@@ -1,7 +1,7 @@
 # Jhash
 
-[![Build](https://travis-ci.org/RamblingWare/RamblingWare.svg?branch=master)](https://travis-ci.org/amdelamar/jhash)
-[![Code Climate](https://codeclimate.com/github/RamblingWare/RamblingWare/badges/gpa.svg)](https://codeclimate.com/github/amdelamar/jhash)
+[![Build](https://travis-ci.org/amdelamar/jhash.svg?branch=master)](https://travis-ci.org/amdelamar/jhash)
+[![Code Climate](https://codeclimate.com/github/amdelamar/jhash/badges/gpa.svg)](https://codeclimate.com/github/amdelamar/jhash)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 
 Password hashing utility in Java.

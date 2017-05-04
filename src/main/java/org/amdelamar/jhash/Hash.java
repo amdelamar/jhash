@@ -3,10 +3,10 @@ package org.amdelamar.jhash;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 import org.amdelamar.jhash.exception.BadOperationException;
 import org.amdelamar.jhash.exception.InvalidHashException;
@@ -28,11 +28,11 @@ public class Hash {
     public static final int SALT_INDEX = 3;
     public static final int PBKDF2_INDEX = 4;
 
-    public static String createHash(String password) throws BadOperationException {
-        return createHash(password.toCharArray());
+    public static String create(String password) throws BadOperationException {
+        return create(password.toCharArray());
     }
 
-    public static String createHash(char[] password) throws BadOperationException {
+    public static String create(char[] password) throws BadOperationException {
         // Generate a random salt
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_BYTE_SIZE];
@@ -43,7 +43,7 @@ public class Hash {
         int hashSize = hash.length;
 
         // format: algorithm:iterations:hashSize:salt:hash
-        String parts = "sha1:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + toBase64(salt) + ":" + toBase64(hash);
+        String parts = "sha1:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + encodeBase64(salt) + ":" + encodeBase64(hash);
         return parts;
     }
 
@@ -78,14 +78,14 @@ public class Hash {
 
         byte[] salt = null;
         try {
-            salt = fromBase64(params[SALT_INDEX]);
+            salt = decodeBase64(params[SALT_INDEX]);
         } catch (IllegalArgumentException ex) {
             throw new InvalidHashException("Base64 decoding of salt failed.", ex);
         }
 
         byte[] hash = null;
         try {
-            hash = fromBase64(params[PBKDF2_INDEX]);
+            hash = decodeBase64(params[PBKDF2_INDEX]);
         } catch (IllegalArgumentException ex) {
             throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", ex);
         }
@@ -126,13 +126,23 @@ public class Hash {
             throw new BadOperationException("Invalid key spec.", ex);
         }
     }
-
-    private static byte[] fromBase64(String hex) throws IllegalArgumentException {
-        return DatatypeConverter.parseBase64Binary(hex);
+    
+    /**
+     * Decodes a Base64 string to a byte array.
+     * @param string
+     * @return
+     */
+    private static byte[] decodeBase64(String string) {
+        return Base64.getDecoder().decode(string);
     }
-
-    private static String toBase64(byte[] array) {
-        return DatatypeConverter.printBase64Binary(array);
+    
+    /**
+     * Encodes a byte array into a Base64 string.
+     * @param array
+     * @return
+     */
+    private static String encodeBase64(byte[] array) {
+        return new String(Base64.getEncoder().encode(array));
     }
 
 }

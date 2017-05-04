@@ -20,7 +20,7 @@ public class Test {
         int badHashLength = 0;
 
         try {
-            goodHash = Hash.createHash(userString);
+            goodHash = Hash.create(userString);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             System.exit(1);
@@ -66,8 +66,8 @@ public class Test {
             boolean failure = false;
             for (int i = 0; i < 10; i++) {
                 String password = "" + i;
-                String hash = Hash.createHash(password);
-                String secondHash = Hash.createHash(password);
+                String hash = Hash.create(password);
+                String secondHash = Hash.create(password);
                 if (hash.equals(secondHash)) {
                     System.out.println("FAILURE: TWO HASHES ARE EQUAL!");
                     failure = true;
@@ -94,7 +94,7 @@ public class Test {
 
     public static void testHashFunctionChecking() {
         try {
-            String hash = Hash.createHash("foobar");
+            String hash = Hash.create("foobar");
             hash = hash.replaceFirst("sha1:", "sha256:");
 
             boolean raised = false;

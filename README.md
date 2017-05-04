@@ -11,7 +11,7 @@ Password hashing utility in Java.
 
 This code salts and hashes passwords with PBKDF2 (64,000 iterations of SHA1 by default).
 
-`Hash.createHash(password)` returns a salt+hash of the password. Store it somewhere safe.
+`Hash.create(password)` returns a salt+hash of the password. Store it somewhere safe.
 
 `Hash.verify(password, correctHash)` returns true, if the password matches the hashed password.
 
@@ -41,7 +41,7 @@ This code salts and hashes passwords with PBKDF2 (64,000 iterations of SHA1 by d
   encoding is optimal.
 
 Note that these constants are encoded into the hash string when it is created
-with `Hash.createHash()` so that they can be changed without breaking existing hashes.
+with `Hash.create()` so that they can be changed without breaking existing hashes.
 The new (changed) values will apply only to newly-created hashes.
 
 

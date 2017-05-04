@@ -28,10 +28,26 @@ public class Hash {
     public static final int SALT_INDEX = 3;
     public static final int PBKDF2_INDEX = 4;
 
+    /**
+     * Creates a Hash from the given String. Use this to create new user's passwords. Or when they
+     * change their password.
+     * 
+     * @param password
+     * @return
+     * @throws BadOperationException
+     */
     public static String create(String password) throws BadOperationException {
         return create(password.toCharArray());
     }
 
+    /**
+     * Creates a Hash from the given char array. Use this to create new user's passwords. Or when
+     * they change their password.
+     * 
+     * @param password
+     * @return
+     * @throws BadOperationException
+     */
     public static String create(char[] password) throws BadOperationException {
         // Generate a random salt
         SecureRandom random = new SecureRandom();
@@ -43,17 +59,36 @@ public class Hash {
         int hashSize = hash.length;
 
         // format: algorithm:iterations:hashSize:salt:hash
-        String parts = "sha1:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + encodeBase64(salt) + ":" + encodeBase64(hash);
+        String parts = "sha1:" + PBKDF2_ITERATIONS + ":" + hashSize + ":" + encodeBase64(salt) + ":"
+                + encodeBase64(hash);
         return parts;
     }
 
-    public static boolean verify(String string, String correctHash)
-            throws BadOperationException, InvalidHashException {
+    /**
+     * Returns true if the string, once hashed, matches the expected hash. Use this to verify a user
+     * login. Take the entered password and compare it with the entire hash stored from before.
+     * 
+     * @param string
+     * @param correctHash
+     * @return
+     * @throws BadOperationException
+     * @throws InvalidHashException
+     */
+    public static boolean verify(String string, String correctHash) throws BadOperationException, InvalidHashException {
         return verify(string.toCharArray(), correctHash);
     }
 
-    public static boolean verify(char[] string, String correctHash)
-            throws BadOperationException, InvalidHashException {
+    /**
+     * Returns true if the char array, once hashed, matches the expected hash. Use this to verify a
+     * user login. Take the entered password and compare it with the entire hash stored from before.
+     * 
+     * @param string
+     * @param correctHash
+     * @return
+     * @throws BadOperationException
+     * @throws InvalidHashException
+     */
+    public static boolean verify(char[] string, String correctHash) throws BadOperationException, InvalidHashException {
         // Decode the hash into its parameters
         String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
@@ -126,22 +161,24 @@ public class Hash {
             throw new BadOperationException("Invalid key spec.", ex);
         }
     }
-    
+
     /**
-     * Decodes a Base64 string to a byte array.
+     * Decodes a Base64 string to a byte array. A convenience method for java.util.Base64 decoder.
+     * 
      * @param string
      * @return
      */
-    private static byte[] decodeBase64(String string) {
+    public static byte[] decodeBase64(String string) {
         return Base64.getDecoder().decode(string);
     }
-    
+
     /**
-     * Encodes a byte array into a Base64 string.
+     * Encodes a byte array into a Base64 string. A convenience method for java.util.Base64 encoder.
+     * 
      * @param array
      * @return
      */
-    private static String encodeBase64(byte[] array) {
+    public static String encodeBase64(byte[] array) {
         return new String(Base64.getEncoder().encode(array));
     }
 

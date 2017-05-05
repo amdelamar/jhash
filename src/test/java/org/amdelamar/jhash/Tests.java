@@ -74,16 +74,13 @@ public class Tests {
             String hash = Hash.create(password);
             String secondHash = Hash.create(password);
             if (hash.equals(secondHash)) {
-                //System.out.println("FAILURE: TWO HASHES ARE EQUAL!");
                 failure = true;
             }
             String wrongPassword = "" + (i + 1);
             if (Hash.verify(wrongPassword, hash)) {
-                //System.out.println("FAILURE: WRONG PASSWORD ACCEPTED!");
                 failure = true;
             }
             if (!Hash.verify(password, hash)) {
-                //System.out.println("FAILURE: GOOD PASSWORD NOT ACCEPTED!");
                 failure = true;
             }
             assertFalse(failure);
@@ -93,9 +90,9 @@ public class Tests {
     @Test
     public void hashTests() throws InvalidHashException, BadOperationException {
         // sha1
-        String hash = Hash.create("foobar",Hash.PBKDF2_HMACSHA1);
+        String hash = Hash.create("foobar");
         // accidentally change algorithms
-        hash = hash.replaceFirst("sha1:", "sha256:");        
+        hash = hash.replaceFirst("sha1:", "sha256:");       
         assertFalse(Hash.verify("foobar", hash));
         
         // sha2

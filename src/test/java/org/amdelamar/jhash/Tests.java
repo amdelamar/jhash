@@ -57,6 +57,7 @@ public class Tests {
                 System.out.println("Truncated hash test: FAIL " + "(At hash length of " + badHashLength + ")");
                 System.exit(1);
             }
+            assertTrue(raised);
 
             // The loop goes on until it is two characters away from the last : it
             // finds. This is because the PBKDF2 function requires a hash that's at
@@ -73,33 +74,60 @@ public class Tests {
             String hash = Hash.create(password);
             String secondHash = Hash.create(password);
             if (hash.equals(secondHash)) {
-                System.out.println("FAILURE: TWO HASHES ARE EQUAL!");
+                //System.out.println("FAILURE: TWO HASHES ARE EQUAL!");
                 failure = true;
             }
             String wrongPassword = "" + (i + 1);
             if (Hash.verify(wrongPassword, hash)) {
-                System.out.println("FAILURE: WRONG PASSWORD ACCEPTED!");
+                //System.out.println("FAILURE: WRONG PASSWORD ACCEPTED!");
                 failure = true;
             }
             if (!Hash.verify(password, hash)) {
-                System.out.println("FAILURE: GOOD PASSWORD NOT ACCEPTED!");
+                //System.out.println("FAILURE: GOOD PASSWORD NOT ACCEPTED!");
                 failure = true;
             }
+            assertFalse(failure);
         }
-        assertFalse(failure);
     }
 
     @Test
-    public void testHashFunctionChecking() throws InvalidHashException, BadOperationException {
-        String hash = Hash.create("foobar");
-        hash = hash.replaceFirst("sha1:", "sha256:");
-
-        boolean raised = false;
+    public void hashTests() throws InvalidHashException, BadOperationException {
+        // sha1
+        String hash = Hash.create("foobar",Hash.PBKDF2_HMACSHA1);
+        // accidentally change algorithms
+        hash = hash.replaceFirst("sha1:", "sha256:");        
+        assertFalse(Hash.verify("foobar", hash));
+        
+        // sha2
+        hash = Hash.create("foobar",Hash.PBKDF2_HMACSHA256);
+        assertTrue(Hash.verify("foobar", hash));
+    }
+    
+    @Test
+    public void pepperTests() throws BadOperationException, InvalidHashException {
+        
+        String pepper = "ZfMifTCEvjyDGIqv";
+        String password = "Hello&77World!";
+        
         try {
-            Hash.verify("foobar", hash);
-        } catch (BadOperationException ex) {
-            raised = true;
+            // sha1 no pepper
+            String hash = Hash.create(password,Hash.PBKDF2_HMACSHA1);
+            assertTrue(Hash.verify(password,hash));
+            
+            // sha256 no pepper
+            String hash2 = Hash.create(password,Hash.PBKDF2_HMACSHA256);
+            assertTrue(Hash.verify(password,pepper,hash2));
+            
+            // sha1 + pepper
+            String hash3 = Hash.create(password,pepper,Hash.PBKDF2_HMACSHA1);
+            assertTrue(Hash.verify(password,pepper,hash3));
+            
+            // sha256 + pepper
+            String hash4 = Hash.create(password,pepper,Hash.PBKDF2_HMACSHA256);
+            assertTrue(Hash.verify(password,pepper,hash4));
+            
+        } catch (BadOperationException | InvalidHashException e) {
+            e.printStackTrace();
         }
-        assertTrue(raised);
     }
 }

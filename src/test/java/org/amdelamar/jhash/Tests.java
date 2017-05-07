@@ -12,13 +12,13 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class Tests {
-    
+
     @Test
     public void base64Tests() {
         // Validate the Base64 encode/deocde methods.
         String hello = "Hello World!";
         String hello64 = "SGVsbG8gV29ybGQh";
-        
+
         assertEquals(hello64, Hash.encodeBase64(hello.getBytes()));
         assertEquals(hello, new String(Hash.decodeBase64(hello64)));
     }
@@ -54,7 +54,8 @@ public class Tests {
             }
 
             if (!raised) {
-                System.out.println("Truncated hash test: FAIL " + "(At hash length of " + badHashLength + ")");
+                System.out.println(
+                        "Truncated hash test: FAIL " + "(At hash length of " + badHashLength + ")");
                 System.exit(1);
             }
             assertTrue(raised);
@@ -92,37 +93,37 @@ public class Tests {
         // sha1
         String hash = Hash.create("foobar");
         // accidentally change algorithms
-        hash = hash.replaceFirst("sha1:", "sha256:");       
+        hash = hash.replaceFirst("sha1:", "sha256:");
         assertFalse(Hash.verify("foobar", hash));
-        
+
         // sha2
-        hash = Hash.create("foobar",Hash.PBKDF2_HMACSHA256);
+        hash = Hash.create("foobar", Hash.PBKDF2_HMACSHA256);
         assertTrue(Hash.verify("foobar", hash));
     }
-    
+
     @Test
     public void pepperTests() throws BadOperationException, InvalidHashException {
-        
+
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
-        
+
         try {
             // sha1 no pepper
-            String hash = Hash.create(password,Hash.PBKDF2_HMACSHA1);
-            assertTrue(Hash.verify(password,hash));
-            
+            String hash = Hash.create(password, Hash.PBKDF2_HMACSHA1);
+            assertTrue(Hash.verify(password, hash));
+
             // sha256 no pepper
-            String hash2 = Hash.create(password,Hash.PBKDF2_HMACSHA256);
-            assertTrue(Hash.verify(password,pepper,hash2));
-            
+            String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256);
+            assertTrue(Hash.verify(password, pepper, hash2));
+
             // sha1 + pepper
-            String hash3 = Hash.create(password,pepper,Hash.PBKDF2_HMACSHA1);
-            assertTrue(Hash.verify(password,pepper,hash3));
-            
+            String hash3 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA1);
+            assertTrue(Hash.verify(password, pepper, hash3));
+
             // sha256 + pepper
-            String hash4 = Hash.create(password,pepper,Hash.PBKDF2_HMACSHA256);
-            assertTrue(Hash.verify(password,pepper,hash4));
-            
+            String hash4 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+            assertTrue(Hash.verify(password, pepper, hash4));
+
         } catch (BadOperationException | InvalidHashException e) {
             e.printStackTrace();
         }

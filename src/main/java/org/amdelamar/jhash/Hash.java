@@ -36,7 +36,7 @@ public class Hash {
      * 
      * @param password
      *            - The password to be salted and hashed.
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
@@ -50,7 +50,7 @@ public class Hash {
      * 
      * @param password
      *            - The password to be salted and hashed.
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
@@ -66,7 +66,7 @@ public class Hash {
      *            - The password to be salted and hashed.
      * @param algorithm
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
@@ -82,7 +82,7 @@ public class Hash {
      *            - The password to be salted and hashed.
      * @param algorithm
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
@@ -101,11 +101,12 @@ public class Hash {
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String pepper, String algorithm) throws BadOperationException {
+    public static String create(String password, String pepper, String algorithm)
+            throws BadOperationException {
         return create(password.toCharArray(), pepper.toCharArray(), algorithm);
     }
 
@@ -120,11 +121,12 @@ public class Hash {
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
-     * @return
+     * @return A hash String
      * @throws BadOperationException
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, char[] pepper, String algorithm) throws BadOperationException {
+    public static String create(char[] password, char[] pepper, String algorithm)
+            throws BadOperationException {
         // Generate a random salt
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[SALT_BYTE_SIZE];
@@ -139,12 +141,13 @@ public class Hash {
         }
 
         // Hash the password
-        byte[] hash = pbkdf2(pepperPassword.toCharArray(), salt, algorithm, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
+        byte[] hash = pbkdf2(pepperPassword.toCharArray(), salt, algorithm, PBKDF2_ITERATIONS,
+                HASH_BYTE_SIZE);
         int hashSize = hash.length;
 
         // format: algorithm:iterations:hashSize:salt:hash
-        String parts = PBKDF2_ITERATIONS + ":" + hashSize + ":" + isPeppered + ":" + encodeBase64(salt) + ":"
-                + encodeBase64(hash);
+        String parts = PBKDF2_ITERATIONS + ":" + hashSize + ":" + isPeppered + ":"
+                + encodeBase64(salt) + ":" + encodeBase64(hash);
 
         if (algorithm.equals(PBKDF2_HMACSHA1)) {
             parts = "sha1:" + parts;
@@ -163,7 +166,7 @@ public class Hash {
      *            - The password to be validated.
      * @param correctHash
      *            - The stored hash from before.
-     * @return
+     * @return boolean true if matches
      * @throws BadOperationException
      * @throws InvalidHashException
      * @see https://en.wikipedia.org/wiki/Hash_function
@@ -181,7 +184,7 @@ public class Hash {
      *            - The password to be validated.
      * @param correctHash
      *            - The stored hash from before.
-     * @return
+     * @return boolean true if matches
      * @throws BadOperationException
      * @throws InvalidHashException
      * @see https://en.wikipedia.org/wiki/Hash_function
@@ -204,7 +207,7 @@ public class Hash {
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param correctHash
      *            - The stored hash from before.
-     * @return
+     * @return boolean true if matches
      * @throws BadOperationException
      * @throws InvalidHashException
      * @see https://en.wikipedia.org/wiki/Hash_function
@@ -227,7 +230,7 @@ public class Hash {
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param correctHash
      *            - The stored hash from before.
-     * @return
+     * @return boolean true if matches
      * @throws BadOperationException
      * @throws InvalidHashException
      * @see https://en.wikipedia.org/wiki/Hash_function
@@ -255,7 +258,8 @@ public class Hash {
         try {
             iterations = Integer.parseInt(params[ITERATION_INDEX]);
         } catch (NumberFormatException ex) {
-            throw new InvalidHashException("Could not parse the iteration count as an integer.", ex);
+            throw new InvalidHashException("Could not parse the iteration count as an integer.",
+                    ex);
         }
 
         if (iterations < 1) {
@@ -303,15 +307,16 @@ public class Hash {
         return slowEquals(hash, testHash);
     }
 
-    private static boolean slowEquals(byte[] a, byte[] b) {
-        int diff = a.length ^ b.length;
-        for (int i = 0; i < a.length && i < b.length; i++)
-            diff |= a[i] ^ b[i];
+    private static boolean slowEquals(byte[] byteA, byte[] byteB) {
+        int diff = byteA.length ^ byteB.length;
+        for (int i = 0; i < byteA.length && i < byteB.length; i++) {
+            diff |= byteA[i] ^ byteB[i];
+        }
         return diff == 0;
     }
 
-    private static byte[] pbkdf2(char[] string, byte[] salt, String algorithm, int iterations, int bytes)
-            throws BadOperationException {
+    private static byte[] pbkdf2(char[] string, byte[] salt, String algorithm, int iterations,
+            int bytes) throws BadOperationException {
         try {
             PBEKeySpec spec = new PBEKeySpec(string, salt, iterations, bytes * 8);
             SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);

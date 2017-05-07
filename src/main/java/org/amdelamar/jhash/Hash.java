@@ -11,6 +11,13 @@ import javax.crypto.spec.PBEKeySpec;
 import org.amdelamar.jhash.exception.BadOperationException;
 import org.amdelamar.jhash.exception.InvalidHashException;
 
+/**
+ * Password hashing utility in Java. It salts automatically and has a pepper option. It hashes
+ * passwords with PBKDF2 using 64,000 iterations of SHA1 (default) or SHA256.
+ * 
+ * @author amdelamar
+ * @see https://github.com/amdelamar/jhash
+ */
 public class Hash {
 
     public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";

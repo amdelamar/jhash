@@ -13,7 +13,7 @@ import org.amdelamar.jhash.exception.InvalidHashException;
 
 /**
  * Password hashing utility in Java. It salts automatically and has a pepper option. It hashes
- * passwords with PBKDF2 using 64,000 iterations of SHA1 (default) or SHA256.
+ * passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512.
  * 
  * @author amdelamar
  * @see https://github.com/amdelamar/jhash
@@ -22,6 +22,7 @@ public class Hash {
 
     public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     public static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
+    public static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
 
     // These constants may be changed without breaking existing hashes.
     private static final int SALT_BYTE_SIZE = 24;
@@ -160,6 +161,8 @@ public class Hash {
             parts = "sha1:" + parts;
         } else if (algorithm.equals(PBKDF2_HMACSHA256)) {
             parts = "sha256:" + parts;
+        } else if (algorithm.equals(PBKDF2_HMACSHA512)) {
+            parts = "sha512:" + parts;
         }
 
         return parts;
@@ -252,13 +255,15 @@ public class Hash {
 
         // Currently, only supports SHA1 and SHA256.
         String alg = params[HASH_ALGORITHM_INDEX];
-        if (!alg.equals("sha1") && !alg.equals("sha256")) {
+        if (!alg.equals("sha1") && !alg.equals("sha256") && !alg.equals("sha512")) {
             throw new BadOperationException("Unsupported hash type.");
         }
         if (alg.equals("sha1")) {
             alg = PBKDF2_HMACSHA1;
-        } else {
+        } else if (alg.equals("sha256")) {
             alg = PBKDF2_HMACSHA256;
+        } else if (alg.equals("sha512")) {
+            alg = PBKDF2_HMACSHA512;
         }
 
         int iterations = 0;

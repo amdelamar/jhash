@@ -67,7 +67,7 @@ public class Tests {
     }
 
     @Test
-    public void basicTests() throws InvalidHashException, BadOperationException {
+    public void verifyTests() throws InvalidHashException, BadOperationException {
         // Test password validation
         boolean failure = false;
         for (int i = 0; i < 10; i++) {
@@ -89,7 +89,7 @@ public class Tests {
     }
 
     @Test
-    public void hashTests() throws InvalidHashException, BadOperationException {
+    public void breakTests() throws InvalidHashException, BadOperationException {
         // sha1
         String hash = Hash.create("foobar");
         // accidentally change algorithms
@@ -102,7 +102,7 @@ public class Tests {
     }
 
     @Test
-    public void pepperTests() throws BadOperationException, InvalidHashException {
+    public void hashTests() throws BadOperationException, InvalidHashException {
 
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
@@ -115,14 +115,22 @@ public class Tests {
             // sha256 no pepper
             String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256);
             assertTrue(Hash.verify(password, pepper, hash2));
-
-            // sha1 + pepper
-            String hash3 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA1);
+            
+            // sha512 no pepper
+            String hash3 = Hash.create(password, Hash.PBKDF2_HMACSHA512);
             assertTrue(Hash.verify(password, pepper, hash3));
 
-            // sha256 + pepper
-            String hash4 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+            // sha1 + pepper
+            String hash4 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA1);
             assertTrue(Hash.verify(password, pepper, hash4));
+
+            // sha256 + pepper
+            String hash5 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+            assertTrue(Hash.verify(password, pepper, hash5));
+            
+            // sha512 + pepper
+            String hash6 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
+            assertTrue(Hash.verify(password, pepper, hash6));
 
         } catch (BadOperationException | InvalidHashException e) {
             e.printStackTrace();

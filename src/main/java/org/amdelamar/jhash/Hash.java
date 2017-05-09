@@ -15,6 +15,7 @@ import org.amdelamar.jhash.exception.InvalidHashException;
  */
 public class Hash {
 
+    public static final String BCRYPT = "bcrypt";
     public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     public static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
     public static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
@@ -178,6 +179,8 @@ public class Hash {
             parts = "sha256:" + parts;
         } else if (algorithm.equals(PBKDF2_HMACSHA512)) {
             parts = "sha512:" + parts;
+        } else {
+            parts = algorithm+":" + parts;
         }
 
         return parts;
@@ -270,7 +273,8 @@ public class Hash {
 
         // Currently, only supports SHA1 and SHA256.
         String alg = params[HASH_ALGORITHM_INDEX];
-        if (!alg.equals("sha1") && !alg.equals("sha256") && !alg.equals("sha512")) {
+        if (!alg.equals("sha1") && !alg.equals("sha256") && !alg.equals("sha512")
+                && !alg.equals(BCRYPT)) {
             throw new BadOperationException("Unsupported hash type.");
         }
         if (alg.equals("sha1")) {
@@ -313,7 +317,7 @@ public class Hash {
         try {
             hash = decodeBase64(params[HASH_INDEX]);
         } catch (IllegalArgumentException ex) {
-            throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", ex);
+            throw new InvalidHashException("Base64 decoding of hash failed.", ex);
         }
 
         int storedHashSize = 0;

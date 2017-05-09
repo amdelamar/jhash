@@ -1,12 +1,7 @@
 package org.amdelamar.jhash;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 import org.amdelamar.jhash.exception.BadOperationException;
 import org.amdelamar.jhash.exception.InvalidHashException;
@@ -25,9 +20,8 @@ public class Hash {
     public static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
 
     // These constants may be changed without breaking existing hashes.
-    private static final int SALT_BYTE_SIZE = 24;
-    private static final int HASH_BYTE_SIZE = 18;
-    private static final int PBKDF2_ITERATIONS = 64000;
+    public static final int SALT_BYTE_SIZE = 24;
+    public static final int HASH_BYTE_SIZE = 18;
 
     // These constants define the encoding and may not be changed.
     private static final int HASH_SECTIONS = 6;
@@ -36,7 +30,30 @@ public class Hash {
     private static final int HASH_SIZE_INDEX = 2;
     private static final int PEPPER_INDEX = 3;
     private static final int SALT_INDEX = 4;
-    private static final int PBKDF2_INDEX = 5;
+    private static final int HASH_INDEX = 5;
+
+    /**
+     * Generates a secure random salt of 24 bytes.
+     * 
+     * @return byte array salt
+     */
+    public static byte[] randomSalt() {
+        return randomSalt(SALT_BYTE_SIZE);
+    }
+
+    /**
+     * Generates a secure random salt of the specified size.
+     * 
+     * @param size
+     *            The size of the salt in bytes.
+     * @return byte array salt
+     */
+    public static byte[] randomSalt(int size) {
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[size];
+        random.nextBytes(salt);
+        return salt;
+    }
 
     /**
      * Creates a Hash from the given string using PBKDF2 SHA1. Use this to create new user's
@@ -136,9 +153,7 @@ public class Hash {
     public static String create(char[] password, char[] pepper, String algorithm)
             throws BadOperationException {
         // Generate a random salt
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[SALT_BYTE_SIZE];
-        random.nextBytes(salt);
+        byte[] salt = randomSalt();
 
         // add pepper if not empty
         char isPeppered = 'n';
@@ -149,12 +164,12 @@ public class Hash {
         }
 
         // Hash the password
-        byte[] hash = pbkdf2(pepperPassword.toCharArray(), salt, algorithm, PBKDF2_ITERATIONS,
-                HASH_BYTE_SIZE);
+        byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm,
+                PBKDF2.ITERATIONS, HASH_BYTE_SIZE);
         int hashSize = hash.length;
 
         // format: algorithm:iterations:hashSize:salt:hash
-        String parts = PBKDF2_ITERATIONS + ":" + hashSize + ":" + isPeppered + ":"
+        String parts = PBKDF2.ITERATIONS + ":" + hashSize + ":" + isPeppered + ":"
                 + encodeBase64(salt) + ":" + encodeBase64(hash);
 
         if (algorithm.equals(PBKDF2_HMACSHA1)) {
@@ -296,7 +311,7 @@ public class Hash {
 
         byte[] hash = null;
         try {
-            hash = decodeBase64(params[PBKDF2_INDEX]);
+            hash = decodeBase64(params[HASH_INDEX]);
         } catch (IllegalArgumentException ex) {
             throw new InvalidHashException("Base64 decoding of pbkdf2 output failed.", ex);
         }
@@ -314,30 +329,27 @@ public class Hash {
 
         // Compute the hash of the provided string, using the same salt,
         // iteration count, and hash length
-        byte[] testHash = pbkdf2(pepperPassword.toCharArray(), salt, alg, iterations, hash.length);
+        byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, iterations,
+                hash.length);
         // Compare the hashes in constant time.
         return slowEquals(hash, testHash);
     }
 
-    private static boolean slowEquals(byte[] byteA, byte[] byteB) {
+    /**
+     * Compares two byte arrays.
+     * 
+     * @param byteA
+     *            First byte array.
+     * @param byteB
+     *            Second byte array.
+     * @return true if they are equivalent.
+     */
+    protected static boolean slowEquals(byte[] byteA, byte[] byteB) {
         int diff = byteA.length ^ byteB.length;
         for (int i = 0; i < byteA.length && i < byteB.length; i++) {
             diff |= byteA[i] ^ byteB[i];
         }
         return diff == 0;
-    }
-
-    private static byte[] pbkdf2(char[] string, byte[] salt, String algorithm, int iterations,
-            int bytes) throws BadOperationException {
-        try {
-            PBEKeySpec spec = new PBEKeySpec(string, salt, iterations, bytes * 8);
-            SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
-            return skf.generateSecret(spec).getEncoded();
-        } catch (NoSuchAlgorithmException ex) {
-            throw new BadOperationException("Hash algorithm not supported.", ex);
-        } catch (InvalidKeySpecException ex) {
-            throw new BadOperationException("Invalid key spec.", ex);
-        }
     }
 
     /**
@@ -348,7 +360,7 @@ public class Hash {
      * @return Base64 decoded byte array
      * @see https://en.wikipedia.org/wiki/Base64
      */
-    public static byte[] decodeBase64(String string) {
+    protected static byte[] decodeBase64(String string) {
         return Base64.getDecoder().decode(string);
     }
 
@@ -360,7 +372,7 @@ public class Hash {
      * @return Base64 encoded string
      * @see https://en.wikipedia.org/wiki/Base64
      */
-    public static String encodeBase64(byte[] array) {
+    protected static String encodeBase64(byte[] array) {
         return new String(Base64.getEncoder().encode(array));
     }
 

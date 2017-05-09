@@ -86,4 +86,5 @@ A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor
 
 ## License
 
-[BSD-2-Clause](https://github.com/amdelamar/jhash/blob/master/LICENSE)
+PBKDF2 is licensed as [BSD-2-Clause](https://github.com/amdelamar/jhash/blob/master/LICENSE)
+BCRYPT is licensed as [ISC](https://github.com/amdelamar/jhash/blob/master/LICENSE)

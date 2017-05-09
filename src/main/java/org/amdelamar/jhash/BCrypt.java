@@ -255,15 +255,15 @@ public class BCrypt {
      * Look up the 3 bits base64-encoded by the specified character, range-checking against
      * conversion table
      * 
-     * @param x
+     * @param character
      *            the base64-encoded value
      * @return the decoded value of x
      */
-    private static byte char64(char x) {
-        if ((int) x < 0 || (int) x >= IBASE64.length) {
+    private static byte char64(char character) {
+        if ((int) character < 0 || (int) character >= IBASE64.length) {
             return -1;
         }
-        return IBASE64[(int) x];
+        return IBASE64[(int) character];
     }
 
     /**
@@ -279,31 +279,29 @@ public class BCrypt {
      *             if maxolen is invalid
      */
     private static byte[] decodeBase64(String string, int maxolen) throws IllegalArgumentException {
-        StringBuffer sb = new StringBuffer();
-        int off = 0, slen = string.length(), olen = 0;
-        byte[] ret;
-        byte c1;
-        byte c2;
-        byte c3;
-        byte c4;
-        byte o1;
-
-        if (maxolen <= 0)
+        
+        if (maxolen <= 0) {
             throw new IllegalArgumentException("Invalid maxolen");
+        }
+        
+        StringBuffer sb = new StringBuffer();
+        int off = 0;
+        int slen = string.length();
+        int olen = 0;
 
         while (off < slen - 1 && olen < maxolen) {
-            c1 = char64(string.charAt(off++));
-            c2 = char64(string.charAt(off++));
+            byte c1 = char64(string.charAt(off++));
+            byte c2 = char64(string.charAt(off++));
             if (c1 == -1 || c2 == -1) {
                 break;
             }
-            o1 = (byte) (c1 << 2);
+            byte o1 = (byte) (c1 << 2);
             o1 |= (c2 & 0x30) >> 4;
             sb.append((char) o1);
             if (++olen >= maxolen || off >= slen) {
                 break;
             }
-            c3 = char64(string.charAt(off++));
+            byte c3 = char64(string.charAt(off++));
             if (c3 == -1) {
                 break;
             }
@@ -313,14 +311,14 @@ public class BCrypt {
             if (++olen >= maxolen || off >= slen) {
                 break;
             }
-            c4 = char64(string.charAt(off++));
+            byte c4 = char64(string.charAt(off++));
             o1 = (byte) ((c3 & 0x03) << 6);
             o1 |= c4;
             sb.append((char) o1);
             ++olen;
         }
 
-        ret = new byte[olen];
+        byte[] ret = new byte[olen];
         for (off = 0; off < olen; off++) {
             ret[off] = (byte) sb.charAt(off);
         }
@@ -518,8 +516,9 @@ public class BCrypt {
         }
         else {
             minor = salt.charAt(2);
-            if (minor != Minor.A.minor || salt.charAt(3) != '$')
+            if (minor != Minor.A.minor || salt.charAt(3) != '$') {
                 throw new IllegalArgumentException("Invalid salt revision");
+            }
             off = 4;
         }
 
@@ -528,15 +527,14 @@ public class BCrypt {
             throw new IllegalArgumentException("Missing salt rounds");
         int rounds = Integer.parseInt(salt.substring(off, off + 2));
 
-        String real_salt = salt.substring(off + 3, off + 32);
-        byte[] saltb = decodeBase64(real_salt, Hash.SALT_BYTE_SIZE);
+        String realSalt = salt.substring(off + 3, off + 32);
+        byte[] saltb = decodeBase64(realSalt, Hash.SALT_BYTE_SIZE);
         byte[] passwordb;
         try {
             passwordb = (password + (minor >= Minor.A.minor ? "\000" : "")).getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
             throw new AssertionError("UTF-8 is not supported");
         }
-        byte[] hashed = hash(passwordb, saltb, rounds, (int[]) CIPHER.clone());
 
         StringBuffer rs = new StringBuffer();
         rs.append("$2");
@@ -553,6 +551,8 @@ public class BCrypt {
         rs.append(Integer.toString(rounds));
         rs.append("$");
         rs.append(encodeBase64(saltb, saltb.length));
+        
+        byte[] hashed = hash(passwordb, saltb, rounds, (int[]) CIPHER.clone());
         rs.append(encodeBase64(hashed, CIPHER.length * 4 - 1));
         
         return rs.toString();

@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/amdelamar/jhash/badges/gpa.svg)](https://codeclimate.com/github/amdelamar/jhash)
 [![License](https://img.shields.io/:license-BSD2-blue.svg)](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 
-Password hashing utility in Java. It salts automatically and has a pepper option. It hashes passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512.
+Password hashing utility in Java. It salts automatically and has a pepper option. It hashes passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512. (Bcrypt and Scrypt comning soon.)
 
 
 ## Getting Started
@@ -62,12 +62,12 @@ sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 ```
 
-- `algorithm` is the name of the cryptographic hash function ("sha1", "sha256", "sha512").
-- `iterations` is the number of PBKDF2 iterations ("64000").
+- `algorithm` is the name of the cryptographic hash function.
+- `iterations` is the number of iterations (PBKDF2 64000, BCRYPT 2<sup>10</sup>).
 - `hashSize` is the length, in bytes, of the `hash` field (after decoding).
 - `pepper` is an indicator that a pepper was used ("y" or "n").
 - `salt` is the salt, base64 encoded.
-- `hash` is the PBKDF2 output, base64 encoded. It must encode `hashSize` bytes.
+- `hash` is the hash, base64 encoded. It must encode `hashSize` bytes.
 
 
 ## Details
@@ -78,12 +78,10 @@ By default, SHA1 is used for compatibility across implementations, but you may c
 
 This code uses the PBKDF2 algorithm to protect passwords. Better technologies for protecting passwords exist today, like bcrypt, scrypt, or Argon2. Before using this code, you should try to find a well-reviewed and carefully-made implementation of one of those algorithms for the language that you are using. These algorithms are "memory hard," meaning that they don't just need a lot of CPU power to compute, they also require a lot of memory (unlike PBKDF2). By using a memory hard algorithm, your passwords will be better protected.
 
-One thing you could do would be to use [libsodium](https://github.com/jedisct1/libsodium) to [hash your passwords with scrypt](https://download.libsodium.org/doc/password_hashing/index.html). It has bindings available for many languages.
-
 
 ## Credit
 
-A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor Hornby's work](https://github.com/defuse/password-hashing) and other [contributors](https://github.com/amdelamar/jhash/graphs/contributors).
+A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor Hornby](https://github.com/defuse/password-hashing) and [Damien Miller](https://github.com/jeremyh/jBCrypt)'s work and other [contributors](https://github.com/amdelamar/jhash/graphs/contributors).
 
 
 ## License

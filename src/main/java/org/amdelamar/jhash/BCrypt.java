@@ -2,6 +2,8 @@ package org.amdelamar.jhash;
 
 import java.io.UnsupportedEncodingException;
 
+import org.amdelamar.jhash.exception.BadOperationException;
+
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using the scheme described in "A
  * Future-Adaptable Password Scheme" by Niels Provos and David Mazieres.
@@ -215,17 +217,17 @@ public class BCrypt {
      * @param len
      *            the number of bytes to encode
      * @return base64-encoded string
-     * @exception IllegalArgumentException
+     * @exception BadOperationException
      *                if the length is invalid
      */
-    private static String encodeBase64(byte[] array, int len) throws IllegalArgumentException {
+    private static String encodeBase64(byte[] array, int len) throws BadOperationException {
         int off = 0;
         StringBuffer rs = new StringBuffer();
         int c1;
         int c2;
 
         if (len <= 0 || len > array.length)
-            throw new IllegalArgumentException("Invalid len");
+            throw new BadOperationException("Invalid length");
 
         while (off < len) {
             c1 = array[off++] & 0xff;
@@ -275,15 +277,15 @@ public class BCrypt {
      * @param maxolen
      *            the maximum number of bytes to decode
      * @return an array containing the decoded bytes
-     * @throws IllegalArgumentException
+     * @throws BadOperationException
      *             if maxolen is invalid
      */
-    private static byte[] decodeBase64(String string, int maxolen) throws IllegalArgumentException {
-        
+    private static byte[] decodeBase64(String string, int maxolen) throws BadOperationException {
+
         if (maxolen <= 0) {
-            throw new IllegalArgumentException("Invalid maxolen");
+            throw new BadOperationException("Invalid maxolen");
         }
-        
+
         StringBuffer sb = new StringBuffer();
         int off = 0;
         int slen = string.length();
@@ -458,19 +460,22 @@ public class BCrypt {
      * @param cdata
      *            the plaintext to encrypt
      * @return an array containing the binary hashed password
+     * @throws BadOperationException
+     *             if log rounds is a bad value
      */
-    private static byte[] hash(byte[] password, byte[] salt, int log_rounds, int[] cdata) {
-        
+    private static byte[] hash(byte[] password, byte[] salt, int log_rounds, int[] cdata)
+            throws BadOperationException {
+
         if (log_rounds < 4 || log_rounds > 30) {
-            throw new IllegalArgumentException("Bad number of rounds");
+            throw new BadOperationException("Bad number of rounds");
         }
         int rounds = 1 << log_rounds;
         // if (salt.length != Hash.SALT_BYTE_SIZE)
-        // throw new IllegalArgumentException("Bad salt length");
+        // throw new InvalidHashException("Bad salt length");
 
         init_key();
         eksKey(salt, password);
-        
+
         for (int i = 0; i != rounds; i++) {
             key(password);
             key(salt);
@@ -498,33 +503,39 @@ public class BCrypt {
      * 
      * @param password
      *            the password to hash
-     * @param salt
-     *            the salt to hash with (perhaps generated using BCrypt.createSalt()
+     * @param iterations
+     *            the log rounds (e.g. 2^10)
      * @return the hashed password
+     * @throws BadOperationException
+     *             if invalid salt or parameters
      */
-    public static String create(String password, String salt) {
+    public static String create(String password, String salt, int iterations)
+            throws BadOperationException {
+
+        if (salt == null || salt.isEmpty()) {
+            salt = createSalt();
+        }
 
         char minor = (char) 0;
         int off = 0;
-        
+
         // validate salt version
         if (salt.charAt(0) != '$' || salt.charAt(1) != '2') {
-            throw new IllegalArgumentException("Invalid salt version");
+            throw new BadOperationException("Invalid salt version");
         }
         if (salt.charAt(2) == '$') {
             off = 3;
-        }
-        else {
+        } else {
             minor = salt.charAt(2);
             if (minor != Minor.A.minor || salt.charAt(3) != '$') {
-                throw new IllegalArgumentException("Invalid salt revision");
+                throw new BadOperationException("Invalid salt revision");
             }
             off = 4;
         }
 
         // Extract number of rounds
         if (salt.charAt(off + 2) > '$')
-            throw new IllegalArgumentException("Missing salt rounds");
+            throw new BadOperationException("Missing salt rounds");
         int rounds = Integer.parseInt(salt.substring(off, off + 2));
 
         String realSalt = salt.substring(off + 3, off + 32);
@@ -546,15 +557,15 @@ public class BCrypt {
             rs.append("0");
         }
         if (rounds > 30) {
-            throw new IllegalArgumentException("rounds exceeds maximum (30)");
+            throw new BadOperationException("rounds exceeds maximum (30)");
         }
         rs.append(Integer.toString(rounds));
         rs.append("$");
         rs.append(encodeBase64(saltb, saltb.length));
-        
+
         byte[] hashed = hash(passwordb, saltb, rounds, (int[]) CIPHER.clone());
         rs.append(encodeBase64(hashed, CIPHER.length * 4 - 1));
-        
+
         return rs.toString();
     }
 
@@ -564,12 +575,18 @@ public class BCrypt {
      * @return an encoded salt value
      */
     public static String createSalt() {
-        byte[] salt = Hash.randomSalt();
-        StringBuffer sb = new StringBuffer();
-        sb.append("$2a$");
-        sb.append(Integer.toString(LOG2_ROUNDS));
-        sb.append("$");
-        sb.append(encodeBase64(salt, salt.length));
-        return sb.toString();
+        try {
+            byte[] salt = Hash.randomSalt();
+            StringBuffer sb = new StringBuffer();
+            sb.append("$2a$");
+            sb.append(Integer.toString(LOG2_ROUNDS));
+            sb.append("$");
+            sb.append(encodeBase64(salt, salt.length));
+            return sb.toString();
+        } catch (Exception e) {
+            // failed to base64 the random salt
+            return "";
+        }
+
     }
 }

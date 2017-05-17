@@ -40,7 +40,7 @@ String hash = Hash.create(password,pepper,Hash.PBKDF2_HMACSHA512);
 
 // bcrypt + pepper
 String hash = Hash.create(password,pepper,Hash.BCRYPT);
-// Returns: bcrypt:10:18:y:$2a$10$/9rQ20Mjh44Y.ktJmE/CGCyYIYjOWRDIsIkzq2H7XcVSQ4xypiag7lzL8fy
+// Returns: bcrypt:10:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
 ```
 
 
@@ -60,15 +60,15 @@ sha256:64000:18:n:ZhxPG2klUysxywJ7NIAhFNTtEKa1U2yu:6oeoGuoQAOIKsztgIgPHTC4/
 sha256:64000:18:y:8MD0yEl5DKz+8Av2L8985h63BhvVppYU:osTwsDh2qo/wgE6g0BrjdeFt
 sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
-bcrypt:10:18:n:$2a$10$KfnTR6sH0dT6j09NqCSK80blpobJE7F3HFZ2sy/3kJDjDGkfCgAM7pvntLG
-bcrypt:10:18:y:$2a$10$/9rQ20Mjh44Y.ktJmE/CGCyYIYjOWRDIsIkzq2H7XcVSQ4xypiag7lzL8fy
+bcrypt:10:66:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
+bcrypt:10:66:y::$2a$10$sdreyOHQW0XAGw.LMXbPyayMMGlMuU69htdw8KXjzk5xOrVTFj2aYLxre7y
 ```
 
 - `algorithm` is the name of the cryptographic hash function.
 - `iterations` is the number of iterations (PBKDF2 64000, BCRYPT 2<sup>10</sup>, etc).
 - `hashSize` is the length, in bytes, of the `hash` field (after decoding).
 - `pepper` is an indicator that a pepper was used ("y" or "n").
-- `salt` is the salt, base64 encoded.
+- `salt` is the salt, base64 encoded (BCRYPT's salt is embeded in the hash). 
 - `hash` is the hash, base64 encoded.
 
 

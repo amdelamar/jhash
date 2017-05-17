@@ -15,6 +15,7 @@ import org.amdelamar.jhash.exception.InvalidHashException;
  */
 public class Hash {
 
+    // algorithms
     public static final String BCRYPT = "bcrypt";
     public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     public static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
@@ -78,6 +79,7 @@ public class Hash {
      *            - The password to be salted and hashed.
      * @return A hash String
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(char[] password) throws BadOperationException {
@@ -94,6 +96,7 @@ public class Hash {
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
      * @return A hash String
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(String password, String algorithm) throws BadOperationException {
@@ -110,6 +113,7 @@ public class Hash {
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
      * @return A hash String
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(char[] password, String algorithm) throws BadOperationException {
@@ -129,6 +133,7 @@ public class Hash {
      *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
      * @return A hash String
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(String password, String pepper, String algorithm)
@@ -146,9 +151,10 @@ public class Hash {
      *            - The application-specific
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
-     *            - Expects Hash.PBKDF2_HMACSHA1 or Hash.PBKDF2_HMACSHA256
+     *            - Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
      * @return A hash String
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(char[] password, char[] pepper, String algorithm)
@@ -164,26 +170,37 @@ public class Hash {
             pepperPassword = (new String(pepper) + pepperPassword);
         }
 
-        // Hash the password
-        byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm,
-                PBKDF2.ITERATIONS, HASH_BYTE_SIZE);
-        int hashSize = hash.length;
+        if (algorithm.startsWith("PBKDF2")) {
+            // Hash the password
+            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm,
+                    PBKDF2.ITERATIONS, HASH_BYTE_SIZE);
 
-        // format: algorithm:iterations:hashSize:salt:hash
-        String parts = PBKDF2.ITERATIONS + ":" + hashSize + ":" + isPeppered + ":"
-                + encodeBase64(salt) + ":" + encodeBase64(hash);
+            // format for storage
+            String parts = PBKDF2.ITERATIONS + ":" + hash.length + ":" + isPeppered + ":"
+                    + encodeBase64(salt) + ":" + encodeBase64(hash);
 
-        if (algorithm.equals(PBKDF2_HMACSHA1)) {
-            parts = "sha1:" + parts;
-        } else if (algorithm.equals(PBKDF2_HMACSHA256)) {
-            parts = "sha256:" + parts;
-        } else if (algorithm.equals(PBKDF2_HMACSHA512)) {
-            parts = "sha512:" + parts;
+            if (algorithm.equals(PBKDF2_HMACSHA1)) {
+                parts = "pbkdf2sha1:" + parts;
+            } else if (algorithm.equals(PBKDF2_HMACSHA256)) {
+                parts = "pbkdf2sha256:" + parts;
+            } else if (algorithm.equals(PBKDF2_HMACSHA512)) {
+                parts = "pbkdf2sha512:" + parts;
+            }
+
+            return parts;
+        } else if (algorithm.equalsIgnoreCase(BCRYPT)) {
+            // Hash the password
+            String hash = BCrypt.create(pepperPassword, null, BCrypt.LOG2_ROUNDS);
+
+            // format for storage
+            String parts = "bcrypt:" + BCrypt.LOG2_ROUNDS + ":" + hash.length() + ":" + isPeppered
+                    + "::" + hash;
+
+            return parts;
         } else {
-            parts = algorithm+":" + parts;
+            // unrecognized algorithm
+            throw new BadOperationException("Unsupported algorithm type.");
         }
-
-        return parts;
     }
 
     /**
@@ -196,7 +213,9 @@ public class Hash {
      *            - The stored hash from before.
      * @return boolean true if matches
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @throws InvalidHashException
+     *             if the correctHash was missing parts or invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(String password, String correctHash)
@@ -214,7 +233,9 @@ public class Hash {
      *            - The stored hash from before.
      * @return boolean true if matches
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @throws InvalidHashException
+     *             if the correctHash was missing parts or invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(char[] password, String correctHash)
@@ -237,7 +258,9 @@ public class Hash {
      *            - The stored hash from before.
      * @return boolean true if matches
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @throws InvalidHashException
+     *             if the correctHash was missing parts or invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(String password, String pepper, String correctHash)
@@ -260,7 +283,9 @@ public class Hash {
      *            - The stored hash from before.
      * @return boolean true if matches
      * @throws BadOperationException
+     *             if one or more parameters are invalid
      * @throws InvalidHashException
+     *             if the correctHash was missing parts or invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(char[] password, char[] pepper, String correctHash)
@@ -271,20 +296,7 @@ public class Hash {
             throw new InvalidHashException("Fields are missing from the correct hash.");
         }
 
-        // Currently, only supports SHA1 and SHA256.
-        String alg = params[HASH_ALGORITHM_INDEX];
-        if (!alg.equals("sha1") && !alg.equals("sha256") && !alg.equals("sha512")
-                && !alg.equals(BCRYPT)) {
-            throw new BadOperationException("Unsupported hash type.");
-        }
-        if (alg.equals("sha1")) {
-            alg = PBKDF2_HMACSHA1;
-        } else if (alg.equals("sha256")) {
-            alg = PBKDF2_HMACSHA256;
-        } else if (alg.equals("sha512")) {
-            alg = PBKDF2_HMACSHA512;
-        }
-
+        // validate parts
         int iterations = 0;
         try {
             iterations = Integer.parseInt(params[ITERATION_INDEX]);
@@ -313,13 +325,6 @@ public class Hash {
             throw new InvalidHashException("Base64 decoding of salt failed.", ex);
         }
 
-        byte[] hash = null;
-        try {
-            hash = decodeBase64(params[HASH_INDEX]);
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidHashException("Base64 decoding of hash failed.", ex);
-        }
-
         int storedHashSize = 0;
         try {
             storedHashSize = Integer.parseInt(params[HASH_SIZE_INDEX]);
@@ -327,16 +332,59 @@ public class Hash {
             throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
         }
 
-        if (storedHashSize != hash.length) {
-            throw new InvalidHashException("Hash length doesn't match stored hash length.");
-        }
+        // verify algorithm
+        String algorithm = params[HASH_ALGORITHM_INDEX];
+        if (algorithm.toLowerCase().startsWith("pbkdf2")) {
 
-        // Compute the hash of the provided string, using the same salt,
-        // iteration count, and hash length
-        byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, iterations,
-                hash.length);
-        // Compare the hashes in constant time.
-        return slowEquals(hash, testHash);
+            if (algorithm.equals("pbkdf2sha1")) {
+                algorithm = PBKDF2_HMACSHA1;
+            } else if (algorithm.equals("pbkdf2sha256")) {
+                algorithm = PBKDF2_HMACSHA256;
+            } else if (algorithm.equals("pbkdf2sha512")) {
+                algorithm = PBKDF2_HMACSHA512;
+            }
+
+            byte[] hash = null;
+            try {
+                hash = decodeBase64(params[HASH_INDEX]);
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidHashException("Base64 decoding of hash failed.", ex);
+            }
+
+            if (storedHashSize != hash.length) {
+                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+            }
+
+            // Compute the hash of the provided string, using the same salt,
+            // iteration count, and hash length
+            byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm,
+                    iterations, hash.length);
+
+            // Compare the hashes in constant time.
+            return slowEquals(hash, testHash);
+        } else if (algorithm.equals("bcrypt")) {
+            algorithm = BCRYPT;
+
+            byte[] hash = null;
+            try {
+                hash = params[HASH_INDEX].getBytes();
+            } catch (Exception ex) {
+                throw new InvalidHashException("Parsing of hash failed.", ex);
+            }
+
+            if (storedHashSize != hash.length) {
+                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+            }
+
+            byte[] testHash = null;
+            testHash = BCrypt.create(pepperPassword, new String(hash), iterations).getBytes();
+
+            // Compare the hashes in constant time.
+            return slowEquals(hash, testHash);
+        } else {
+            // unrecognized algorithm
+            throw new BadOperationException("Unsupported algorithm type.");
+        }
     }
 
     /**

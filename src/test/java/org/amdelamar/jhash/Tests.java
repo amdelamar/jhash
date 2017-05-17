@@ -93,7 +93,7 @@ public class Tests {
         // sha1
         String hash = Hash.create("foobar");
         // accidentally change algorithms
-        hash = hash.replaceFirst("sha1:", "sha256:");
+        hash = hash.replaceFirst("pbkdf2sha1:", "pbkdf2sha256:");
         assertFalse(Hash.verify("foobar", hash));
 
         // sha2
@@ -102,7 +102,7 @@ public class Tests {
     }
 
     @Test
-    public void hashTests() throws BadOperationException, InvalidHashException {
+    public void pbkdf2Tests() throws BadOperationException, InvalidHashException {
 
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
@@ -131,6 +131,26 @@ public class Tests {
             // sha512 + pepper
             String hash6 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
             assertTrue(Hash.verify(password, pepper, hash6));
+
+        } catch (BadOperationException | InvalidHashException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Test
+    public void bcryptTests() throws BadOperationException, InvalidHashException {
+
+        String pepper = "ZfMifTCEvjyDGIqv";
+        String password = "Hello&77World!";
+
+        try {
+            // bcrypt no pepper
+            String hash = Hash.create(password, Hash.BCRYPT);
+            assertTrue(Hash.verify(password, hash));
+
+            // bcrypt + pepper
+            String hash2 = Hash.create(password, pepper, Hash.BCRYPT);
+            assertTrue(Hash.verify(password, pepper, hash2));
 
         } catch (BadOperationException | InvalidHashException e) {
             e.printStackTrace();

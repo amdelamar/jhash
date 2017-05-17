@@ -36,14 +36,15 @@ public class PBKDF2 {
      *            - The length of the hash in bytes.
      * @return A hash String
      * @throws BadOperationException
+     *             if algorithm not supported
      */
     public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations,
             int bytes) throws BadOperationException {
-        
+
         // strengthen weak choices from users
-        if(iterations < 1000)
+        if (iterations < 1000)
             iterations = ITERATIONS;
-        
+
         try {
             PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);
             SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
@@ -54,5 +55,4 @@ public class PBKDF2 {
             throw new BadOperationException("Invalid key spec.", ex);
         }
     }
-
 }

@@ -131,4 +131,4 @@ PBKDF2 is licensed as [BSD-2-Clause](https://github.com/amdelamar/jhash/blob/mas
 
 BCRYPT is licensed as [ISC](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 
-SCRYPT is licensed as [Apache 2.0](https://github.com/amdelamar/jhash/blob/master/LICENSE)
+SCRYPT is licensed as [Apache-2.0](https://github.com/amdelamar/jhash/blob/master/LICENSE)

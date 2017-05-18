@@ -1,11 +1,11 @@
-package org.amdelamar.jhash;
+package com.amdelamar.jhash;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import org.amdelamar.jhash.exception.BadOperationException;
-import org.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.exception.InvalidHashException;
 
 /**
  * Password hashing utility in Java. It salts automatically and has a pepper option. It hashes

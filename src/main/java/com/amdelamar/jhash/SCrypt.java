@@ -1,4 +1,4 @@
-package org.amdelamar.jhash;
+package com.amdelamar.jhash;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.System.arraycopy;

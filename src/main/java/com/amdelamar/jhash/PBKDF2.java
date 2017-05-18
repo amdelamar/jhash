@@ -1,4 +1,4 @@
-package org.amdelamar.jhash;
+package com.amdelamar.jhash;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -6,7 +6,7 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import org.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.exception.BadOperationException;
 
 /**
  * PBKDF2 implements the password-based key derivative function 2, for password hashing. It follows

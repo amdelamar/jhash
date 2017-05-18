@@ -1,4 +1,4 @@
-package org.amdelamar.jhash.exception;
+package com.amdelamar.jhash.exception;
 
 public class BadOperationException extends Exception {
 

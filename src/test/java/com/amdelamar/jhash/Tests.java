@@ -1,4 +1,4 @@
-package org.amdelamar.jhash;
+package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -6,11 +6,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
 
-import org.amdelamar.jhash.exception.BadOperationException;
-import org.amdelamar.jhash.exception.InvalidHashException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import com.amdelamar.jhash.Hash;
+import com.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class Tests {

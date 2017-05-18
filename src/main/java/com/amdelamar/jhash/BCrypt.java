@@ -1,8 +1,8 @@
-package org.amdelamar.jhash;
+package com.amdelamar.jhash;
 
 import java.io.UnsupportedEncodingException;
 
-import org.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.exception.BadOperationException;
 
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using the scheme described in "A

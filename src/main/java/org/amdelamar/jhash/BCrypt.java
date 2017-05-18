@@ -13,7 +13,7 @@ import org.amdelamar.jhash.exception.BadOperationException;
  */
 public class BCrypt {
 
-    public static final int LOG2_ROUNDS = 10;
+    public static final int LOG2_ROUNDS = 13;
     public static final int BLOWFISH_ROUNDS = 16;
 
     /**
@@ -463,7 +463,7 @@ public class BCrypt {
      * @throws BadOperationException
      *             if log rounds is a bad value
      */
-    private static byte[] hash(byte[] password, byte[] salt, int log_rounds, int[] cdata)
+    private static byte[] bcrypt(byte[] password, byte[] salt, int log_rounds, int[] cdata)
             throws BadOperationException {
 
         if (log_rounds < 4 || log_rounds > 30) {
@@ -503,6 +503,21 @@ public class BCrypt {
      * 
      * @param password
      *            the password to hash
+     * @return the hashed password
+     * @throws BadOperationException
+     *             if invalid salt or parameters
+     */
+    public static String create(String password) throws BadOperationException {
+        return create(password, createSalt(), BCrypt.LOG2_ROUNDS);
+    }
+    
+    /**
+     * Hash a password using the OpenBSD bcrypt scheme
+     * 
+     * @param password
+     *            the password to hash
+     * @param salt
+     *            the random salt
      * @param iterations
      *            the log rounds (e.g. 2^10)
      * @return the hashed password
@@ -511,6 +526,14 @@ public class BCrypt {
      */
     public static String create(String password, String salt, int iterations)
             throws BadOperationException {
+        
+        if(password == null || password.isEmpty()) {
+            throw new BadOperationException("Password cannot be null or empty!");
+        }
+        if(password.length() > 72) {
+            // 72 character password limit for bcrypt
+            throw new BadOperationException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
+        }
 
         if (salt == null || salt.isEmpty()) {
             salt = createSalt();
@@ -563,7 +586,7 @@ public class BCrypt {
         rs.append("$");
         rs.append(encodeBase64(saltb, saltb.length));
 
-        byte[] hashed = hash(passwordb, saltb, rounds, (int[]) CIPHER.clone());
+        byte[] hashed = bcrypt(passwordb, saltb, rounds, (int[]) CIPHER.clone());
         rs.append(encodeBase64(hashed, CIPHER.length * 4 - 1));
 
         return rs.toString();

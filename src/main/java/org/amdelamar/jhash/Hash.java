@@ -1,5 +1,6 @@
 package org.amdelamar.jhash;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -16,6 +17,7 @@ import org.amdelamar.jhash.exception.InvalidHashException;
 public class Hash {
 
     // algorithms
+    public static final String SCRYPT = "scrypt";
     public static final String BCRYPT = "bcrypt";
     public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     public static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
@@ -65,9 +67,12 @@ public class Hash {
      *            - The password to be salted and hashed.
      * @return A hash String
      * @throws BadOperationException
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password) throws BadOperationException {
+    public static String create(String password)
+            throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), "".toCharArray(), PBKDF2_HMACSHA1);
     }
 
@@ -80,9 +85,12 @@ public class Hash {
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password) throws BadOperationException {
+    public static String create(char[] password)
+            throws BadOperationException, NoSuchAlgorithmException {
         return create(password, "".toCharArray(), PBKDF2_HMACSHA1);
     }
 
@@ -97,9 +105,12 @@ public class Hash {
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String algorithm) throws BadOperationException {
+    public static String create(String password, String algorithm)
+            throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), "".toCharArray(), algorithm);
     }
 
@@ -114,9 +125,12 @@ public class Hash {
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, String algorithm) throws BadOperationException {
+    public static String create(char[] password, String algorithm)
+            throws BadOperationException, NoSuchAlgorithmException {
         return create(password, "".toCharArray(), algorithm);
     }
 
@@ -134,10 +148,12 @@ public class Hash {
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(String password, String pepper, String algorithm)
-            throws BadOperationException {
+            throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), pepper.toCharArray(), algorithm);
     }
 
@@ -155,10 +171,12 @@ public class Hash {
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static String create(char[] password, char[] pepper, String algorithm)
-            throws BadOperationException {
+            throws BadOperationException, NoSuchAlgorithmException {
         // Generate a random salt
         byte[] salt = randomSalt();
 
@@ -190,11 +208,20 @@ public class Hash {
             return parts;
         } else if (algorithm.equalsIgnoreCase(BCRYPT)) {
             // Hash the password
-            String hash = BCrypt.create(pepperPassword, null, BCrypt.LOG2_ROUNDS);
+            String hash = BCrypt.create(pepperPassword);
 
             // format for storage
-            String parts = "bcrypt:" + BCrypt.LOG2_ROUNDS + ":" + hash.length() + ":" + isPeppered
-                    + "::" + hash;
+            String parts = BCRYPT + ":" + BCrypt.LOG2_ROUNDS + ":" + hash.length() + ":"
+                    + isPeppered + "::" + hash;
+
+            return parts;
+        } else if (algorithm.equalsIgnoreCase(SCRYPT)) {
+            // Hash the password
+            String hash = SCrypt.create(pepperPassword);
+
+            // format for storage
+            String parts = SCRYPT + ":" + SCrypt.COST + ":" + hash.length() + ":"
+                    + isPeppered + "::" + hash;
 
             return parts;
         } else {
@@ -216,10 +243,12 @@ public class Hash {
      *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(String password, String correctHash)
-            throws BadOperationException, InvalidHashException {
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
         return verify(password.toCharArray(), null, correctHash);
     }
 
@@ -236,10 +265,12 @@ public class Hash {
      *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(char[] password, String correctHash)
-            throws BadOperationException, InvalidHashException {
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
         return verify(password, null, correctHash);
     }
 
@@ -261,10 +292,12 @@ public class Hash {
      *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(String password, String pepper, String correctHash)
-            throws BadOperationException, InvalidHashException {
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
         return verify(password.toCharArray(), pepper.toCharArray(), correctHash);
     }
 
@@ -286,10 +319,12 @@ public class Hash {
      *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public static boolean verify(char[] password, char[] pepper, String correctHash)
-            throws BadOperationException, InvalidHashException {
+            throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
         // Decode the hash into its parameters
         String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
@@ -362,8 +397,7 @@ public class Hash {
 
             // Compare the hashes in constant time.
             return slowEquals(hash, testHash);
-        } else if (algorithm.equals("bcrypt")) {
-            algorithm = BCRYPT;
+        } else if (algorithm.equals(BCRYPT)) {
 
             byte[] hash = null;
             try {
@@ -376,14 +410,27 @@ public class Hash {
                 throw new InvalidHashException("Hash length doesn't match stored hash length.");
             }
 
-            byte[] testHash = null;
-            testHash = BCrypt.create(pepperPassword, new String(hash), iterations).getBytes();
+            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), iterations).getBytes();
 
             // Compare the hashes in constant time.
             return slowEquals(hash, testHash);
+        } else if (algorithm.equals(SCRYPT)) {
+
+            byte[] hash = null;
+            try {
+                hash = params[HASH_INDEX].getBytes();
+            } catch (Exception ex) {
+                throw new InvalidHashException("Parsing of hash failed.", ex);
+            }
+
+            if (storedHashSize != hash.length) {
+                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+            }
+
+            return SCrypt.verify(pepperPassword, new String(hash));
         } else {
             // unrecognized algorithm
-            throw new BadOperationException("Unsupported algorithm type.");
+            throw new NoSuchAlgorithmException("Unsupported algorithm type.");
         }
     }
 

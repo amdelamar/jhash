@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.amdelamar.jhash.exception.BadOperationException;
 import org.amdelamar.jhash.exception.InvalidHashException;
 import org.junit.Test;
@@ -67,7 +69,8 @@ public class Tests {
     }
 
     @Test
-    public void verifyTests() throws InvalidHashException, BadOperationException {
+    public void verifyTests()
+            throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
         // Test password validation
         boolean failure = false;
         for (int i = 0; i < 10; i++) {
@@ -89,7 +92,8 @@ public class Tests {
     }
 
     @Test
-    public void breakTests() throws InvalidHashException, BadOperationException {
+    public void breakTests()
+            throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
         // sha1
         String hash = Hash.create("foobar");
         // accidentally change algorithms
@@ -102,7 +106,8 @@ public class Tests {
     }
 
     @Test
-    public void pbkdf2Tests() throws BadOperationException, InvalidHashException {
+    public void pbkdf2Tests()
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
@@ -115,7 +120,7 @@ public class Tests {
             // sha256 no pepper
             String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256);
             assertTrue(Hash.verify(password, pepper, hash2));
-            
+
             // sha512 no pepper
             String hash3 = Hash.create(password, Hash.PBKDF2_HMACSHA512);
             assertTrue(Hash.verify(password, pepper, hash3));
@@ -127,7 +132,7 @@ public class Tests {
             // sha256 + pepper
             String hash5 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
             assertTrue(Hash.verify(password, pepper, hash5));
-            
+
             // sha512 + pepper
             String hash6 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
             assertTrue(Hash.verify(password, pepper, hash6));
@@ -136,9 +141,10 @@ public class Tests {
             e.printStackTrace();
         }
     }
-    
+
     @Test
-    public void bcryptTests() throws BadOperationException, InvalidHashException {
+    public void bcryptTests()
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
@@ -155,5 +161,21 @@ public class Tests {
         } catch (BadOperationException | InvalidHashException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Test
+    public void scryptTests()
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+
+        String pepper = "ZfMifTCEvjyDGIqv";
+        String password = "Hello&77World!";
+    
+        // scrypt no pepper
+        String hash = Hash.create(password, Hash.SCRYPT);
+        assertTrue(Hash.verify(password, hash));
+
+        // scrypt + pepper
+        String hash2 = Hash.create(password, pepper, Hash.SCRYPT);
+        assertTrue(Hash.verify(password, pepper, hash2));
     }
 }

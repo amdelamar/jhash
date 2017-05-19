@@ -59,10 +59,39 @@
             <hr />
             <br />
             <h3>Getting Started</h3>
+            
             <ul>
-            <li>Maven <code>coming soon</code>.</li>
-            <li>Gradle <code>coming soon</code>.</li>
+            <li>Maven:</li>
             </ul>
+            <pre><code><repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+...
+<dependency>
+    <groupId>com.github.amdelamar</groupId>
+    <artifactId>jhash</artifactId>
+    <version>v1.0.0</version>
+</dependency></code></pre>
+
+			<ul>
+            <li>Gradle:</li>
+            </ul>
+
+<pre><code>repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
+...
+dependencies {
+    compile 'com.github.amdelamar:jhash:v1.0.0'
+}
+</code></pre>
+            
+
+			<h3>Usage</h3>
 
             <pre><code class="java">// salt + hash a password. (pbkdf2 hmac sha1)
 String hash = Hash.create(password);

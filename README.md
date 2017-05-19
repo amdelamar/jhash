@@ -9,10 +9,40 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 ## Getting Started
 
-* Maven `coming soon`.
-* Gradle `coming soon`.
-* Download latest [release](https://github.com/amdelamar/jhash/releases).
+* Maven:
 
+```
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+...
+<dependency>
+    <groupId>com.github.amdelamar</groupId>
+    <artifactId>jhash</artifactId>
+    <version>v1.0.0</version>
+</dependency>
+```
+
+* Gradle:
+
+```
+repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
+...
+dependencies {
+    compile 'com.github.amdelamar:jhash:v1.0.0'
+}
+```
+
+* or Download the latest [release](https://github.com/amdelamar/jhash/releases).
+
+
+## Usage
 
 ```
 String password = "Hello World!";

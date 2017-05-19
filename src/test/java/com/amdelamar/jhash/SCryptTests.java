@@ -51,7 +51,7 @@ public class SCryptTests {
     public void highParameterTests()
             throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
-        int parameter = 1048576;
+        int parameter = 262144;
         String pepper = "ZfMifTCEvjyDGIqv";
         String password = "Hello&77World!";
 

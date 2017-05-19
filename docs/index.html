@@ -62,7 +62,6 @@
             <ul>
             <li>Maven <code>coming soon</code>.</li>
             <li>Gradle <code>coming soon</code>.</li>
-            <li>Download Jar <code>coming soon</code>.</li>
             </ul>
 
             <pre><code class="java">// salt + hash a password. (pbkdf2 hmac sha1)
@@ -76,29 +75,37 @@ boolean login = Hash.verify(password, correctHash);
 
 // More Options:
 
-// pbkdf2 hmac sha512
+// pbkdf2 hmac sha512 + salt
 String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
 // Returns: sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 
-// pbkdf2 hmac sha256 + pepper
+// pbkdf2 hmac sha256 + salt + pepper
 String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
 // Returns: sha256:64000:18:y:J84o+zGuJebtj99FiAMk9pminEBmoEIm:4hoNRxgrn79lxujYIrNUXQd1
 
-// pbkdf2 hmac sha512 + pepper
+// pbkdf2 hmac sha512 + salt + pepper
 String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
 // Returns: sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 
-// bcrypt + pepper
+// bcrypt + salt
+String hash = Hash.create(password, Hash.BCRYPT);
+// Example: bcrypt:13:66:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
+
+// bcrypt + salt + pepper
 String hash = Hash.create(password, pepper, Hash.BCRYPT);
-// Returns: bcrypt:10:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
+// Example: bcrypt:13:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
 
-// scrypt no pepper
+// scrypt + salt
 String hash = Hash.create(password, Hash.SCRYPT);
-// Returns: scrypt:16384:79:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
+// Example: scrypt:16384:79:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
 
-// scrypt + pepper
-String hash2 = Hash.create(password, pepper, Hash.SCRYPT);
-// Returns: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=</code></pre>
+// scrypt + salt + pepper
+String hash = Hash.create(password, pepper, Hash.SCRYPT);
+// Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
+
+// scrypt + salt + pepper + super high cost
+String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
+// Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=</code></pre>
             <p>
 
             <br />
@@ -122,11 +129,11 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
 
             <ul>
             <li><code>algorithm</code> is the name of the cryptographic hash function.</li>
-            <li><code>iterations</code> is the number of iterations (PBKDF2 64000, BCRYPT 2<sup>13</sup>, SCRYPT cpu cost).</li>
-            <li><code>hashSize</code> is the length, in bytes, of the <code>hash</code> field (after decoding).</li>
+            <li><code>iterations</code> parameter for the function. PBKDF2 number of iterations (64000), BCRYPT number of logrounds (2<sup>12</sup>), SCRYPT cpu/mem cost (131072).</li>
+            <li><code>hashSize</code> the byte length of the <code>hash</code>.</li>
             <li><code>pepper</code> is an indicator that a pepper was used ("y" or "n").</li>
             <li><code>salt</code> is the salt. (BCRYPT and SCRYPT salt is embeded in the hash).</li>
-            <li><code>hash</code> is the hash.</li>
+            <li><code>hash</code> is the hashed password.</li>
             </ul>
 
             <br />
@@ -138,7 +145,7 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
             <p>The default logrounds = 13 but feel free to increase up to 20 depending on the cpu cost you want. Again, run some preliminary tests to find out if hashes are too quick. Here is a quick estimate:</p>
             <ul>
             <li>12 = About ~250 ms each hash.</li>
-            <li>13 = About ~500 ms each hash. <span class="icon-star"></span></li>
+            <li>13 = About ~500 ms each hash. <span class="icon-star"></span> default</li>
             <li>14 = About ~1 second each hash.</li>
             <li>15 = About ~2 seconds each hash.</li>
             <li>16 = About ~4.5 seconds each hash.</li>
@@ -148,7 +155,7 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
             <p>The default cost = 131072 (2<sup>17</sup>) but you can increase this too. Again, run some preliminary tests to find out if the hashes are computed too quickly. Here is a quick estimate:</p>
             <ul>
             <li>16384  (2<sup>15</sup>) = About ~100 ms each hash.</li>
-            <li>131072 (2<sup>17</sup>) = About ~800 ms each hash <span class="icon-star"></span></li>
+            <li>131072 (2<sup>17</sup>) = About ~800 ms each hash <span class="icon-star"></span> default</li>
             <li>262144  (2<sup>18</sup>) = About ~2 seconds each hash.</li>
             <li>1048576 (2<sup>20</sup>) = About ~5 seconds each hash.</li>
             </ul>

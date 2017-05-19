@@ -334,6 +334,22 @@ public class SCrypt {
     public static String create(String password) throws IllegalStateException {
         return create(password, COST, BLOCKSIZE, PARALLEL);
     }
+    
+    /**
+     * Hash the supplied plaintext password and generate output in the format described in
+     * {@link SCryptUtil}.
+     *
+     * @param password
+     *            Password. *
+     * @param cost
+     *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
+     * @return The hashed password.
+     * @throws IllegalStateException
+     *             If JVM doesn't support necessary functions.
+     */
+    public static String create(String password, int cost) throws IllegalStateException {
+        return create(password, cost, BLOCKSIZE, PARALLEL);
+    }
 
     /**
      * Hash the supplied plaintext password and generate output in the format described in

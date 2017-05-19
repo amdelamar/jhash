@@ -53,6 +53,10 @@ String hash = Hash.create(password, Hash.SCRYPT);
 // scrypt + salt + pepper
 String hash = Hash.create(password, pepper, Hash.SCRYPT);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
+
+// scrypt + salt + pepper + high cost
+String hash = Hash.create(password, pepper, Hash.SCRYPT, );
+// Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
 
 
@@ -79,11 +83,11 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
 ```
 
 - `algorithm` is the name of the cryptographic hash function.
-- `iterations` is the number of iterations (PBKDF2 64000, BCRYPT 2<sup>12</sup>, SCRYPT cpu cost).
-- `hashSize` is the length, in bytes, of the `hash` field (after decoding).
-- `pepper` is an indicator that a pepper was used ("y" or "n").
-- `salt` is the salt. (BCRYPT and SCRYPT salt is embeded in the hash). 
-- `hash` is the hash.
+- `iterations` parameter for the function. PBKDF2 number of iterations (64000), BCRYPT number of logrounds (2<sup>12</sup>), SCRYPT cpu/mem cost (131072).
+- `hashSize` is the byte length of the `hash`.
+- `pepper` is an indicator that a pepper was used ("y" or "n"). Peppers aren't stored with the Hashes. They're stored in the application properties.
+- `salt` is the salt. (BCRYPT and SCRYPT salt is embedded in the hash). 
+- `hash` is the hashed password.
 
 
 ## Options and Considerations
@@ -92,15 +96,15 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
 
 You have three options with PBKDF2 hmac: SHA1, SHA256, or SHA512. Test each before you try them, because not all JVM's support the newer hashing methods. Java 8 added support for PBKDF2 with SHA512 in 2014.
 
-The default iterations = 64,000 but feel free to increase up to 200,000 depending on your server and cpu cost you want. Run some preliminary tests to find out if hashes are too quick. You'll want **at least 0.5 seconds** per hash and no faster.
+The default iterations = 64,000 but feel free to increase up to 200,000 depending on your server and cpu cost you want. Run some preliminary tests to find out if your server/device can handle the high number of iterations first. There are lots of applications out there that use anywhere from 1,000 to 10k, or 200k, for their storage.
 
 
 #### BCrypt Options
 
-The default logrounds = 13 but feel free to increase up to 20 depending on the cpu cost you want. Again, run some preliminary tests to find out if hashes are too quick. Here is a quick estimate:
+The default logrounds = 13 but feel free to increase up to 20 depending on the cpu cost you want. Again, run some preliminary tests to find out if hashes are too quick. You'll want **at least 0.5 seconds** per hash and no faster. Here is a quick estimate:
 
 * 12 = About ~250 ms each hash.
-* 13 = About ~500 ms each hash. :key: 
+* 13 = About ~500 ms each hash. :key: default
 * 14 = About ~1 second each hash.
 * 15 = About ~2 seconds each hash.
 * 16 = About ~4.5 seconds each hash.
@@ -110,10 +114,10 @@ Also note that BCrypt has a password limit of 72 characters (18 32-bit words). B
 
 #### SCrypt Options
 
-The default cost = 131072 (2<sup>17</sup>) but you can increase this too. Again, run some preliminary tests to find out if the hashes are computed too quickly. Here is a quick estimate:
+The default cost = 131072 (2<sup>17</sup>) but you can increase this too. Again, run some preliminary tests to find out if the hashes are computed too quickly. You'll want **at least 0.5 seconds** per hash and no faster. Here is a quick estimate:
 
 * 16384  (2<sup>15</sup>) = About ~100 ms each hash.
-* 131072 (2<sup>17</sup>) = About ~800 ms each hash :key: 
+* 131072 (2<sup>17</sup>) = About ~800 ms each hash :key: default
 * 262144  (2<sup>18</sup>) = About ~2 seconds each hash.
 * 1048576 (2<sup>20</sup>) = About ~5 seconds each hash.
 

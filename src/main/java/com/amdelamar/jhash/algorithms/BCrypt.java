@@ -508,7 +508,22 @@ public class BCrypt {
      *             if invalid salt or parameters
      */
     public static String create(String password) throws BadOperationException {
-        return create(password, createSalt(), BCrypt.LOG2_ROUNDS);
+        return create(password, createSalt(LOG2_ROUNDS), LOG2_ROUNDS);
+    }
+    
+    /**
+     * Hash a password using the OpenBSD bcrypt scheme
+     * 
+     * @param password
+     *            the password to hash
+     * @param iterations
+     *            the log rounds (e.g. 2^10)
+     * @return the hashed password
+     * @throws BadOperationException
+     *             if invalid salt or parameters
+     */
+    public static String create(String password, int iterations) throws BadOperationException {
+        return create(password, createSalt(iterations), iterations);
     }
 
     /**
@@ -537,7 +552,7 @@ public class BCrypt {
         }
 
         if (salt == null || salt.isEmpty()) {
-            salt = createSalt();
+            salt = createSalt(iterations);
         }
 
         char minor = (char) 0;
@@ -598,12 +613,12 @@ public class BCrypt {
      * 
      * @return an encoded salt value
      */
-    public static String createSalt() {
+    public static String createSalt(int rounds) {
         try {
             byte[] salt = HashUtils.randomSalt();
             StringBuffer sb = new StringBuffer();
             sb.append("$2a$");
-            sb.append(Integer.toString(LOG2_ROUNDS));
+            sb.append(Integer.toString(rounds));
             sb.append("$");
             sb.append(encodeBase64(salt, salt.length));
             return sb.toString();

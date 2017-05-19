@@ -42,9 +42,13 @@ String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
 String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
 // Example: pbkdf2sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 
+// bcrypt + salt
+String hash = Hash.create(password, Hash.BCRYPT);
+// Example: bcrypt:13:66:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
+
 // bcrypt + salt + pepper
 String hash = Hash.create(password, pepper, Hash.BCRYPT);
-// Example: bcrypt:10:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
+// Example: bcrypt:13:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
 
 // scrypt + salt
 String hash = Hash.create(password, Hash.SCRYPT);
@@ -54,8 +58,8 @@ String hash = Hash.create(password, Hash.SCRYPT);
 String hash = Hash.create(password, pepper, Hash.SCRYPT);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 
-// scrypt + salt + pepper + high cost
-String hash = Hash.create(password, pepper, Hash.SCRYPT, );
+// scrypt + salt + pepper + super high cost
+String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
 
@@ -64,9 +68,7 @@ String hash = Hash.create(password, pepper, Hash.SCRYPT, );
 
 The hash format is six fields separated by the colon (':') character.
 
-```
-algorithm:iterations:hashSize:pepper:salt:hash
-```
+`algorithm:iterations:hashSize:pepper:salt:hash`
 
 Examples:
 

@@ -1,4 +1,4 @@
-package com.amdelamar.jhash;
+package com.amdelamar.jhash.algorithms;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -42,14 +42,15 @@ public class PBKDF2 {
      */
     public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations,
             int bytes) throws NoSuchAlgorithmException, BadOperationException {
-        
-        if(password == null || password.length == 0) {
+
+        if (password == null || password.length == 0) {
             throw new BadOperationException("Password cannot be null or empty!");
         }
 
         // strengthen weak choices from users
-        if (iterations < 1000)
+        if (iterations < 1000) {
             iterations = ITERATIONS;
+        }
 
         try {
             PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);

@@ -1,8 +1,10 @@
-package com.amdelamar.jhash;
+package com.amdelamar.jhash.algorithms;
 
 import java.io.UnsupportedEncodingException;
 
+import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.exception.BadOperationException;
+import com.amdelamar.jhash.util.HashUtils;
 
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using the scheme described in "A
@@ -16,11 +18,8 @@ public class BCrypt {
     public static final int LOG2_ROUNDS = 13;
     public static final int BLOWFISH_ROUNDS = 16;
 
-    /**
-     * Different types of compatible blowfish minors
-     */
+    // Different types of compatible blowfish minors
     private enum Minor {
-
         A('a'), // "2a" - some implementations suffered from a very rare security flaw. current
                 // default for compatibility purposes.
         Y('y'); // "2y" - format specific to the crypt_blowfish BCrypt implementation, identical to
@@ -221,14 +220,15 @@ public class BCrypt {
      *                if the length is invalid
      */
     private static String encodeBase64(byte[] array, int len) throws BadOperationException {
-        int off = 0;
+
+        if (len <= 0 || len > array.length) {
+            throw new BadOperationException("Invalid length");
+        }
+
         StringBuffer rs = new StringBuffer();
         int c1;
         int c2;
-
-        if (len <= 0 || len > array.length)
-            throw new BadOperationException("Invalid length");
-
+        int off = 0;
         while (off < len) {
             c1 = array[off++] & 0xff;
             rs.append(BASE64[(c1 >> 2) & 0x3f]);
@@ -385,7 +385,7 @@ public class BCrypt {
     /**
      * Initialize the Blowfish key schedule
      */
-    private static void init_key() {
+    private static void initializeKey() {
         pA = (int[]) P_ARRAY.clone();
         sB = (int[]) S_BOX.clone();
     }
@@ -423,7 +423,7 @@ public class BCrypt {
      * @param key
      *            password information
      */
-    private static void eksKey(byte[] data, byte[] key) {
+    private static void enhancedKeySchedule(byte[] data, byte[] key) {
         int[] koffp = {0};
         int[] doffp = {0};
         int[] lr = {0, 0};
@@ -473,8 +473,8 @@ public class BCrypt {
         // if (salt.length != Hash.SALT_BYTE_SIZE)
         // throw new InvalidHashException("Bad salt length");
 
-        init_key();
-        eksKey(salt, password);
+        initializeKey();
+        enhancedKeySchedule(salt, password);
 
         for (int i = 0; i != rounds; i++) {
             key(password);
@@ -510,7 +510,7 @@ public class BCrypt {
     public static String create(String password) throws BadOperationException {
         return create(password, createSalt(), BCrypt.LOG2_ROUNDS);
     }
-    
+
     /**
      * Hash a password using the OpenBSD bcrypt scheme
      * 
@@ -526,13 +526,14 @@ public class BCrypt {
      */
     public static String create(String password, String salt, int iterations)
             throws BadOperationException {
-        
-        if(password == null || password.isEmpty()) {
+
+        if (password == null || password.isEmpty()) {
             throw new BadOperationException("Password cannot be null or empty!");
         }
-        if(password.length() > 72) {
+        if (password.length() > 72) {
             // 72 character password limit for bcrypt
-            throw new BadOperationException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
+            throw new BadOperationException(
+                    "Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
         }
 
         if (salt == null || salt.isEmpty()) {
@@ -599,7 +600,7 @@ public class BCrypt {
      */
     public static String createSalt() {
         try {
-            byte[] salt = Hash.randomSalt();
+            byte[] salt = HashUtils.randomSalt();
             StringBuffer sb = new StringBuffer();
             sb.append("$2a$");
             sb.append(Integer.toString(LOG2_ROUNDS));

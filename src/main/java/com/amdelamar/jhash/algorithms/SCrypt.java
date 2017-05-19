@@ -1,7 +1,4 @@
-package com.amdelamar.jhash;
-
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.System.arraycopy;
+package com.amdelamar.jhash.algorithms;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -9,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.amdelamar.jhash.util.HashUtils;
 
 /**
  * SCrypt implements the password-based key derivative function created by Colin Percival. It
@@ -20,7 +19,6 @@ import javax.crypto.spec.SecretKeySpec;
 public class SCrypt {
 
     public static final int COST = 131072;
-
     public static final int BLOCKSIZE = 8;
     public static final int PARALLEL = 1;
 
@@ -69,14 +67,14 @@ public class SCrypt {
      * @throws IllegalArgumentException
      *             when parameters invalid
      */
-    private static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize, int parallel, int length)
-            throws GeneralSecurityException {
+    private static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize,
+            int parallel, int length) throws GeneralSecurityException {
         if (cost < 2 || (cost & (cost - 1)) != 0)
             throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
 
-        if (cost > MAX_VALUE / 128 / blocksize)
+        if (cost > Integer.MAX_VALUE / 128 / blocksize)
             throw new IllegalArgumentException("Parameter cost is too large");
-        if (blocksize > MAX_VALUE / 128 / parallel)
+        if (blocksize > Integer.MAX_VALUE / 128 / parallel)
             throw new IllegalArgumentException("Parameter blocksize is too large");
 
         Mac mac = Mac.getInstance("HmacSHA256");
@@ -103,10 +101,10 @@ public class SCrypt {
         int xi = 0;
         int yi = 128 * round;
 
-        arraycopy(b1, bi, xy, xi, 128 * round);
+        System.arraycopy(b1, bi, xy, xi, 128 * round);
 
         for (int i = 0; i < cpu; i++) {
-            arraycopy(xy, xi, v1, i * (128 * round), 128 * round);
+            System.arraycopy(xy, xi, v1, i * (128 * round), 128 * round);
             blockmix_salsa8(xy, xi, yi, round);
         }
 
@@ -116,26 +114,26 @@ public class SCrypt {
             blockmix_salsa8(xy, xi, yi, round);
         }
 
-        arraycopy(xy, xi, b1, bi, 128 * round);
+        System.arraycopy(xy, xi, b1, bi, 128 * round);
     }
 
     private static void blockmix_salsa8(byte[] by, int bi, int yi, int round) {
-        
+
         byte[] x1 = new byte[64];
-        arraycopy(by, bi + (2 * round - 1) * 64, x1, 0, 64);
+        System.arraycopy(by, bi + (2 * round - 1) * 64, x1, 0, 64);
 
         for (int i = 0; i < 2 * round; i++) {
             blockxor(by, i * 64, x1, 0, 64);
             salsa(x1);
-            arraycopy(x1, 0, by, yi + (i * 64), 64);
+            System.arraycopy(x1, 0, by, yi + (i * 64), 64);
         }
 
         for (int i = 0; i < round; i++) {
-            arraycopy(by, yi + (i * 2) * 64, by, bi + (i * 64), 64);
+            System.arraycopy(by, yi + (i * 2) * 64, by, bi + (i * 64), 64);
         }
 
         for (int i = 0; i < round; i++) {
-            arraycopy(by, yi + (i * 2 + 1) * 64, by, bi + (i + round) * 64, 64);
+            System.arraycopy(by, yi + (i * 2 + 1) * 64, by, bi + (i + round) * 64, 64);
         }
     }
 
@@ -144,7 +142,7 @@ public class SCrypt {
     }
 
     private static void salsa(byte[] b1) {
-        
+
         int[] base32 = new int[16];
         for (int i = 0; i < 16; i++) {
             base32[i] = (b1[i * 4 + 0] & 0xff) << 0;
@@ -154,7 +152,7 @@ public class SCrypt {
         }
 
         int[] x1 = new int[16];
-        arraycopy(base32, 0, x1, 0, 16);
+        System.arraycopy(base32, 0, x1, 0, 16);
 
         for (int i = 8; i > 0; i -= 2) {
             x1[4] ^= r1(x1[0] + x1[12], 7);
@@ -194,7 +192,7 @@ public class SCrypt {
         for (int i = 0; i < 16; ++i) {
             base32[i] = x1[i] + base32[i];
         }
-        
+
         for (int i = 0; i < 16; i++) {
             b1[i * 4 + 0] = (byte) (base32[i] >> 0 & 0xff);
             b1[i * 4 + 1] = (byte) (base32[i] >> 8 & 0xff);
@@ -210,7 +208,7 @@ public class SCrypt {
     }
 
     private static int integerify(byte[] b1, int bi, int round) {
-        
+
         bi += (2 * round - 1) * 64;
 
         int n = (b1[bi + 0] & 0xff) << 0;
@@ -253,7 +251,7 @@ public class SCrypt {
         int limit = (int) Math.ceil((double) length / len);
         int r = length - (limit - 1) * len;
 
-        arraycopy(salt, 0, block, 0, salt.length);
+        System.arraycopy(salt, 0, block, 0, salt.length);
 
         for (int i = 1; i <= limit; i++) {
             block[salt.length + 0] = (byte) (i >> 24 & 0xff);
@@ -263,7 +261,7 @@ public class SCrypt {
 
             mac.update(block);
             mac.doFinal(u1, 0);
-            arraycopy(u1, 0, t1, 0, len);
+            System.arraycopy(u1, 0, t1, 0, len);
 
             for (int j = 1; j < iterations; j++) {
                 mac.update(u1);
@@ -274,7 +272,7 @@ public class SCrypt {
                 }
             }
 
-            arraycopy(t1, 0, key, (i - 1) * len, (i == limit ? r : len));
+            System.arraycopy(t1, 0, key, (i - 1) * len, (i == limit ? r : len));
         }
     }
 
@@ -299,8 +297,8 @@ public class SCrypt {
             }
 
             long params = Long.parseLong(parts[2], 16);
-            byte[] salt = Hash.decodeBase64(parts[3]);
-            byte[] derived0 = Hash.decodeBase64(parts[4]);
+            byte[] salt = HashUtils.decodeBase64(parts[3]);
+            byte[] derived0 = HashUtils.decodeBase64(parts[4]);
 
             int N = (int) Math.pow(2, params >> 16 & 0xffff);
             int r = (int) params >> 8 & 0xff;
@@ -354,18 +352,20 @@ public class SCrypt {
      * @throws IllegalStateException
      *             If JVM doesn't support necessary functions.
      */
-    public static String create(String password, int cost, int blockSize, int parallel) throws IllegalStateException {
+    public static String create(String password, int cost, int blockSize, int parallel)
+            throws IllegalStateException {
         try {
-            byte[] salt = Hash.randomSalt(16);
+            byte[] salt = HashUtils.randomSalt(16);
 
-            byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
+            byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel,
+                    32);
 
             String params = Long.toString(log2(cost) << 16L | blockSize << 8 | parallel, 16);
 
             StringBuilder sb = new StringBuilder((salt.length + derived.length) * 2);
             sb.append("$s0$").append(params).append('$');
-            sb.append(Hash.encodeBase64(salt)).append('$');
-            sb.append(Hash.encodeBase64(derived));
+            sb.append(HashUtils.encodeBase64(salt)).append('$');
+            sb.append(HashUtils.encodeBase64(derived));
 
             return sb.toString();
         } catch (UnsupportedEncodingException e) {

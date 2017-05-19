@@ -1,11 +1,13 @@
 package com.amdelamar.jhash;
 
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Base64;
 
+import com.amdelamar.jhash.algorithms.BCrypt;
+import com.amdelamar.jhash.algorithms.PBKDF2;
+import com.amdelamar.jhash.algorithms.SCrypt;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.util.HashUtils;
 
 /**
  * Password hashing utility in Java. It salts automatically and has a pepper option. It hashes
@@ -35,29 +37,6 @@ public class Hash {
     private static final int PEPPER_INDEX = 3;
     private static final int SALT_INDEX = 4;
     private static final int HASH_INDEX = 5;
-
-    /**
-     * Generates a secure random salt of 24 bytes.
-     * 
-     * @return byte array salt
-     */
-    public static byte[] randomSalt() {
-        return randomSalt(SALT_BYTE_SIZE);
-    }
-
-    /**
-     * Generates a secure random salt of the specified size.
-     * 
-     * @param size
-     *            The size of the salt in bytes.
-     * @return byte array salt
-     */
-    public static byte[] randomSalt(int size) {
-        SecureRandom random = new SecureRandom();
-        byte[] salt = new byte[size];
-        random.nextBytes(salt);
-        return salt;
-    }
 
     /**
      * Creates a Hash from the given string using PBKDF2 SHA1. Use this to create new user's
@@ -178,7 +157,7 @@ public class Hash {
     public static String create(char[] password, char[] pepper, String algorithm)
             throws BadOperationException, NoSuchAlgorithmException {
         // Generate a random salt
-        byte[] salt = randomSalt();
+        byte[] salt = HashUtils.randomSalt();
 
         // add pepper if not empty
         char isPeppered = 'n';
@@ -195,7 +174,7 @@ public class Hash {
 
             // format for storage
             String parts = PBKDF2.ITERATIONS + ":" + hash.length + ":" + isPeppered + ":"
-                    + encodeBase64(salt) + ":" + encodeBase64(hash);
+                    + HashUtils.encodeBase64(salt) + ":" + HashUtils.encodeBase64(hash);
 
             if (algorithm.equals(PBKDF2_HMACSHA1)) {
                 parts = "pbkdf2sha1:" + parts;
@@ -220,8 +199,8 @@ public class Hash {
             String hash = SCrypt.create(pepperPassword);
 
             // format for storage
-            String parts = SCRYPT + ":" + SCrypt.COST + ":" + hash.length() + ":"
-                    + isPeppered + "::" + hash;
+            String parts = SCRYPT + ":" + SCrypt.COST + ":" + hash.length() + ":" + isPeppered
+                    + "::" + hash;
 
             return parts;
         } else {
@@ -272,6 +251,28 @@ public class Hash {
     public static boolean verify(char[] password, String correctHash)
             throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
         return verify(password, null, correctHash);
+    }
+
+    /**
+     * Returns true if the char array, once hashed, matches the expected hash. Use this to verify a
+     * user login. Take the entered password and compare it with the entire hash stored from before.
+     * 
+     * @param password
+     *            - The password to be validated.
+     * @param correctHash
+     *            - The stored hash from before.
+     * @return boolean true if matches
+     * @throws BadOperationException
+     *             if one or more parameters are invalid
+     * @throws InvalidHashException
+     *             if the correctHash was missing parts or invalid
+     * @throws NoSuchAlgorithmException
+     *             if algorithm is not supported
+     * @see https://en.wikipedia.org/wiki/Hash_function
+     */
+    public static boolean verify(char[] password, char[] correctHash)
+            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+        return verify(password, null, correctHash.toString());
     }
 
     /**
@@ -355,7 +356,7 @@ public class Hash {
 
         byte[] salt = null;
         try {
-            salt = decodeBase64(params[SALT_INDEX]);
+            salt = HashUtils.decodeBase64(params[SALT_INDEX]);
         } catch (IllegalArgumentException ex) {
             throw new InvalidHashException("Base64 decoding of salt failed.", ex);
         }
@@ -381,7 +382,7 @@ public class Hash {
 
             byte[] hash = null;
             try {
-                hash = decodeBase64(params[HASH_INDEX]);
+                hash = HashUtils.decodeBase64(params[HASH_INDEX]);
             } catch (IllegalArgumentException ex) {
                 throw new InvalidHashException("Base64 decoding of hash failed.", ex);
             }
@@ -396,7 +397,7 @@ public class Hash {
                     iterations, hash.length);
 
             // Compare the hashes in constant time.
-            return slowEquals(hash, testHash);
+            return HashUtils.slowEquals(hash, testHash);
         } else if (algorithm.equals(BCRYPT)) {
 
             byte[] hash = null;
@@ -410,10 +411,11 @@ public class Hash {
                 throw new InvalidHashException("Hash length doesn't match stored hash length.");
             }
 
-            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), iterations).getBytes();
+            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), iterations)
+                    .getBytes();
 
             // Compare the hashes in constant time.
-            return slowEquals(hash, testHash);
+            return HashUtils.slowEquals(hash, testHash);
         } else if (algorithm.equals(SCRYPT)) {
 
             byte[] hash = null;
@@ -432,47 +434,6 @@ public class Hash {
             // unrecognized algorithm
             throw new NoSuchAlgorithmException("Unsupported algorithm type.");
         }
-    }
-
-    /**
-     * Compares two byte arrays.
-     * 
-     * @param byteA
-     *            First byte array.
-     * @param byteB
-     *            Second byte array.
-     * @return true if they are equivalent.
-     */
-    protected static boolean slowEquals(byte[] byteA, byte[] byteB) {
-        int diff = byteA.length ^ byteB.length;
-        for (int i = 0; i < byteA.length && i < byteB.length; i++) {
-            diff |= byteA[i] ^ byteB[i];
-        }
-        return diff == 0;
-    }
-
-    /**
-     * Decodes a Base64 string to a byte array. A convenience method for java.util.Base64 decoder.
-     * 
-     * @param string
-     *            (in Base64)
-     * @return Base64 decoded byte array
-     * @see https://en.wikipedia.org/wiki/Base64
-     */
-    protected static byte[] decodeBase64(String string) {
-        return Base64.getDecoder().decode(string);
-    }
-
-    /**
-     * Encodes a byte array into a Base64 string. A convenience method for java.util.Base64 encoder.
-     * 
-     * @param array
-     *            (byte array)
-     * @return Base64 encoded string
-     * @see https://en.wikipedia.org/wiki/Base64
-     */
-    protected static String encodeBase64(byte[] array) {
-        return new String(Base64.getEncoder().encode(array));
     }
 
 }

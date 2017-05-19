@@ -3,6 +3,7 @@
 [![Build](https://travis-ci.org/amdelamar/jhash.svg?branch=master)](https://travis-ci.org/amdelamar/jhash)
 [![Code Climate](https://codeclimate.com/github/amdelamar/jhash/badges/gpa.svg)](https://codeclimate.com/github/amdelamar/jhash)
 [![License](https://img.shields.io/:license-BSD2-blue.svg)](https://github.com/amdelamar/jhash/blob/master/LICENSE)
+[![Release](https://img.shields.io/github/tag/amdelamar/jhash.svg?label=JitPack)](https://jitpack.io/#amdelamar/jhash)
 
 Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option. 
 
@@ -11,7 +12,7 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 * Maven:
 
-```
+```xml
 <repositories>
     <repository>
         <id>jitpack.io</id>
@@ -28,7 +29,7 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 * Gradle:
 
-```
+```gradle
 repositories {
     ...
     maven { url 'https://jitpack.io' }
@@ -44,21 +45,25 @@ dependencies {
 
 ## Usage
 
-```
+Easy hash and verification...
+
+```java
 String password = "Hello World!";
 
 // salt + hash a password. (pbkdf2 hmac sha1)
 String hash = Hash.create(password);
 
-// Save hash into your database...
+// Save the enitre hash somewhere safe...
 
 // Verify Login 
-boolean login = Hash.verify(password, correctHash);
-// Returns true, if the password matches the hashed password.
-// If you use another algorithm, you don't need to specify it in the verify() method.
+if(Hash.verify(password, correctHash)) {
+    // Passwords match. Login successful!
+}
+```
 
+More Options...
 
-// More Options:
+```java
 
 // pbkdf2 hmac sha512 + salt 
 String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
@@ -93,6 +98,14 @@ String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
 
+Now verify the passwords match. Even if you use a stronger algorithm, pepper it, and increase the iterations, you don't need to provide that information when you `verify()` because the hash output has those values already.
+
+```java
+// Verify Login 
+if(Hash.verify(password, correctHash)) {
+    // Passwords match. Login successful!
+}
+```
 
 ## Hash Format
 

@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="author" content="Austin Delamar">
+    <meta name="keywords" content="java,hash,encrypt,pbdkf2,sha,bcrypt,scrypt,password,software,library">
+    <meta name="description" content="" />
+    <meta name="robots" content="all">
+
+    <meta property="og:url" content="https://austindelamar.com/jhash/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Jhash">
+    <meta property="og:image" content="https://austindelamar.com/jotp/img/blue-key-200x200.png">
+    <meta property="og:description" content="Password hashing utility in Java. It salts automatically and has a pepper option. It can hash passwords with PBKDF2 SHA1, SHA256, SHA512, or BCRYPT.">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="https://austindelamar.com/jhash/">
+    <meta name="twitter:creator" content="Austin Delamar">
+    <meta name="twitter:title" content="Jhash">
+    <meta name="twitter:description" content="Password hashing utility in Java. It salts automatically and has a pepper option. It can hash passwords with PBKDF2 SHA1, SHA256, SHA512, or BCRYPT.">
+    <meta name="twitter:image" content="https://austindelamar.com/jotp/img/blue-key-200x200.png">
+
+    <link rel="icon" type="image/x-icon" href="img/blue-key-200x200.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="highlight/default.css">
+    <script src="highlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <title>Jhash - Password hashing utility in Java</title>
+</head>
+<body>
+
+<div class="container" style="margin-top:2%;">
+    <div class="row">
+        <div class="twelve columns" style="text-align:center;">
+            <img src="img/blue-key-200x200.png" alt="Banner" title="Photo Credit: Typography Images at Pixabay.com" style="max-width: 200px;" />
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-bottom:10%">
+    <div class="row">
+        <div class="twelve columns" style="text-align:center;">
+            <h1 style="font-weight:700">Jhash</h1>
+            <p>
+                Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.
+            </p>
+            <p>
+            <a class="button button-primary" target="_blank" href="https://github.com/amdelamar/jhash/releases"><span class="icon-embed" style="font-size:1.5em;margin-right:5px"></span>Download</a>
+            <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/"><span class="icon-github" style="font-size:1.5em;margin-right:5px"></span>View on GitHub</a>
+            <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/issues"><span class="icon-bug" style="font-size:1.5em;margin-right:5px"></span>Report Issue</a>
+            </p>
+        </div>
+        <div class="twelve columns">
+            <hr />
+            <br />
+            <h3>Getting Started</h3>
+            <ul>
+            <li>Maven <code>coming soon</code>.</li>
+            <li>Gradle <code>coming soon</code>.</li>
+            <li>Download Jar <code>coming soon</code>.</li>
+            </ul>
+
+            <pre><code class="java">// salt + hash a password. (pbkdf2 hmac sha1)
+String hash = Hash.create(password);
+
+// Verify Login
+boolean login = Hash.verify(password, correctHash);
+// Returns true, if the password matches the hashed password.
+// If you use another algorithm, you don't need to specify it in the verify() method.
+
+
+// More Options:
+
+// pbkdf2 hmac sha512
+String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
+// Returns: sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
+
+// pbkdf2 hmac sha256 + pepper
+String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+// Returns: sha256:64000:18:y:J84o+zGuJebtj99FiAMk9pminEBmoEIm:4hoNRxgrn79lxujYIrNUXQd1
+
+// pbkdf2 hmac sha512 + pepper
+String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
+// Returns: sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
+
+// bcrypt + pepper
+String hash = Hash.create(password, pepper, Hash.BCRYPT);
+// Returns: bcrypt:10:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
+
+// scrypt no pepper
+String hash = Hash.create(password, Hash.SCRYPT);
+// Returns: scrypt:16384:79:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
+
+// scrypt + pepper
+String hash2 = Hash.create(password, pepper, Hash.SCRYPT);
+// Returns: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=</code></pre>
+            <p>
+
+            <br />
+            <h3>Hash Format</h3>
+
+            The hash format is six fields separated by the colon (':') character.
+
+            <code>algorithm:iterations:hashSize:pepper:salt:hash</code>
+
+            Examples:
+
+            <pre><code>sha1:64000:18:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ
+sha256:64000:18:n:ZhxPG2klUysxywJ7NIAhFNTtEKa1U2yu:6oeoGuoQAOIKsztgIgPHTC4/
+sha256:64000:18:y:8MD0yEl5DKz+8Av2L8985h63BhvVppYU:osTwsDh2qo/wgE6g0BrjdeFt
+sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
+sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
+bcrypt:13:66:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
+bcrypt:13:66:y::$2a$10$sdreyOHQW0XAGw.LMXbPyayMMGlMuU69htdw8KXjzk5xOrVTFj2aYLxre7y
+scrypt:131072:79:n::$s0$e0801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=
+scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y=</code></pre>
+
+            <ul>
+            <li><code>algorithm</code> is the name of the cryptographic hash function.</li>
+            <li><code>iterations</code> is the number of iterations (PBKDF2 64000, BCRYPT 2<sup>13</sup>, SCRYPT cpu cost).</li>
+            <li><code>hashSize</code> is the length, in bytes, of the <code>hash</code> field (after decoding).</li>
+            <li><code>pepper</code> is an indicator that a pepper was used ("y" or "n").</li>
+            <li><code>salt</code> is the salt. (BCRYPT and SCRYPT salt is embeded in the hash).</li>
+            <li><code>hash</code> is the hash.</li>
+            </ul>
+
+            <br />
+            <h3>Options and Considerations</h3>
+            <h5>PBKDF2 Options</h5>
+            <p>You have three options with PBKDF2 hmac: SHA1, SHA256, or SHA512. Test each before you try them, because not all JVM's support the newer hashing methods. Java 8 added support for PBKDF2 with SHA512 in 2014.</p>
+            <p>The default iterations = 64,000 but feel free to increase up to 200,000 depending on your server and cpu cost you want. Run some preliminary tests to find out if hashes are too quick. You'll want <strong>at least 0.5 seconds</strong> per hash and no faster.</p>
+            <h5>BCrypt Options</h5>
+            <p>The default logrounds = 13 but feel free to increase up to 20 depending on the cpu cost you want. Again, run some preliminary tests to find out if hashes are too quick. Here is a quick estimate:</p>
+            <ul>
+            <li>12 = About ~250 ms each hash.</li>
+            <li>13 = About ~500 ms each hash. <span class="icon-star"></span></li>
+            <li>14 = About ~1 second each hash.</li>
+            <li>15 = About ~2 seconds each hash.</li>
+            <li>16 = About ~4.5 seconds each hash.</li>
+            </ul>
+            <p>Also note that BCrypt has a password limit of 72 characters (18 32-bit words). Be sure to truncate before hashing. Its a limitiation of the Blowfish cipher.</p>
+            <h5>SCrypt Options</h5>
+            <p>The default cost = 131072 (2<sup>17</sup>) but you can increase this too. Again, run some preliminary tests to find out if the hashes are computed too quickly. Here is a quick estimate:</p>
+            <ul>
+            <li>16384  (2<sup>15</sup>) = About ~100 ms each hash.</li>
+            <li>131072 (2<sup>17</sup>) = About ~800 ms each hash <span class="icon-star"></span></li>
+            <li>262144  (2<sup>18</sup>) = About ~2 seconds each hash.</li>
+            <li>1048576 (2<sup>20</sup>) = About ~5 seconds each hash.</li>
+            </ul>
+
+            <br />
+            <h3>Details</h3>
+            <p>
+            By default, if you just call <code>Hash.create(pwd)</code> it uses PBKDF2 hmac SHA1 with 24 bytes (192 bits) of securely random salt and outputs 18 bytes (144 bits). 144 bits was chosen because it is (1) Less than SHA1's 160-bit output (to avoid unnecessary PBKDF2 overhead), and (2) A multiple of 6 bits, so that the base64 encoding is optimal. PBKDF2 hmac SHA1 was chosen for the default mainly for the most compatibility across Java implementations. Although SHA1 has been cryptographically broken as a collision-resistant function, it is still perfectly safe for password storage with PBKDF2. Its my recommendation though to use algorithms like BCRYPT and SCRYPT. As they are 'memory hard', meaning that they don't just need a lot of CPU power to compute, they also require a lot of memory (unlike PBKDF2). This makes them better against brute-force attacks.
+            </p>
+
+            <br />
+            <h3>Credit</h3>
+            <p>
+            A project by <a href="https://github.com/amdelamar">Austin Delamar</a> based off of <a href="https://github.com/defuse/password-hashing">Talor Hornby</a>, <a href="https://github.com/jeremyh/jBCrypt">Damien Miller</a>, and <a href="https://github.com/wg/scrypt">Will Grozer</a>'s work and other <a href="https://github.com/amdelamar/jhash/graphs/contributors">contributors</a>.<br>
+            <br>
+            If you'd like to contribute, feel free to fork and make changes, then open a pull request to <code>master</code> branch.
+            </p>
+
+            <br />
+            <h3>License</h3>
+
+            <p>PBKDF2 is licensed as <a href="https://github.com/amdelamar/jhash/blob/master/LICENSE">BSD-2-Clause</a>
+            <br><br>
+            BCRYPT is licensed as <a href="https://github.com/amdelamar/jhash/blob/master/LICENSE">ISC</a>
+            <br><br>
+            SCRYPT is licensed as <a href="https://github.com/amdelamar/jhash/blob/master/LICENSE">Apache-2.0</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -30,27 +30,27 @@ boolean login = Hash.verify(password, correctHash);
 
 // More Options:
 
-// pbkdf2 hmac sha512
+// pbkdf2 hmac sha512 + salt 
 String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
 // Example: pbkdf2sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 
-// pbkdf2 hmac sha256 + pepper
+// pbkdf2 hmac sha256 + salt + pepper
 String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
 // Example: pbkdf2sha256:64000:18:y:J84o+zGuJebtj99FiAMk9pminEBmoEIm:4hoNRxgrn79lxujYIrNUXQd1
 
-// pbkdf2 hmac sha512 + pepper
+// pbkdf2 hmac sha512 + salt + pepper
 String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
 // Example: pbkdf2sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 
-// bcrypt + pepper
+// bcrypt + salt + pepper
 String hash = Hash.create(password, pepper, Hash.BCRYPT);
 // Example: bcrypt:10:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
 
-// scrypt no pepper
+// scrypt + salt
 String hash = Hash.create(password, Hash.SCRYPT);
 // Example: scrypt:16384:79:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
 
-// scrypt + pepper
+// scrypt + salt + pepper
 String hash = Hash.create(password, pepper, Hash.SCRYPT);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
@@ -124,9 +124,11 @@ The default cost = 131072 (2<sup>17</sup>) but you can increase this too. Again,
 By default, if you just call `Hash.create(pwd)` it uses PBKDF2 hmac SHA1 with 24 bytes (192 bits) of securely random salt and outputs 18 bytes (144 bits). 144 bits was chosen because it is (1) Less than SHA1's 160-bit output (to avoid unnecessary PBKDF2 overhead), and (2) A multiple of 6 bits, so that the base64 encoding is optimal. PBKDF2 hmac SHA1 was chosen for the default mainly for the most compatibility across Java implementations. Although SHA1 has been cryptographically broken as a collision-resistant function, it is still perfectly safe for password storage with PBKDF2. Its my recommendation though to use algorithms like BCRYPT and SCRYPT. As they are 'memory hard', meaning that they don't just need a lot of CPU power to compute, they also require a lot of memory (unlike PBKDF2). This makes them better against brute-force attacks.
 
 
-## Credit
+## Contribute
 
-A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor Hornby](https://github.com/defuse/password-hashing) and [Damien Miller](https://github.com/jeremyh/jBCrypt)'s work and other [contributors](https://github.com/amdelamar/jhash/graphs/contributors).
+A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor Hornby](https://github.com/defuse/password-hashing), [Damien Miller](https://github.com/jeremyh/jBCrypt), and [Will Grozer](https://github.com/wg/scrypt)'s work and other [contributors](https://github.com/amdelamar/jhash/graphs/contributors).
+
+If you'd like to contribute, feel free to fork and make changes, then open a pull request to master branch. 
 
 
 ## License

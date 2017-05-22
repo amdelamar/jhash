@@ -92,18 +92,21 @@ dependencies {
 
 			<h3>Usage</h3>
 
-            <pre><code class="java">// salt + hash a password. (pbkdf2 hmac sha1)
+            <pre><code class="java">String password = "Hello World!";
+
+// salt + hash a password. (pbkdf2 hmac sha1)
 String hash = Hash.create(password);
 
-// Verify Login
-boolean login = Hash.verify(password, correctHash);
-// Returns true, if the password matches the hashed password.
-// If you use another algorithm, you don't need to specify it in the verify() method.
+// Save the enitre hash somewhere safe...
 
+// Verify Login 
+if(Hash.verify(password, correctHash)) {
+    // Passwords match. Login successful!
+}</code></pre>
 
-// More Options:
+		<p>More Options:</p>
 
-// pbkdf2 hmac sha512 + salt
+<pre><code class="java">// pbkdf2 hmac sha512 + salt
 String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
 // Returns: sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 
@@ -134,7 +137,16 @@ String hash = Hash.create(password, pepper, Hash.SCRYPT);
 // scrypt + salt + pepper + super high cost
 String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=</code></pre>
-            <p>
+            
+	    <p>Now verify the passwords match. Even if you use a stronger algorithm, pepper it, and increase the iterations, 
+		    you don't need to provide that information when you <code>verify()</code> because the hash output has 
+		    those values already.</p>
+	    
+		<pre><code class="java">// Verify Login 
+if(Hash.verify(password, correctHash)) {
+    // Passwords match. Login successful!
+}</code></pre>
+		
 
             <br />
             <h3>Hash Format</h3>

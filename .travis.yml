@@ -1,10 +1,12 @@
 language: java
 jdk:
   - oraclejdk8
+
 before_install:
  - chmod +x gradlew
- script:
-  - ./gradlew check
-  - ./gradlew codeCoverageReport
+
+script:
+ - ./gradlew check
+ - ./gradlew codeCoverageReport
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+ - bash <(curl -s https://codecov.io/bash)

@@ -27,7 +27,7 @@ javadoc {
 	classpath = configurations.compile
 }
 
-codeCoverageReport {
+jacocoTestReport {
     reports {
         xml.enabled true
         html.enabled false

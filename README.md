@@ -1,11 +1,12 @@
 # Jhash
 
-[![Build](https://travis-ci.org/amdelamar/jhash.svg?branch=master)](https://travis-ci.org/amdelamar/jhash)
-[![Code Climate](https://codeclimate.com/github/amdelamar/jhash/badges/gpa.svg)](https://codeclimate.com/github/amdelamar/jhash)
+[![Build](https://img.shields.io/travis/amdelamar/jhash.svg)](https://travis-ci.org/amdelamar/jhash)
+[![Code Climate](https://img.shields.io/codeclimate/github/amdelamar/jhash.svg)](https://codeclimate.com/github/amdelamar/jhash)
+[![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
 [![License](https://img.shields.io/:license-BSD2-blue.svg)](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/tag/amdelamar/jhash.svg?label=JitPack)](https://jitpack.io/#amdelamar/jhash)
 
-Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option. 
+Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.
 
 
 ## Getting Started
@@ -55,7 +56,7 @@ String hash = Hash.create(password);
 
 // Save the enitre hash somewhere safe...
 
-// Verify Login 
+// Verify Login
 if(Hash.verify(password, correctHash)) {
     // Passwords match. Login successful!
 }
@@ -65,7 +66,7 @@ More Options...
 
 ```java
 
-// pbkdf2 hmac sha512 + salt 
+// pbkdf2 hmac sha512 + salt
 String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
 // Example: pbkdf2sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 
@@ -101,7 +102,7 @@ String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
 Now verify the passwords match. Even if you use a stronger algorithm, pepper it, and increase the iterations, you don't need to provide that information when you `verify()` because the hash output has those values already.
 
 ```java
-// Verify Login 
+// Verify Login
 if(Hash.verify(password, correctHash)) {
     // Passwords match. Login successful!
 }
@@ -131,7 +132,7 @@ scrypt:131072:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsf
 - `iterations` parameter for the function. PBKDF2 number of iterations (64000), BCRYPT number of logrounds (2<sup>12</sup>), SCRYPT cpu/mem cost (131072).
 - `hashSize` is the byte length of the `hash`.
 - `pepper` is an indicator that a pepper was used ("y" or "n"). Peppers aren't stored with the Hashes. They're stored in the application properties.
-- `salt` is the salt. (BCRYPT and SCRYPT salt is embedded in the hash). 
+- `salt` is the salt. (BCRYPT and SCRYPT salt is embedded in the hash).
 - `hash` is the hashed password.
 
 
@@ -177,7 +178,7 @@ By default, if you just call `Hash.create(pwd)` it uses PBKDF2 hmac SHA1 with 24
 
 A project by [Austin Delamar](https://github.com/amdelamar) based off of [Taylor Hornby](https://github.com/defuse/password-hashing), [Damien Miller](https://github.com/jeremyh/jBCrypt), and [Will Grozer](https://github.com/wg/scrypt)'s work and other [contributors](https://github.com/amdelamar/jhash/graphs/contributors).
 
-If you'd like to contribute, feel free to fork and make changes, then open a pull request to master branch. 
+If you'd like to contribute, feel free to fork and make changes, then open a pull request to master branch.
 
 
 ## License

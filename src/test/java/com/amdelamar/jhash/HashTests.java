@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
@@ -76,7 +77,23 @@ public class HashTests {
         assertFalse(Hash.verify("foobar", hash));
 
         // sha2
-        hash = Hash.create("foobar", Hash.PBKDF2_HMACSHA256);
+        hash = Hash.create("foobar", Type.PBKDF2_SHA256);
         assertTrue(Hash.verify("foobar", hash));
+    }
+    
+    @Test
+    public void nullTests() {
+        // null algorithm type
+        boolean caught = false;
+        try {
+            Hash.create("foobar", null);
+        } catch (NoSuchAlgorithmException e) {
+            // the error we expect
+            caught = true;
+        } catch (BadOperationException e) {
+            // not good error
+            caught = false;
+        }
+        assertTrue(caught);
     }
 }

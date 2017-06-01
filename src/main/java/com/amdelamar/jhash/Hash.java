@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import com.amdelamar.jhash.algorithms.BCrypt;
 import com.amdelamar.jhash.algorithms.PBKDF2;
 import com.amdelamar.jhash.algorithms.SCrypt;
+import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 import com.amdelamar.jhash.util.HashUtils;
@@ -19,11 +20,11 @@ import com.amdelamar.jhash.util.HashUtils;
 public class Hash {
 
     // algorithms
-    public static final String SCRYPT = "scrypt";
-    public static final String BCRYPT = "bcrypt";
-    public static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
-    public static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
-    public static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
+    private static final String SCRYPT = "scrypt";
+    private static final String BCRYPT = "bcrypt";
+    private static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
+    private static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
+    private static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
 
     // These constants may be changed without breaking existing hashes.
     public static final int SALT_BYTE_SIZE = 24;
@@ -52,7 +53,7 @@ public class Hash {
      */
     public static String create(String password)
             throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), "".toCharArray(), PBKDF2_HMACSHA1, 0);
+        return create(password.toCharArray(), "".toCharArray(), Type.PBKDF2_SHA1, 0);
     }
 
     /**
@@ -70,7 +71,7 @@ public class Hash {
      */
     public static String create(char[] password)
             throws BadOperationException, NoSuchAlgorithmException {
-        return create(password, "".toCharArray(), PBKDF2_HMACSHA1, 0);
+        return create(password, "".toCharArray(), Type.PBKDF2_SHA1, 0);
     }
 
     /**
@@ -80,7 +81,7 @@ public class Hash {
      * @param password
      *            The password to be salted and hashed.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
@@ -88,7 +89,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String algorithm)
+    public static String create(String password, Type algorithm)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), "".toCharArray(), algorithm, 0);
     }
@@ -100,7 +101,7 @@ public class Hash {
      * @param password
      *            The password to be salted and hashed.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @param parameter
      *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
      *            to 0 if you're unsure and it will use the default value for the given algorithm.
@@ -111,7 +112,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String algorithm, int parameter)
+    public static String create(String password, Type algorithm, int parameter)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), "".toCharArray(), algorithm, parameter);
     }
@@ -123,7 +124,7 @@ public class Hash {
      * @param password
      *            The password to be salted and hashed.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
@@ -131,7 +132,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, String algorithm)
+    public static String create(char[] password, Type algorithm)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password, "".toCharArray(), algorithm, 0);
     }
@@ -143,7 +144,7 @@ public class Hash {
      * @param password
      *            The password to be salted and hashed.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @param parameter
      *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
      *            to 0 if you're unsure and it will use the default value for the given algorithm.
@@ -154,7 +155,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, String algorithm, int parameter)
+    public static String create(char[] password, Type algorithm, int parameter)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password, "".toCharArray(), algorithm, parameter);
     }
@@ -169,7 +170,7 @@ public class Hash {
      *            The application-specific
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
@@ -177,7 +178,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String pepper, String algorithm)
+    public static String create(String password, String pepper, Type algorithm)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), pepper.toCharArray(), algorithm, 0);
     }
@@ -192,7 +193,7 @@ public class Hash {
      *            The application-specific
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @param parameter
      *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
      *            to 0 if you're unsure and it will use the default value for the given algorithm.
@@ -203,7 +204,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(String password, String pepper, String algorithm, int parameter)
+    public static String create(String password, String pepper, Type algorithm, int parameter)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password.toCharArray(), pepper.toCharArray(), algorithm, parameter);
     }
@@ -218,7 +219,7 @@ public class Hash {
      *            The application-specific
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @return A hash String
      * @throws BadOperationException
      *             if one or more parameters are invalid
@@ -226,7 +227,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, char[] pepper, String algorithm)
+    public static String create(char[] password, char[] pepper, Type algorithm)
             throws BadOperationException, NoSuchAlgorithmException {
         return create(password, pepper, algorithm, 0);
     }
@@ -241,7 +242,7 @@ public class Hash {
      *            The application-specific
      *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
      * @param algorithm
-     *            Expects an algorithm like Hash.PBKDF2_HMACSHA512 or Hash.BCRYPT
+     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
      * @param parameter
      *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
      *            to 0 if you're unsure and it will use the default value for the given algorithm.
@@ -252,7 +253,7 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password, char[] pepper, String algorithm, int parameter)
+    public static String create(char[] password, char[] pepper, Type algorithm, int parameter)
             throws BadOperationException, NoSuchAlgorithmException {
         // Generate a random salt
         byte[] salt = HashUtils.randomSalt(HASH_BYTE_SIZE);
@@ -265,31 +266,41 @@ public class Hash {
             pepperPassword = (new String(pepper) + pepperPassword);
         }
 
-        if (algorithm.startsWith("PBKDF2")) {
+        if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256
+                || algorithm == Type.PBKDF2_SHA512) {
 
             if (parameter == 0) {
                 // default parameter
                 parameter = PBKDF2.ITERATIONS;
             }
 
+            String alg = null;
+            if (algorithm == Type.PBKDF2_SHA1) {
+                alg = Hash.PBKDF2_HMACSHA1;
+            } else if (algorithm == Type.PBKDF2_SHA256) {
+                alg = Hash.PBKDF2_HMACSHA256;
+            } else if (algorithm == Type.PBKDF2_SHA512) {
+                alg = Hash.PBKDF2_HMACSHA512;
+            }
+
             // Hash the password
-            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm, parameter,
+            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, parameter,
                     HASH_BYTE_SIZE);
 
             // format for storage
             String parts = parameter + ":" + hash.length + ":" + isPeppered + ":"
                     + HashUtils.encodeBase64(salt) + ":" + HashUtils.encodeBase64(hash);
 
-            if (algorithm.equals(PBKDF2_HMACSHA1)) {
+            if (algorithm == Type.PBKDF2_SHA1) {
                 parts = "pbkdf2sha1:" + parts;
-            } else if (algorithm.equals(PBKDF2_HMACSHA256)) {
+            } else if (algorithm == Type.PBKDF2_SHA256) {
                 parts = "pbkdf2sha256:" + parts;
-            } else if (algorithm.equals(PBKDF2_HMACSHA512)) {
+            } else if (algorithm == Type.PBKDF2_SHA512) {
                 parts = "pbkdf2sha512:" + parts;
             }
 
             return parts;
-        } else if (algorithm.equalsIgnoreCase(BCRYPT)) {
+        } else if (algorithm == Type.BCRYPT) {
 
             if (parameter == 0) {
                 // default parameter
@@ -304,7 +315,7 @@ public class Hash {
                     + hash;
 
             return parts;
-        } else if (algorithm.equalsIgnoreCase(SCRYPT)) {
+        } else if (algorithm == Type.SCRYPT) {
 
             if (parameter == 0) {
                 // default parameter
@@ -321,7 +332,7 @@ public class Hash {
             return parts;
         } else {
             // unrecognized algorithm
-            throw new BadOperationException("Unsupported algorithm type.");
+            throw new NoSuchAlgorithmException("Unsupported algorithm type. Expected Type.BCRYPT or other.");
         }
     }
 

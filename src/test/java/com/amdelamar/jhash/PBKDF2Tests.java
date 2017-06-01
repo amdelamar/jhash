@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
@@ -22,30 +23,30 @@ public class PBKDF2Tests {
         String password = "Hello&77World!";
 
         // sha1 no pepper
-        String hash = Hash.create(password, Hash.PBKDF2_HMACSHA1);
+        String hash = Hash.create(password, Type.PBKDF2_SHA1);
         assertTrue(Hash.verify(password, hash));
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256);
+        String hash2 = Hash.create(password, Type.PBKDF2_SHA256);
         assertTrue(Hash.verify(password, pepper, hash2));
 
         // sha512 no pepper
-        String hash3 = Hash.create(password, Hash.PBKDF2_HMACSHA512);
+        String hash3 = Hash.create(password, Type.PBKDF2_SHA512);
         assertTrue(Hash.verify(password, pepper, hash3));
 
         // sha1 + pepper
-        String hash4 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA1);
+        String hash4 = Hash.create(password, pepper, Type.PBKDF2_SHA1);
         assertTrue(Hash.verify(password, pepper, hash4));
 
         // sha256 + pepper
-        String hash5 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+        String hash5 = Hash.create(password, pepper, Type.PBKDF2_SHA256);
         assertTrue(Hash.verify(password, pepper, hash5));
 
         // sha512 + pepper
-        String hash6 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
+        String hash6 = Hash.create(password, pepper, Type.PBKDF2_SHA512);
         assertTrue(Hash.verify(password, pepper, hash6));
     }
-    
+
     @Test
     public void lowParameterTests()
             throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
@@ -55,30 +56,30 @@ public class PBKDF2Tests {
         String password = "Hello&77World!";
 
         // sha1 no pepper
-        String hash = Hash.create(password, Hash.PBKDF2_HMACSHA1, parameter);
+        String hash = Hash.create(password, Type.PBKDF2_SHA1, parameter);
         assertTrue(Hash.verify(password, hash));
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256, parameter);
+        String hash2 = Hash.create(password, Type.PBKDF2_SHA256, parameter);
         assertTrue(Hash.verify(password, pepper, hash2));
 
         // sha512 no pepper
-        String hash3 = Hash.create(password, Hash.PBKDF2_HMACSHA512, parameter);
+        String hash3 = Hash.create(password, Type.PBKDF2_SHA512, parameter);
         assertTrue(Hash.verify(password, pepper, hash3));
 
         // sha1 + pepper
-        String hash4 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA1, parameter);
+        String hash4 = Hash.create(password, pepper, Type.PBKDF2_SHA1, parameter);
         assertTrue(Hash.verify(password, pepper, hash4));
 
         // sha256 + pepper
-        String hash5 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256, parameter);
+        String hash5 = Hash.create(password, pepper, Type.PBKDF2_SHA256, parameter);
         assertTrue(Hash.verify(password, pepper, hash5));
 
         // sha512 + pepper
-        String hash6 = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512, parameter);
+        String hash6 = Hash.create(password, pepper, Type.PBKDF2_SHA512, parameter);
         assertTrue(Hash.verify(password, pepper, hash6));
     }
-    
+
     @Test
     public void highParameterTests()
             throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
@@ -88,7 +89,7 @@ public class PBKDF2Tests {
         String password = "Hello&77World!";
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Hash.PBKDF2_HMACSHA256, parameter);
+        String hash2 = Hash.create(password, Type.PBKDF2_SHA256, parameter);
         assertTrue(Hash.verify(password, pepper, hash2));
     }
 }

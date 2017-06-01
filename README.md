@@ -67,35 +67,35 @@ More Options...
 ```java
 
 // pbkdf2 hmac sha512 + salt
-String hash = Hash.create(password, Hash.PBKDF2_HMACSHA512);
+String hash = Hash.create(password, Type.PBKDF2_SHA512);
 // Example: pbkdf2sha512:64000:18:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5rfjM9
 
 // pbkdf2 hmac sha256 + salt + pepper
-String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA256);
+String hash = Hash.create(password, pepper, Type.PBKDF2_SHA256);
 // Example: pbkdf2sha256:64000:18:y:J84o+zGuJebtj99FiAMk9pminEBmoEIm:4hoNRxgrn79lxujYIrNUXQd1
 
 // pbkdf2 hmac sha512 + salt + pepper
-String hash = Hash.create(password, pepper, Hash.PBKDF2_HMACSHA512);
+String hash = Hash.create(password, pepper, Type.PBKDF2_SHA512);
 // Example: pbkdf2sha512:64000:18:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 
 // bcrypt + salt
-String hash = Hash.create(password, Hash.BCRYPT);
+String hash = Hash.create(password, Type.BCRYPT);
 // Example: bcrypt:13:66:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
 
 // bcrypt + salt + pepper
-String hash = Hash.create(password, pepper, Hash.BCRYPT);
+String hash = Hash.create(password, pepper, Type.BCRYPT);
 // Example: bcrypt:13:66:y::$2a$10$UlxpnyYwYmmlLgl7YVGonN9H74ffEttiD1O2uMy8q5Y7YgJc8.YsRa3yOM6
 
 // scrypt + salt
-String hash = Hash.create(password, Hash.SCRYPT);
+String hash = Hash.create(password, Type.SCRYPT);
 // Example: scrypt:16384:79:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
 
 // scrypt + salt + pepper
-String hash = Hash.create(password, pepper, Hash.SCRYPT);
+String hash = Hash.create(password, pepper, Type.SCRYPT);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 
 // scrypt + salt + pepper + super high cost
-String hash = Hash.create(password, pepper, Hash.SCRYPT, 1048576);
+String hash = Hash.create(password, pepper, Type.SCRYPT, 1048576);
 // Example: scrypt:16384:79:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
 
@@ -182,6 +182,8 @@ If you'd like to contribute, feel free to fork and make changes, then open a pul
 
 
 ## License
+
+JHash is licensed as [MIT](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 
 PBKDF2 is licensed as [BSD-2-Clause](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 

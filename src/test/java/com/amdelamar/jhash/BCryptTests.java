@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
@@ -22,11 +23,11 @@ public class BCryptTests {
         String password = "Hello&77World!";
 
         // bcrypt no pepper
-        String hash = Hash.create(password, Hash.BCRYPT);
+        String hash = Hash.create(password, Type.BCRYPT);
         assertTrue(Hash.verify(password, hash));
 
         // bcrypt + pepper
-        String hash2 = Hash.create(password, pepper, Hash.BCRYPT);
+        String hash2 = Hash.create(password, pepper, Type.BCRYPT);
         assertTrue(Hash.verify(password, pepper, hash2));
     }
     
@@ -39,11 +40,11 @@ public class BCryptTests {
         String password = "Hello&77World!";
 
         // bcrypt no pepper
-        String hash = Hash.create(password, Hash.BCRYPT, parameter);
+        String hash = Hash.create(password, Type.BCRYPT, parameter);
         assertTrue(Hash.verify(password, hash));
 
         // bcrypt + pepper
-        String hash2 = Hash.create(password, pepper, Hash.BCRYPT, parameter);
+        String hash2 = Hash.create(password, pepper, Type.BCRYPT, parameter);
         assertTrue(Hash.verify(password, pepper, hash2));
     }
     
@@ -56,7 +57,7 @@ public class BCryptTests {
         String password = "Hello&77World!";
 
         // bcrypt + pepper
-        String hash2 = Hash.create(password, pepper, Hash.BCRYPT, parameter);
+        String hash2 = Hash.create(password, pepper, Type.BCRYPT, parameter);
         assertTrue(Hash.verify(password, pepper, hash2));
     }
 }

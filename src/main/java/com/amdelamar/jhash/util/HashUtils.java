@@ -19,7 +19,7 @@ public class HashUtils {
      * @return byte array salt
      */
     public static byte[] randomSalt() {
-        return randomSalt(Hash.SALT_BYTE_SIZE);
+        return randomSalt(new SecureRandom(), Hash.SALT_BYTE_SIZE);
     }
 
     /**
@@ -30,9 +30,32 @@ public class HashUtils {
      * @return byte array salt
      */
     public static byte[] randomSalt(int size) {
-        SecureRandom random = new SecureRandom();
+        return randomSalt(new SecureRandom(), size);
+    }
+
+    /**
+     * Generates a secure random salt of 24 bytes.
+     * 
+     * @param secureRandom
+     *            SecureRandom thats hopefully seeded
+     * @return byte array salt
+     */
+    public static byte[] randomSalt(SecureRandom secureRandom) {
+        return randomSalt(secureRandom, Hash.SALT_BYTE_SIZE);
+    }
+
+    /**
+     * Generates a secure random salt of the specified size.
+     * 
+     * @param secureRandom
+     *            SecureRandom thats hopefully seeded
+     * @param size
+     *            The size of the salt in bytes.
+     * @return byte array salt
+     */
+    public static byte[] randomSalt(SecureRandom secureRandom, int size) {
         byte[] salt = new byte[size];
-        random.nextBytes(salt);
+        secureRandom.nextBytes(salt);
         return salt;
     }
 

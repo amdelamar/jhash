@@ -24,7 +24,7 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 <dependency>
     <groupId>com.github.amdelamar</groupId>
     <artifactId>jhash</artifactId>
-    <version>v1.0.0</version>
+    <version>v1.1.0</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ repositories {
 }
 ...
 dependencies {
-    compile 'com.github.amdelamar:jhash:v1.0.0'
+    compile 'com.github.amdelamar:jhash:v1.1.0'
 }
 ```
 

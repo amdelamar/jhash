@@ -1,7 +1,8 @@
 # Jhash
 
 [![Build](https://img.shields.io/travis/amdelamar/jhash.svg)](https://travis-ci.org/amdelamar/jhash)
-[![Code Climate](https://img.shields.io/codeclimate/github/amdelamar/jhash.svg)](https://codeclimate.com/github/amdelamar/jhash)
+[![Codacy grade](https://img.shields.io/codacy/grade/6d7927e4c18042d6a62f27e8ab5b53dd.svg)](https://www.codacy.com/app/amdelamar/jhash)
+[![Code Climate](https://img.shields.io/codeclimate/maintainability/amdelamar/jhash.svg)](https://codeclimate.com/github/amdelamar/jhash)
 [![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
 [![License](https://img.shields.io/:license-BSD2-blue.svg)](https://github.com/amdelamar/jhash/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/tag/amdelamar/jhash.svg?label=JitPack)](https://jitpack.io/#amdelamar/jhash)

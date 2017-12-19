@@ -2,8 +2,6 @@ package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertTrue;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,6 +21,7 @@ public class BCryptTests {
         // bcrypt no pepper
         String hash = Hash.password(password)
                 .algorithm(Type.BCRYPT)
+                .factor(10)
                 .create();
         assertTrue(Hash.password(password)
                 .verify(hash));

@@ -11,4 +11,4 @@ ratings:
   paths:
   - "**.java"
 exclude_paths:
-# - eg "tests/" here
+ - src/test/

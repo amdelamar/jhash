@@ -30,7 +30,7 @@ public class HashTests {
 
         boolean equal = Hash.password(password)
                 .pepper(pepper)
-                .verify(hash.toCharArray());
+                .verify(hash);
 
         assertTrue(equal);
     }
@@ -52,7 +52,7 @@ public class HashTests {
             boolean raised = false;
             try {
                 Hash.password(password)
-                        .verify(badHash.toCharArray());
+                        .verify(badHash);
             } catch (Exception e) {
                 // this is good
                 raised = true;
@@ -80,11 +80,11 @@ public class HashTests {
             }
             String wrongPassword = "000" + (i + 1);
             if (Hash.password(wrongPassword.toCharArray())
-                    .verify(hash.toCharArray())) {
+                    .verify(hash)) {
                 failure = true;
             }
             if (!Hash.password(password.toCharArray())
-                    .verify(hash.toCharArray())) {
+                    .verify(hash)) {
                 failure = true;
             }
             assertFalse(failure);
@@ -100,14 +100,14 @@ public class HashTests {
         // accidentally change algorithms
         hash = hash.replaceFirst("pbkdf2sha1:", "pbkdf2sha256:");
         assertFalse(Hash.password(password)
-                .verify(hash.toCharArray()));
+                .verify(hash));
 
         // sha2
         hash = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA256)
                 .create();
         assertTrue(Hash.password(password)
-                .verify(hash.toCharArray()));
+                .verify(hash));
     }
 
     @Test

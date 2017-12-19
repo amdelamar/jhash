@@ -12,9 +12,12 @@ import com.amdelamar.jhash.util.HashUtils;
 
 /**
  * Password hashing utility in Java. It salts automatically and has a pepper option. It hashes
- * passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512.
+ * passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512. Follows
+ * the builder pattern, so start with Hash.password(pw).create() and use .verify(hash) to
+ * check if valid password hash matches.
  * 
  * @author amdelamar
+ * @version 2.0.0
  * @see https://github.com/amdelamar/jhash
  */
 public class Hash {
@@ -125,8 +128,8 @@ public class Hash {
     }
 
     /**
-     * Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set to 0 
-     * if you're unsure and it will use the default value for the given algorithm.
+     * Optional value for iterations (PBKDF2), logrounds (BCRYPT), or cost (SCRYPT). Set to 0 
+     * if you're unsure and it will use the default value for the specified algorithm.
      * @param int factor
      * @return Hash
      */
@@ -159,7 +162,7 @@ public class Hash {
 
         if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256 || algorithm == Type.PBKDF2_SHA512) {
 
-            if (factor == 0) {
+            if (factor <= 0) {
                 // default factor
                 factor = PBKDF2.ITERATIONS;
             }
@@ -177,21 +180,30 @@ public class Hash {
             byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
 
             // format for storage
-            String parts = factor + ":" + hash.length + ":" + salt.length + ":" + isPeppered + ":" + HashUtils.encodeBase64(salt) + ":"
-                    + HashUtils.encodeBase64(hash);
-
-            if (algorithm == Type.PBKDF2_SHA1) {
-                parts = "pbkdf2sha1:" + parts;
-            } else if (algorithm == Type.PBKDF2_SHA256) {
-                parts = "pbkdf2sha256:" + parts;
+            String alg2 = "pbkdf2sha1";
+            if (algorithm == Type.PBKDF2_SHA256) {
+                alg2 = "pbkdf2sha256";
             } else if (algorithm == Type.PBKDF2_SHA512) {
-                parts = "pbkdf2sha512:" + parts;
+                alg2 = "pbkdf2sha512";
             }
+            StringBuilder finalHash = new StringBuilder(alg2).append(":")
+                    .append(factor)
+                    .append(":")
+                    .append(hash.length)
+                    .append(":")
+                    .append(salt.length)
+                    .append(":")
+                    .append(isPeppered)
+                    .append(":")
+                    .append(HashUtils.encodeBase64(salt))
+                    .append(":")
+                    .append(HashUtils.encodeBase64(hash));
 
-            return parts;
+            return finalHash.toString();
+
         } else if (algorithm == Type.BCRYPT) {
 
-            if (factor == 0) {
+            if (factor <= 0) {
                 // default factor
                 factor = BCrypt.LOG2_ROUNDS;
             }
@@ -200,12 +212,22 @@ public class Hash {
             String hash = BCrypt.create(pepperPassword, factor);
 
             // format for storage
-            String parts = BCRYPT + ":" + factor + ":" + hash.length() + ":" + salt.length + ":" + isPeppered + "::" + hash;
+            StringBuilder finalHash = new StringBuilder(BCRYPT).append(":")
+                    .append(factor)
+                    .append(":")
+                    .append(hash.length())
+                    .append(":")
+                    .append(salt.length)
+                    .append(":")
+                    .append(isPeppered)
+                    .append("::")
+                    .append(hash);
 
-            return parts;
+            return finalHash.toString();
+
         } else if (algorithm == Type.SCRYPT) {
 
-            if (factor == 0) {
+            if (factor <= 0) {
                 // default factor
                 factor = SCrypt.COST;
             }
@@ -214,9 +236,19 @@ public class Hash {
             String hash = SCrypt.create(pepperPassword, factor);
 
             // format for storage
-            String parts = SCRYPT + ":" + factor + ":" + hash.length() + ":" + salt.length + ":" + isPeppered + "::" + hash;
+            StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
+                    .append(factor)
+                    .append(":")
+                    .append(hash.length())
+                    .append(":")
+                    .append(salt.length)
+                    .append(":")
+                    .append(isPeppered)
+                    .append("::")
+                    .append(hash);
 
-            return parts;
+            return finalHash.toString();
+
         } else {
             // unrecognized algorithm
             throw new NoSuchAlgorithmException("Unsupported algorithm type. Expected Type.BCRYPT or other.");
@@ -239,9 +271,9 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public boolean verify(char[] correctHash) throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
+    public boolean verify(String correctHash) throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
         // Decode the hash into its parameters
-        String[] params = new String(correctHash).split(":");
+        String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
             throw new InvalidHashException("Fields are missing from the correct hash. Double-check JHash vesrion and hash format.");
         }
@@ -287,8 +319,8 @@ public class Hash {
         } catch (NumberFormatException ex) {
             throw new InvalidHashException("Could not parse the salt size as an integer.", ex);
         }
-        
-        if (storedSaltSize != saltLength ) {
+
+        if (storedSaltSize != saltLength) {
             throw new InvalidHashException("Salt length doesn't match stored salt length.");
         }
 

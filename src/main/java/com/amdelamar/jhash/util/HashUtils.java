@@ -85,7 +85,8 @@ public class HashUtils {
      * @see https://en.wikipedia.org/wiki/Base64
      */
     public static byte[] decodeBase64(String string) {
-        return Base64.getDecoder().decode(string);
+        return Base64.getDecoder()
+                .decode(string);
     }
 
     /**
@@ -97,7 +98,8 @@ public class HashUtils {
      * @see https://en.wikipedia.org/wiki/Base64
      */
     public static String encodeBase64(byte[] array) {
-        return new String(Base64.getEncoder().encode(array));
+        return new String(Base64.getEncoder()
+                .encode(array));
     }
 
 }

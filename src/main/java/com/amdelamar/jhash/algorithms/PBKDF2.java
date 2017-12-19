@@ -40,8 +40,8 @@ public class PBKDF2 {
      * @throws BadOperationException
      *             if key spec is invalid
      */
-    public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations,
-            int bytes) throws NoSuchAlgorithmException, BadOperationException {
+    public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations, int bytes)
+            throws NoSuchAlgorithmException, BadOperationException {
 
         if (password == null || password.length == 0) {
             throw new BadOperationException("Password cannot be null or empty!");
@@ -55,7 +55,8 @@ public class PBKDF2 {
         try {
             PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);
             SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
-            return skf.generateSecret(spec).getEncoded();
+            return skf.generateSecret(spec)
+                    .getEncoded();
         } catch (NoSuchAlgorithmException ex) {
             throw new NoSuchAlgorithmException("Hash algorithm not supported.", ex);
         } catch (InvalidKeySpecException ex) {

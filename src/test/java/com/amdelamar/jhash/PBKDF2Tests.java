@@ -22,57 +22,51 @@ public class PBKDF2Tests {
         char[] password = "Hello&77World!".toCharArray();
 
         // sha1 no pepper
-        char[] hash = Hash.password(password)
+        String hash = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA1)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .verify(hash));
 
         // sha256 no pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA256)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
 
         // sha512 no pepper
-        char[] hash3 = Hash.password(password)
+        String hash3 = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA512)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash3));
 
         // sha1 + pepper
-        char[] hash4 = Hash.password(password)
+        String hash4 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA1)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash4));
 
         // sha256 + pepper
-        char[] hash5 = Hash.password(password)
+        String hash5 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA256)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash5));
 
         // sha512 + pepper
-        char[] hash6 = Hash.password(password)
+        String hash6 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA512)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash6));
@@ -86,63 +80,57 @@ public class PBKDF2Tests {
         char[] password = "Hello&77World!".toCharArray();
 
         // sha1 no pepper
-        char[] hash = Hash.password(password)
+        String hash = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA1)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .verify(hash));
 
         // sha256 no pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA256)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
 
         // sha512 no pepper
-        char[] hash3 = Hash.password(password)
+        String hash3 = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA512)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash3));
 
         // sha1 + pepper
-        char[] hash4 = Hash.password(password)
+        String hash4 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA1)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash4));
 
         // sha256 + pepper
-        char[] hash5 = Hash.password(password)
+        String hash5 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA256)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash5));
 
         // sha512 + pepper
-        char[] hash6 = Hash.password(password)
+        String hash6 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.PBKDF2_SHA512)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash6));
@@ -156,11 +144,10 @@ public class PBKDF2Tests {
         char[] password = "Hello&77World!".toCharArray();
 
         // sha256 no pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .algorithm(Type.PBKDF2_SHA256)
                 .factor(factor)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));

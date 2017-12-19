@@ -67,15 +67,12 @@ public class SCrypt {
      * @throws IllegalArgumentException
      *             when parameters invalid
      */
-    private static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize,
-            int parallel, int length) throws GeneralSecurityException {
-        if (cost < 2 || (cost & (cost - 1)) != 0)
-            throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
+    private static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize, int parallel, int length)
+            throws GeneralSecurityException {
+        if (cost < 2 || (cost & (cost - 1)) != 0) throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
 
-        if (cost > Integer.MAX_VALUE / 128 / blocksize)
-            throw new IllegalArgumentException("Parameter cost is too large");
-        if (blocksize > Integer.MAX_VALUE / 128 / parallel)
-            throw new IllegalArgumentException("Parameter blocksize is too large");
+        if (cost > Integer.MAX_VALUE / 128 / blocksize) throw new IllegalArgumentException("Parameter cost is too large");
+        if (blocksize > Integer.MAX_VALUE / 128 / parallel) throw new IllegalArgumentException("Parameter blocksize is too large");
 
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(password, "HmacSHA256"));
@@ -236,8 +233,7 @@ public class SCrypt {
      * @throws GeneralSecurityException
      *             If key length is too long
      */
-    private static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length)
-            throws GeneralSecurityException {
+    private static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
         int len = mac.getMacLength();
 
         if (length > (Math.pow(2, 32) - 1) * len) {
@@ -306,8 +302,7 @@ public class SCrypt {
 
             byte[] derived1 = SCrypt.scrypt(password.getBytes("UTF-8"), salt, N, r, p, 32);
 
-            if (derived0.length != derived1.length)
-                return false;
+            if (derived0.length != derived1.length) return false;
 
             int result = 0;
             for (int i = 0; i < derived0.length; i++) {
@@ -334,7 +329,7 @@ public class SCrypt {
     public static String create(String password) throws IllegalStateException {
         return create(password, COST, BLOCKSIZE, PARALLEL);
     }
-    
+
     /**
      * Hash the supplied plaintext password and generate output in the format described in
      * {@link SCryptUtil}.
@@ -368,19 +363,20 @@ public class SCrypt {
      * @throws IllegalStateException
      *             If JVM doesn't support necessary functions.
      */
-    public static String create(String password, int cost, int blockSize, int parallel)
-            throws IllegalStateException {
+    public static String create(String password, int cost, int blockSize, int parallel) throws IllegalStateException {
         try {
             byte[] salt = HashUtils.randomSalt(16);
 
-            byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel,
-                    32);
+            byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 
             String params = Long.toString(log2(cost) << 16L | blockSize << 8 | parallel, 16);
 
             StringBuilder sb = new StringBuilder((salt.length + derived.length) * 2);
-            sb.append("$s0$").append(params).append('$');
-            sb.append(HashUtils.encodeBase64(salt)).append('$');
+            sb.append("$s0$")
+                    .append(params)
+                    .append('$');
+            sb.append(HashUtils.encodeBase64(salt))
+                    .append('$');
             sb.append(HashUtils.encodeBase64(derived));
 
             return sb.toString();

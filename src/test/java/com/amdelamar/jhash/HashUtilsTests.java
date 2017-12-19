@@ -55,8 +55,8 @@ public class HashUtilsTests {
         boolean slow1 = HashUtils.slowEquals(hello.getBytes(), hello64.getBytes());
         assertFalse(slow1);
 
-        boolean slow2 = HashUtils.slowEquals(HashUtils.encodeBase64(hello.getBytes()).getBytes(),
-                hello64.getBytes());
+        boolean slow2 = HashUtils.slowEquals(HashUtils.encodeBase64(hello.getBytes())
+                .getBytes(), hello64.getBytes());
         assertTrue(slow2);
     }
 

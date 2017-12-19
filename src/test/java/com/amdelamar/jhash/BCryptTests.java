@@ -22,19 +22,17 @@ public class BCryptTests {
         char[] password = "Hello&77World!".toCharArray();
 
         // bcrypt no pepper
-        char[] hash = Hash.password(password)
+        String hash = Hash.password(password)
                 .algorithm(Type.BCRYPT)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .verify(hash));
 
         // bcrypt + pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.BCRYPT)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
@@ -48,21 +46,19 @@ public class BCryptTests {
         char[] password = "Hello&77World!".toCharArray();
 
         // bcrypt no pepper
-        char[] hash = Hash.password(password)
+        String hash = Hash.password(password)
                 .algorithm(Type.BCRYPT)
                 .factor(parameter)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .verify(hash));
 
         // bcrypt + pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.BCRYPT)
                 .factor(parameter)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
@@ -76,12 +72,11 @@ public class BCryptTests {
         char[] password = "Hello&77World!".toCharArray();
 
         // bcrypt + pepper
-        char[] hash2 = Hash.password(password)
+        String hash2 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.BCRYPT)
                 .factor(parameter)
-                .create()
-                .toCharArray();
+                .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));

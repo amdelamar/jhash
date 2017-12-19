@@ -141,17 +141,17 @@ public class Hash {
             } else if (algorithm == Type.PBKDF2_SHA512) {
                 alg = Hash.PBKDF2_HMACSHA512;
             }
-            
-            if(saltLength <= 0) {
+
+            if (saltLength <= 0) {
                 // default salt length
                 saltLength = PBKDF2.DEFAULT_SALT_LENGTH;
             }
-            
+
             if (factor <= 0) {
                 // default factor
                 factor = PBKDF2.ITERATIONS;
             }
-            
+
             // Generate a random salt
             byte[] salt = HashUtils.randomSalt(saltLength);
 
@@ -186,8 +186,8 @@ public class Hash {
                 // default factor
                 factor = BCrypt.LOG2_ROUNDS;
             }
-            
-            if(saltLength <= 0) {
+
+            if (saltLength <= 0) {
                 // default salt length
                 saltLength = BCrypt.DEFAULT_SALT_LENGTH;
             }
@@ -215,8 +215,8 @@ public class Hash {
                 // default factor
                 factor = SCrypt.COST;
             }
-            
-            if(saltLength <= 0) {
+
+            if (saltLength <= 0) {
                 // default salt length
                 saltLength = SCrypt.DEFAULT_SALT_LENGTH;
             }
@@ -252,13 +252,15 @@ public class Hash {
      * @param correctHash
      *            The stored hash from storage.
      * @return boolean true if matches
-     * @throws IllegalArgumentException
-     *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public boolean verify(String correctHash) throws IllegalArgumentException, InvalidHashException {
+    public boolean verify(String correctHash) throws InvalidHashException {
+        if (correctHash == null || correctHash.isEmpty()) {
+            throw new InvalidHashException("Correct hash cannot be null or empty.");
+        }
+
         // Decode the hash into its parameters
         String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
@@ -299,7 +301,7 @@ public class Hash {
         } catch (NumberFormatException ex) {
             throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
         }
-        
+
         int storedSaltSize = 0;
         try {
             storedSaltSize = Integer.parseInt(params[SALT_SIZE_INDEX]);
@@ -371,7 +373,7 @@ public class Hash {
             return SCrypt.verify(pepperPassword, new String(hash));
         } else {
             // unrecognized algorithm
-            throw new IllegalArgumentException("Unsupported algorithm type: "+algorithm);
+            throw new InvalidHashException("Unsupported algorithm type: " + algorithm);
         }
     }
 

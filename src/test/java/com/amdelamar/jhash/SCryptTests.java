@@ -39,6 +39,23 @@ public class SCryptTests {
     }
 
     @Test
+    public void saltLengthTests() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
+
+        // scrypt + saltLength
+        String hash3 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.SCRYPT)
+                .saltLength(24)
+                .create();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash3));
+    }
+
+    @Test
     public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
         int parameter = 16384;

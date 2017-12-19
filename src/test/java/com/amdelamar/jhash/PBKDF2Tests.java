@@ -71,6 +71,23 @@ public class PBKDF2Tests {
                 .pepper(pepper)
                 .verify(hash6));
     }
+    
+    @Test
+    public void saltLengthTests() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
+
+        // sha512 + saltLength
+        String hash3 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA512)
+                .saltLength(24)
+                .create();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash3));
+    }
 
     @Test
     public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {

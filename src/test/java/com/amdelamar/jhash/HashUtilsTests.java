@@ -24,9 +24,9 @@ public class HashUtilsTests {
         sr.setSeed(123456789l);
 
         String s1 = new String(HashUtils.randomSalt());
-        String s2 = new String(HashUtils.randomSalt(Hash.DEFAULT_SALT_BYTE_SIZE));
+        String s2 = new String(HashUtils.randomSalt(24));
         String s3 = new String(HashUtils.randomSalt(sr));
-        String s4 = new String(HashUtils.randomSalt(sr, Hash.DEFAULT_SALT_BYTE_SIZE));
+        String s4 = new String(HashUtils.randomSalt(sr, 24));
 
         assertNotNull(s1);
         assertNotNull(s2);
@@ -40,10 +40,10 @@ public class HashUtilsTests {
         assertNotEquals(s2, s4);
         assertNotEquals(s3, s4);
 
-        assertEquals(s1.length(), Hash.DEFAULT_SALT_BYTE_SIZE);
-        assertEquals(s2.length(), Hash.DEFAULT_SALT_BYTE_SIZE);
-        assertEquals(s3.length(), Hash.DEFAULT_SALT_BYTE_SIZE);
-        assertEquals(s4.length(), Hash.DEFAULT_SALT_BYTE_SIZE);
+        assertEquals(s1.length(), 24);
+        assertEquals(s2.length(), 24);
+        assertEquals(s3.length(), 24);
+        assertEquals(s4.length(), 24);
     }
 
     @Test

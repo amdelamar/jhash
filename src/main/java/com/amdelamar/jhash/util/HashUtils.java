@@ -3,8 +3,6 @@ package com.amdelamar.jhash.util;
 import java.security.SecureRandom;
 import java.util.Base64;
 
-import com.amdelamar.jhash.Hash;
-
 /**
  * Hash Utility and Common functions.
  * 
@@ -19,7 +17,7 @@ public class HashUtils {
      * @return byte array salt
      */
     public static byte[] randomSalt() {
-        return randomSalt(new SecureRandom(), Hash.DEFAULT_SALT_BYTE_SIZE);
+        return randomSalt(new SecureRandom(), 24);
     }
 
     /**
@@ -41,7 +39,7 @@ public class HashUtils {
      * @return byte array salt
      */
     public static byte[] randomSalt(SecureRandom secureRandom) {
-        return randomSalt(secureRandom, Hash.DEFAULT_SALT_BYTE_SIZE);
+        return randomSalt(secureRandom, 24);
     }
 
     /**

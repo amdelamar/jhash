@@ -37,6 +37,23 @@ public class BCryptTests {
                 .pepper(pepper)
                 .verify(hash2));
     }
+    
+    @Test
+    public void saltLengthTests() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
+
+        // bcrypt + saltLength
+        String hash3 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.BCRYPT)
+                .saltLength(24)
+                .create();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash3));
+    }
 
     @Test
     public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {

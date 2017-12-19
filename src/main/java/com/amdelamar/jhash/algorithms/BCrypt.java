@@ -2,7 +2,6 @@ package com.amdelamar.jhash.algorithms;
 
 import java.io.UnsupportedEncodingException;
 
-import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.util.HashUtils;
 
@@ -15,6 +14,7 @@ import com.amdelamar.jhash.util.HashUtils;
  */
 public class BCrypt {
 
+    public static final int DEFAULT_SALT_LENGTH = 24;
     public static final int LOG2_ROUNDS = 13;
     public static final int BLOWFISH_ROUNDS = 16;
 
@@ -453,43 +453,17 @@ public class BCrypt {
      * 
      * @param password
      *            the password to hash
-     * @return the hashed password
-     * @throws BadOperationException
-     *             if invalid salt or parameters
-     */
-    public static String create(String password) throws BadOperationException {
-        return create(password, createSalt(LOG2_ROUNDS), LOG2_ROUNDS);
-    }
-
-    /**
-     * Hash a password using the OpenBSD bcrypt scheme
-     * 
-     * @param password
-     *            the password to hash
+     * @param hash
+     *            the correct hash, null if hashing
+     * @param saltLength
+     *            the salt byte size
      * @param iterations
      *            the log rounds (e.g. 2^10)
      * @return the hashed password
      * @throws BadOperationException
      *             if invalid salt or parameters
      */
-    public static String create(String password, int iterations) throws BadOperationException {
-        return create(password, createSalt(iterations), iterations);
-    }
-
-    /**
-     * Hash a password using the OpenBSD bcrypt scheme
-     * 
-     * @param password
-     *            the password to hash
-     * @param salt
-     *            the random salt
-     * @param iterations
-     *            the log rounds (e.g. 2^10)
-     * @return the hashed password
-     * @throws BadOperationException
-     *             if invalid salt or parameters
-     */
-    public static String create(String password, String salt, int iterations) throws BadOperationException {
+    public static String create(String password, String hash, int saltLength, int iterations) throws BadOperationException {
 
         if (password == null || password.isEmpty()) {
             throw new BadOperationException("Password cannot be null or empty!");
@@ -499,33 +473,47 @@ public class BCrypt {
             throw new BadOperationException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
         }
 
-        if (salt == null || salt.isEmpty()) {
-            salt = createSalt(iterations);
+        // defaults
+        if (saltLength <= 0) {
+            saltLength = DEFAULT_SALT_LENGTH;
+        }
+        if (iterations <= 0) {
+            iterations = LOG2_ROUNDS;
+        }
+
+        // we are creating a new hash
+        // so we need a random salt
+        if (hash == null || hash.isEmpty()) {
+            hash = createSalt(saltLength, iterations);
         }
 
         char minor = (char) 0;
         int off = 0;
 
         // validate salt version
-        if (salt.charAt(0) != '$' || salt.charAt(1) != '2') {
+        if (hash.charAt(0) != '$' || hash.charAt(1) != '2') {
             throw new BadOperationException("Invalid salt version");
         }
-        if (salt.charAt(2) == '$') {
+        if (hash.charAt(2) == '$') {
             off = 3;
         } else {
-            minor = salt.charAt(2);
-            if (minor != Minor.A.minor || salt.charAt(3) != '$') {
+            minor = hash.charAt(2);
+            if (minor != Minor.A.minor || hash.charAt(3) != '$') {
                 throw new BadOperationException("Invalid salt revision");
             }
             off = 4;
         }
 
         // Extract number of rounds
-        if (salt.charAt(off + 2) > '$') throw new BadOperationException("Missing salt rounds");
-        int rounds = Integer.parseInt(salt.substring(off, off + 2));
+        if (hash.charAt(off + 2) > '$') {
+            throw new BadOperationException("Missing salt rounds");
+        }
+        int rounds = Integer.parseInt(hash.substring(off, off + 2));
 
-        String realSalt = salt.substring(off + 3, off + 32);
-        byte[] saltb = decodeBase64(realSalt, Hash.DEFAULT_SALT_BYTE_SIZE);
+        // Extract real salt
+        int realSaltLength = createSalt(saltLength, 10).length() - (off + 3);
+        String realSalt = hash.substring(off + 3, off + 3 + realSaltLength);
+        byte[] saltb = decodeBase64(realSalt, realSalt.length());
         byte[] passwordb;
         try {
             passwordb = (password + (minor >= Minor.A.minor ? "\000" : "")).getBytes("UTF-8");
@@ -557,12 +545,13 @@ public class BCrypt {
 
     /**
      * Generate a salt for use with the BCrypt.create() method.
-     * 
+     * @param length the salt length
+     * @param rounds the log rounds
      * @return an encoded salt value
      */
-    public static String createSalt(int rounds) {
+    public static String createSalt(int length, int rounds) {
         try {
-            byte[] salt = HashUtils.randomSalt();
+            byte[] salt = HashUtils.randomSalt(length);
             StringBuffer sb = new StringBuffer();
             sb.append("$2a$");
             sb.append(Integer.toString(rounds));
@@ -573,6 +562,5 @@ public class BCrypt {
             // failed to base64 the random salt
             return "";
         }
-
     }
 }

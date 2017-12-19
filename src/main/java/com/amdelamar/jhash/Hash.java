@@ -22,26 +22,6 @@ import com.amdelamar.jhash.util.HashUtils;
  */
 public class Hash {
 
-    /**
-     * Default hash byte length
-     */
-    public static final int DEFAULT_HASH_BYTE_SIZE = 18;
-
-    /**
-     * Default salt byte length
-     */
-    public static final int DEFAULT_SALT_BYTE_SIZE = 24;
-
-    /**
-     * Default algorithm type
-     */
-    public static final Type DEFAULT_ALGORITHM = Type.PBKDF2_SHA1;
-
-    /**
-     * Default factor
-     */
-    public static final int DEFAULT_FACTOR = 0;
-
     // These constants define the encoding and may not be changed.
     private static final String SCRYPT = "scrypt";
     private static final String BCRYPT = "bcrypt";
@@ -57,13 +37,13 @@ public class Hash {
     private static final int SALT_INDEX = 5;
     private static final int HASH_INDEX = 6;
 
-    // Hash parameters
+    // Hash parameters with defaults
     private char[] password;
     private char[] pepper;
-    private int hashLength = DEFAULT_HASH_BYTE_SIZE;
-    private int saltLength = DEFAULT_SALT_BYTE_SIZE;
-    private int factor = DEFAULT_FACTOR;
-    private Type algorithm = DEFAULT_ALGORITHM;
+    private int hashLength = 18;
+    private int saltLength = 0;
+    private int factor = 0;
+    private Type algorithm = Type.PBKDF2_SHA1;
 
     /**
      * The password to be hashed. Note: Call create() when ready to output the hash value. 
@@ -149,8 +129,6 @@ public class Hash {
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public String create() throws BadOperationException, NoSuchAlgorithmException {
-        // Generate a random salt
-        byte[] salt = HashUtils.randomSalt(saltLength);
 
         // add pepper if not empty
         char isPeppered = 'n';
@@ -175,6 +153,14 @@ public class Hash {
             } else if (algorithm == Type.PBKDF2_SHA512) {
                 alg = Hash.PBKDF2_HMACSHA512;
             }
+            
+            if(saltLength <= 0) {
+                // default salt length
+                saltLength = 24;
+            }
+            
+            // Generate a random salt
+            byte[] salt = HashUtils.randomSalt(saltLength);
 
             // Hash the password
             byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
@@ -207,9 +193,14 @@ public class Hash {
                 // default factor
                 factor = BCrypt.LOG2_ROUNDS;
             }
+            
+            if(saltLength <= 0) {
+                // default salt length
+                saltLength = 16;
+            }
 
             // Hash the password
-            String hash = BCrypt.create(pepperPassword, factor);
+            String hash = BCrypt.create(pepperPassword, null, saltLength, factor);
 
             // format for storage
             StringBuilder finalHash = new StringBuilder(BCRYPT).append(":")
@@ -217,7 +208,7 @@ public class Hash {
                     .append(":")
                     .append(hash.length())
                     .append(":")
-                    .append(salt.length)
+                    .append(saltLength)
                     .append(":")
                     .append(isPeppered)
                     .append("::")
@@ -231,6 +222,11 @@ public class Hash {
                 // default factor
                 factor = SCrypt.COST;
             }
+            
+            if(saltLength <= 0) {
+                // default salt length
+                saltLength = 24;
+            }
 
             // Hash the password
             String hash = SCrypt.create(pepperPassword, factor);
@@ -241,7 +237,7 @@ public class Hash {
                     .append(":")
                     .append(hash.length())
                     .append(":")
-                    .append(salt.length)
+                    .append(saltLength)
                     .append(":")
                     .append(isPeppered)
                     .append("::")
@@ -312,16 +308,12 @@ public class Hash {
         } catch (NumberFormatException ex) {
             throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
         }
-
+        
         int storedSaltSize = 0;
         try {
             storedSaltSize = Integer.parseInt(params[SALT_SIZE_INDEX]);
         } catch (NumberFormatException ex) {
             throw new InvalidHashException("Could not parse the salt size as an integer.", ex);
-        }
-
-        if (storedSaltSize != saltLength) {
-            throw new InvalidHashException("Salt length doesn't match stored salt length.");
         }
 
         // verify algorithm
@@ -367,7 +359,7 @@ public class Hash {
                 throw new InvalidHashException("Hash length doesn't match stored hash length.");
             }
 
-            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), iterations)
+            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), storedSaltSize, iterations)
                     .getBytes();
 
             // Compare the hashes in constant time.

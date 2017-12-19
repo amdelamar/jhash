@@ -15,27 +15,7 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class HashTests {
-
-    @Test
-    public void builderPatternTest() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
-
-        char[] password = "Hello World!".toCharArray();
-        char[] pepper = "123".toCharArray();
-
-        String hash = Hash.password(password)
-                .pepper(pepper)
-                .algorithm(Type.PBKDF2_SHA512)
-                .factor(12)
-                .create();
-
-        boolean equal = Hash.password(password)
-                .pepper(pepper)
-                .verify(hash);
-
-        assertTrue(equal);
-    }
-
-    @Test
+    
     public void truncatedHashTest() throws NoSuchAlgorithmException, BadOperationException {
 
         char[] password = "Hello World!".toCharArray();
@@ -65,7 +45,7 @@ public class HashTests {
         } while (badHash.charAt(badHashLength - 3) != ':');
     }
 
-    @Test
+    
     public void verifyTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
 
         boolean failure = false;
@@ -91,7 +71,7 @@ public class HashTests {
         }
     }
 
-    @Test
+    
     public void breakTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
         char[] password = "foobar".toCharArray();
         // sha1

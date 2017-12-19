@@ -18,6 +18,7 @@ import com.amdelamar.jhash.util.HashUtils;
  */
 public class SCrypt {
 
+    public static final int DEFAULT_SALT_LENGTH = 24;
     public static final int COST = 131072;
     public static final int BLOCKSIZE = 8;
     public static final int PARALLEL = 1;

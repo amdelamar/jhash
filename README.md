@@ -89,15 +89,15 @@ String hash = Hash.password(password).pepper(pepper).algorithm(Type.BCRYPT).crea
 
 // scrypt + salt
 String hash = Hash.password(password).algorithm(Type.SCRYPT).create();
-// Example: scrypt:16384:79:24:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
+// Example: scrypt:16384:80:24:n::$s0$e0801$+nNFxTV9IHyN0cPKn/ORDA==$uPrBpPBQm7GgX+Vcc/8zuFNJZ+8XqDMylpLrOjv6X8w=
 
 // scrypt + salt + pepper
 String hash = Hash.password(password).pepper(pepper).algorithm(Type.SCRYPT).create();
-// Example: scrypt:16384:79:24:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
+// Example: scrypt:16384:80:24:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 
 // scrypt + salt + pepper + higher complexity factor
 String hash = Hash.password(password).pepper(pepper).algorithm(Type.SCRYPT).factor(1048576).create();
-// Example: scrypt:16384:79:24:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
+// Example: scrypt:16384:80:24:y::$s0$e0801$iHSTF05OtGCb3BiaFTZ3BA==$QANWx2qBzMzONIQEXUJTWnNX+3wynikSkGJdO9QvOx8=
 ```
 
 Now verify the passwords match. Even if you use a stronger algorithm, longer hash length, or increase the complexity factor, you don't need to provide that information when you `verify()` because the hash output has those values already. But if you used a pepper, you need to provide that when verifying.
@@ -131,8 +131,8 @@ pbkdf2sha512:64000:18:24:n:EbroMczUKuBRx5sy+hgFQyHmqk2iNtt5:Ml8pGxc3pYoh1z5fkk5r
 pbkdf2sha512:64000:18:24:y:v+tqRNA5B4cAxbZ4aUId/hvrR+FlS1d8:/R851fqvd7HItsSr0vJEupBf
 bcrypt:13:66:24:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway
 bcrypt:13:66:24:y::$2a$10$sdreyOHQW0XAGw.LMXbPyayMMGlMuU69htdw8KXjzk5xOrVTFj2aYLxre7y
-scrypt:131072:24:79:n::$s0$e0801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=
-scrypt:131072:24:79:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y=
+scrypt:131072:24:80:n::$s0$e0801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=
+scrypt:131072:24:80:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y=
 ```
 
 - `algorithm` is the name of the cryptographic hash function.

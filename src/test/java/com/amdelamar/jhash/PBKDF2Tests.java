@@ -16,80 +16,153 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 public class PBKDF2Tests {
 
     @Test
-    public void defaultTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void defaultTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // sha1 no pepper
-        String hash = Hash.create(password, Type.PBKDF2_SHA1);
-        assertTrue(Hash.verify(password, hash));
+        char[] hash = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA1)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .verify(hash));
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Type.PBKDF2_SHA256);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA256)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
 
         // sha512 no pepper
-        String hash3 = Hash.create(password, Type.PBKDF2_SHA512);
-        assertTrue(Hash.verify(password, pepper, hash3));
+        char[] hash3 = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA512)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash3));
 
         // sha1 + pepper
-        String hash4 = Hash.create(password, pepper, Type.PBKDF2_SHA1);
-        assertTrue(Hash.verify(password, pepper, hash4));
+        char[] hash4 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA1)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash4));
 
         // sha256 + pepper
-        String hash5 = Hash.create(password, pepper, Type.PBKDF2_SHA256);
-        assertTrue(Hash.verify(password, pepper, hash5));
+        char[] hash5 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA256)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash5));
 
         // sha512 + pepper
-        String hash6 = Hash.create(password, pepper, Type.PBKDF2_SHA512);
-        assertTrue(Hash.verify(password, pepper, hash6));
+        char[] hash6 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA512)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash6));
     }
 
     @Test
-    public void lowParameterTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
-        int parameter = 1000;
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        int factor = 1000;
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // sha1 no pepper
-        String hash = Hash.create(password, Type.PBKDF2_SHA1, parameter);
-        assertTrue(Hash.verify(password, hash));
+        char[] hash = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA1)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .verify(hash));
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Type.PBKDF2_SHA256, parameter);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA256)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
 
         // sha512 no pepper
-        String hash3 = Hash.create(password, Type.PBKDF2_SHA512, parameter);
-        assertTrue(Hash.verify(password, pepper, hash3));
+        char[] hash3 = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA512)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash3));
 
         // sha1 + pepper
-        String hash4 = Hash.create(password, pepper, Type.PBKDF2_SHA1, parameter);
-        assertTrue(Hash.verify(password, pepper, hash4));
+        char[] hash4 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA1)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash4));
 
         // sha256 + pepper
-        String hash5 = Hash.create(password, pepper, Type.PBKDF2_SHA256, parameter);
-        assertTrue(Hash.verify(password, pepper, hash5));
+        char[] hash5 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA256)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash5));
 
         // sha512 + pepper
-        String hash6 = Hash.create(password, pepper, Type.PBKDF2_SHA512, parameter);
-        assertTrue(Hash.verify(password, pepper, hash6));
+        char[] hash6 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA512)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash6));
     }
 
     @Test
-    public void highParameterTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void highFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
-        int parameter = 250000;
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        int factor = 250000;
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // sha256 no pepper
-        String hash2 = Hash.create(password, Type.PBKDF2_SHA256, parameter);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA256)
+                .factor(factor)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
     }
 }

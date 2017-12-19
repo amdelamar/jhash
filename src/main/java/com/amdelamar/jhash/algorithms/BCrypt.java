@@ -578,7 +578,7 @@ public class BCrypt {
         int rounds = Integer.parseInt(salt.substring(off, off + 2));
 
         String realSalt = salt.substring(off + 3, off + 32);
-        byte[] saltb = decodeBase64(realSalt, Hash.SALT_BYTE_SIZE);
+        byte[] saltb = decodeBase64(realSalt, Hash.DEFAULT_SALT_BYTE_SIZE);
         byte[] passwordb;
         try {
             passwordb = (password + (minor >= Minor.A.minor ? "\000" : "")).getBytes("UTF-8");

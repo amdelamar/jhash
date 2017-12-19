@@ -19,244 +19,135 @@ import com.amdelamar.jhash.util.HashUtils;
  */
 public class Hash {
 
-    // algorithms
+    /**
+     * Default hash byte length
+     */
+    public static final int DEFAULT_HASH_BYTE_SIZE = 18;
+
+    /**
+     * Default salt byte length
+     */
+    public static final int DEFAULT_SALT_BYTE_SIZE = 24;
+
+    /**
+     * Default algorithm type
+     */
+    public static final Type DEFAULT_ALGORITHM = Type.PBKDF2_SHA1;
+
+    /**
+     * Default factor
+     */
+    public static final int DEFAULT_FACTOR = 0;
+
+    // These constants define the encoding and may not be changed.
     private static final String SCRYPT = "scrypt";
     private static final String BCRYPT = "bcrypt";
     private static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     private static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
     private static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
-
-    // These constants may be changed without breaking existing hashes.
-    public static final int SALT_BYTE_SIZE = 24;
-    public static final int HASH_BYTE_SIZE = 18;
-
-    // These constants define the encoding and may not be changed.
-    private static final int HASH_SECTIONS = 6;
+    private static final int HASH_SECTIONS = 7;
     private static final int HASH_ALGORITHM_INDEX = 0;
     private static final int ITERATION_INDEX = 1;
     private static final int HASH_SIZE_INDEX = 2;
-    private static final int PEPPER_INDEX = 3;
-    private static final int SALT_INDEX = 4;
-    private static final int HASH_INDEX = 5;
+    private static final int SALT_SIZE_INDEX = 3;
+    private static final int PEPPER_INDEX = 4;
+    private static final int SALT_INDEX = 5;
+    private static final int HASH_INDEX = 6;
+
+    // Hash parameters
+    private char[] password;
+    private char[] pepper;
+    private int hashLength = DEFAULT_HASH_BYTE_SIZE;
+    private int saltLength = DEFAULT_SALT_BYTE_SIZE;
+    private int factor = DEFAULT_FACTOR;
+    private Type algorithm = DEFAULT_ALGORITHM;
 
     /**
-     * Creates a Hash from the password using PBKDF2 SHA1. Use this to create new user's passwords.
-     * Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @return A hash String
-     * @throws BadOperationException
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
+     * The password to be hashed. Note: Call create() when ready to output the hash value. 
+     * You can also specify optional parameters such as pepper, factor, algorithm, and more. 
+     * But this has to be done before you call create().
+     * @param char[] password
+     * @return Hash
      */
-    public static String create(String password)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), "".toCharArray(), Type.PBKDF2_SHA1, 0);
+    public static Hash password(char[] password) {
+        if (password == null || password.length < 1) {
+            throw new IllegalArgumentException("Password cannot be null or empty.");
+        }
+        Hash hash = new Hash();
+        hash.password = password;
+        return hash;
     }
 
     /**
-     * Creates a Hash from the given char array using PBKDF2 SHA1. Use this to create new user's
-     * passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @return A hash String
+     * Optional value for the application-specific pepper.
+     * @param char[] pepper
+     * @return Hash
+     * @see https://en.wikipedia.org/wiki/Pepper_(cryptography)
+     */
+    public Hash pepper(char[] pepper) {
+        if (pepper == null || pepper.length < 1) {
+            throw new IllegalArgumentException("Pepper cannot be null or empty.");
+        }
+        this.pepper = pepper;
+        return this;
+    }
+
+    /**
+     * Optional value for hash byte length. Default is 18.
+     * @param int hashLength
+     * @return Hash
+     */
+    public Hash hashLength(int hashLength) {
+        this.hashLength = hashLength;
+        return this;
+    }
+
+    /**
+     * Optional value for salt byte length. Default is 24.
+     * @param saltLength
+     * @return
+     */
+    public Hash saltLength(int saltLength) {
+        this.saltLength = saltLength;
+        return this;
+    }
+
+    /**
+     * Optional value for selecting hash algorithm. E.g. Type.PBKDF2_SHA512, Type.BCRYPT, 
+     * or Type.SCRYPT.
+     * Default is Type.PBKDF2_SHA1
+     * @param Type algorithm
+     * @return Hash
+     */
+    public Hash algorithm(Type algorithm) {
+        this.algorithm = algorithm;
+        return this;
+    }
+
+    /**
+     * Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set to 0 
+     * if you're unsure and it will use the default value for the given algorithm.
+     * @param int factor
+     * @return Hash
+     */
+    public Hash factor(int factor) {
+        this.factor = factor;
+        return this;
+    }
+
+    /**
+     * Creates a Hash from the given char array using the specified algorithm. Use this to 
+     * create new user's passwords. Or when they change their password.
+     * @return A String hash
      * @throws BadOperationException
      *             if one or more parameters are invalid
      * @throws NoSuchAlgorithmException
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static String create(char[] password)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password, "".toCharArray(), Type.PBKDF2_SHA1, 0);
-    }
-
-    /**
-     * Creates a Hash from the password using the specified algorithm. Use this to create new user's
-     * passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(String password, Type algorithm)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), "".toCharArray(), algorithm, 0);
-    }
-
-    /**
-     * Creates a Hash from the password using the specified algorithm. Use this to create new user's
-     * passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @param parameter
-     *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
-     *            to 0 if you're unsure and it will use the default value for the given algorithm.
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(String password, Type algorithm, int parameter)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), "".toCharArray(), algorithm, parameter);
-    }
-
-    /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to create
-     * new user's passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(char[] password, Type algorithm)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password, "".toCharArray(), algorithm, 0);
-    }
-
-    /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to create
-     * new user's passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @param parameter
-     *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
-     *            to 0 if you're unsure and it will use the default value for the given algorithm.
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(char[] password, Type algorithm, int parameter)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password, "".toCharArray(), algorithm, parameter);
-    }
-
-    /**
-     * Creates a Hash from the password using the specified algorithm. Use this to create new user's
-     * passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(String password, String pepper, Type algorithm)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), pepper.toCharArray(), algorithm, 0);
-    }
-
-    /**
-     * Creates a Hash from the password using the specified algorithm. Use this to create new user's
-     * passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @param parameter
-     *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
-     *            to 0 if you're unsure and it will use the default value for the given algorithm.
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(String password, String pepper, Type algorithm, int parameter)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password.toCharArray(), pepper.toCharArray(), algorithm, parameter);
-    }
-
-    /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to create
-     * new user's passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(char[] password, char[] pepper, Type algorithm)
-            throws BadOperationException, NoSuchAlgorithmException {
-        return create(password, pepper, algorithm, 0);
-    }
-
-    /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to create
-     * new user's passwords. Or when they change their password.
-     * 
-     * @param password
-     *            The password to be salted and hashed.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param algorithm
-     *            Expects an algorithm like Type.PBKDF2_SHA512 or Type.BCRYPT
-     * @param parameter
-     *            Optional value for iterations (pbdkf2), logrounds (bcrypt), or cost (scrypt). Set
-     *            to 0 if you're unsure and it will use the default value for the given algorithm.
-     * @return A hash String
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static String create(char[] password, char[] pepper, Type algorithm, int parameter)
-            throws BadOperationException, NoSuchAlgorithmException {
+    public String create() throws BadOperationException, NoSuchAlgorithmException {
         // Generate a random salt
-        byte[] salt = HashUtils.randomSalt(HASH_BYTE_SIZE);
+        byte[] salt = HashUtils.randomSalt(saltLength);
 
         // add pepper if not empty
         char isPeppered = 'n';
@@ -266,12 +157,11 @@ public class Hash {
             pepperPassword = (new String(pepper) + pepperPassword);
         }
 
-        if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256
-                || algorithm == Type.PBKDF2_SHA512) {
+        if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256 || algorithm == Type.PBKDF2_SHA512) {
 
-            if (parameter == 0) {
-                // default parameter
-                parameter = PBKDF2.ITERATIONS;
+            if (factor == 0) {
+                // default factor
+                factor = PBKDF2.ITERATIONS;
             }
 
             String alg = null;
@@ -284,12 +174,11 @@ public class Hash {
             }
 
             // Hash the password
-            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, parameter,
-                    HASH_BYTE_SIZE);
+            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
 
             // format for storage
-            String parts = parameter + ":" + hash.length + ":" + isPeppered + ":"
-                    + HashUtils.encodeBase64(salt) + ":" + HashUtils.encodeBase64(hash);
+            String parts = factor + ":" + hash.length + ":" + salt.length + ":" + isPeppered + ":" + HashUtils.encodeBase64(salt) + ":"
+                    + HashUtils.encodeBase64(hash);
 
             if (algorithm == Type.PBKDF2_SHA1) {
                 parts = "pbkdf2sha1:" + parts;
@@ -302,32 +191,30 @@ public class Hash {
             return parts;
         } else if (algorithm == Type.BCRYPT) {
 
-            if (parameter == 0) {
-                // default parameter
-                parameter = BCrypt.LOG2_ROUNDS;
+            if (factor == 0) {
+                // default factor
+                factor = BCrypt.LOG2_ROUNDS;
             }
 
             // Hash the password
-            String hash = BCrypt.create(pepperPassword, parameter);
+            String hash = BCrypt.create(pepperPassword, factor);
 
             // format for storage
-            String parts = BCRYPT + ":" + parameter + ":" + hash.length() + ":" + isPeppered + "::"
-                    + hash;
+            String parts = BCRYPT + ":" + factor + ":" + hash.length() + ":" + salt.length + ":" + isPeppered + "::" + hash;
 
             return parts;
         } else if (algorithm == Type.SCRYPT) {
 
-            if (parameter == 0) {
-                // default parameter
-                parameter = SCrypt.COST;
+            if (factor == 0) {
+                // default factor
+                factor = SCrypt.COST;
             }
 
             // Hash the password
-            String hash = SCrypt.create(pepperPassword, parameter);
+            String hash = SCrypt.create(pepperPassword, factor);
 
             // format for storage
-            String parts = SCRYPT + ":" + parameter + ":" + hash.length() + ":" + isPeppered + "::"
-                    + hash;
+            String parts = SCRYPT + ":" + factor + ":" + hash.length() + ":" + salt.length + ":" + isPeppered + "::" + hash;
 
             return parts;
         } else {
@@ -337,13 +224,12 @@ public class Hash {
     }
 
     /**
-     * Returns true if the string, once hashed, matches the expected hash. Use this to verify a user
-     * login. Take the entered password and compare it with the entire hash stored from before.
+     * Returns true if the password (and pepper) to be hashed matches the expected correctHash. 
+     * Use this to verify a user login. Note: you must provide a pepper before calling this method
+     * if you used a pepper to hash the correctHash from before.
      * 
-     * @param password
-     *            The password to be validated.
      * @param correctHash
-     *            The stored hash from before.
+     *            The stored hash from storage.
      * @return boolean true if matches
      * @throws BadOperationException
      *             if one or more parameters are invalid
@@ -353,110 +239,11 @@ public class Hash {
      *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public static boolean verify(String password, String correctHash)
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
-        return verify(password.toCharArray(), null, correctHash);
-    }
-
-    /**
-     * Returns true if the char array, once hashed, matches the expected hash. Use this to verify a
-     * user login. Take the entered password and compare it with the entire hash stored from before.
-     * 
-     * @param password
-     *            The password to be validated.
-     * @param correctHash
-     *            The stored hash from before.
-     * @return boolean true if matches
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws InvalidHashException
-     *             if the correctHash was missing parts or invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static boolean verify(char[] password, String correctHash)
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
-        return verify(password, null, correctHash);
-    }
-
-    /**
-     * Returns true if the char array, once hashed, matches the expected hash. Use this to verify a
-     * user login. Take the entered password and compare it with the entire hash stored from before.
-     * 
-     * @param password
-     *            The password to be validated.
-     * @param correctHash
-     *            The stored hash from before.
-     * @return boolean true if matches
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws InvalidHashException
-     *             if the correctHash was missing parts or invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static boolean verify(char[] password, char[] correctHash)
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
-        return verify(password, null, correctHash.toString());
-    }
-
-    /**
-     * Returns true if the string and
-     * <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>, once hashed,
-     * matches the expected hash. Use this to verify a user login. Take the entered password and
-     * compare it with the entire hash stored from before.
-     * 
-     * @param password
-     *            The password to be validated.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param correctHash
-     *            The stored hash from before.
-     * @return boolean true if matches
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws InvalidHashException
-     *             if the correctHash was missing parts or invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static boolean verify(String password, String pepper, String correctHash)
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
-        return verify(password.toCharArray(), pepper.toCharArray(), correctHash);
-    }
-
-    /**
-     * Returns true if the char array and
-     * <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>, once hashed,
-     * matches the expected hash. Use this to verify a user login. Take the entered password and
-     * compare it with the entire hash stored from before.
-     * 
-     * @param password
-     *            The password to be validated.
-     * @param pepper
-     *            The application-specific
-     *            <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
-     * @param correctHash
-     *            The stored hash from before.
-     * @return boolean true if matches
-     * @throws BadOperationException
-     *             if one or more parameters are invalid
-     * @throws InvalidHashException
-     *             if the correctHash was missing parts or invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
-     * @see https://en.wikipedia.org/wiki/Hash_function
-     */
-    public static boolean verify(char[] password, char[] pepper, String correctHash)
-            throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
+    public boolean verify(char[] correctHash) throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
         // Decode the hash into its parameters
-        String[] params = correctHash.split(":");
+        String[] params = new String(correctHash).split(":");
         if (params.length != HASH_SECTIONS) {
-            throw new InvalidHashException("Fields are missing from the correct hash.");
+            throw new InvalidHashException("Fields are missing from the correct hash. Double-check JHash vesrion and hash format.");
         }
 
         // validate parts
@@ -464,8 +251,7 @@ public class Hash {
         try {
             iterations = Integer.parseInt(params[ITERATION_INDEX]);
         } catch (NumberFormatException ex) {
-            throw new InvalidHashException("Could not parse the iteration count as an integer.",
-                    ex);
+            throw new InvalidHashException("Could not parse the iteration count as an integer.", ex);
         }
 
         if (iterations < 1) {
@@ -495,9 +281,21 @@ public class Hash {
             throw new InvalidHashException("Could not parse the hash size as an integer.", ex);
         }
 
+        int storedSaltSize = 0;
+        try {
+            storedSaltSize = Integer.parseInt(params[SALT_SIZE_INDEX]);
+        } catch (NumberFormatException ex) {
+            throw new InvalidHashException("Could not parse the salt size as an integer.", ex);
+        }
+        
+        if (storedSaltSize != saltLength ) {
+            throw new InvalidHashException("Salt length doesn't match stored salt length.");
+        }
+
         // verify algorithm
         String algorithm = params[HASH_ALGORITHM_INDEX];
-        if (algorithm.toLowerCase().startsWith("pbkdf2")) {
+        if (algorithm.toLowerCase()
+                .startsWith("pbkdf2")) {
 
             if (algorithm.equals("pbkdf2sha1")) {
                 algorithm = PBKDF2_HMACSHA1;
@@ -520,8 +318,7 @@ public class Hash {
 
             // Compute the hash of the provided string, using the same salt,
             // iteration count, and hash length
-            byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm,
-                    iterations, hash.length);
+            byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm, iterations, hash.length);
 
             // Compare the hashes in constant time.
             return HashUtils.slowEquals(hash, testHash);

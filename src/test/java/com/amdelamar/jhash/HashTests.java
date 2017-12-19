@@ -17,11 +17,31 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 public class HashTests {
 
     @Test
+    public void builderPatternTest() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+
+        char[] password = "Hello World!".toCharArray();
+        char[] pepper = "123".toCharArray();
+
+        String hash = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.PBKDF2_SHA512)
+                .factor(12)
+                .create();
+
+        boolean equal = Hash.password(password)
+                .pepper(pepper)
+                .verify(hash.toCharArray());
+
+        assertTrue(equal);
+    }
+
+    @Test
     public void truncatedHashTest() throws NoSuchAlgorithmException, BadOperationException {
-        
-        String password = "Hello World!";
+
+        char[] password = "Hello World!".toCharArray();
         String badHash = "";
-        String goodHash = Hash.create(password);
+        String goodHash = Hash.password(password)
+                .create();
         int badHashLength = goodHash.length();
 
         do {
@@ -31,7 +51,8 @@ public class HashTests {
 
             boolean raised = false;
             try {
-                Hash.verify(password, badHash);
+                Hash.password(password)
+                        .verify(badHash.toCharArray());
             } catch (Exception e) {
                 // this is good
                 raised = true;
@@ -45,22 +66,25 @@ public class HashTests {
     }
 
     @Test
-    public void verifyTests()
-            throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
+    public void verifyTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
 
         boolean failure = false;
         for (int i = 0; i < 10; i++) {
-            String password = "" + i;
-            String hash = Hash.create(password);
-            String secondHash = Hash.create(password);
+            String password = "000" + i;
+            String hash = Hash.password(password.toCharArray())
+                    .create();
+            String secondHash = Hash.password(password.toCharArray())
+                    .create();
             if (hash.equals(secondHash)) {
                 failure = true;
             }
-            String wrongPassword = "" + (i + 1);
-            if (Hash.verify(wrongPassword, hash)) {
+            String wrongPassword = "000" + (i + 1);
+            if (Hash.password(wrongPassword.toCharArray())
+                    .verify(hash.toCharArray())) {
                 failure = true;
             }
-            if (!Hash.verify(password, hash)) {
+            if (!Hash.password(password.toCharArray())
+                    .verify(hash.toCharArray())) {
                 failure = true;
             }
             assertFalse(failure);
@@ -68,29 +92,35 @@ public class HashTests {
     }
 
     @Test
-    public void breakTests()
-            throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
+    public void breakTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
+        char[] password = "foobar".toCharArray();
         // sha1
-        String hash = Hash.create("foobar");
+        String hash = Hash.password(password)
+                .create();
         // accidentally change algorithms
         hash = hash.replaceFirst("pbkdf2sha1:", "pbkdf2sha256:");
-        assertFalse(Hash.verify("foobar", hash));
+        assertFalse(Hash.password(password)
+                .verify(hash.toCharArray()));
 
         // sha2
-        hash = Hash.create("foobar", Type.PBKDF2_SHA256);
-        assertTrue(Hash.verify("foobar", hash));
+        hash = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA256)
+                .create();
+        assertTrue(Hash.password(password)
+                .verify(hash.toCharArray()));
     }
-    
+
     @Test
     public void nullTests() {
         // null algorithm type
         boolean caught = false;
         try {
-            Hash.create("foobar", null);
-        } catch (NoSuchAlgorithmException e) {
+            Hash.password(null)
+                    .create();
+        } catch (IllegalArgumentException e) {
             // the error we expect
             caught = true;
-        } catch (BadOperationException e) {
+        } catch (Exception e) {
             // not good error
             caught = false;
         }

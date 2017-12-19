@@ -16,48 +16,74 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 public class SCryptTests {
 
     @Test
-    public void defaultTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void defaultTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // scrypt no pepper
-        String hash = Hash.create(password, Type.SCRYPT);
-        assertTrue(Hash.verify(password, hash));
+        char[] hash = Hash.password(password)
+                .algorithm(Type.SCRYPT)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .verify(hash));
 
         // scrypt + pepper
-        String hash2 = Hash.create(password, pepper, Type.SCRYPT);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.SCRYPT)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
     }
 
     @Test
-    public void lowParameterTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
         int parameter = 16384;
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // scrypt no pepper
-        String hash = Hash.create(password, Type.SCRYPT, parameter);
-        assertTrue(Hash.verify(password, hash));
+        char[] hash = Hash.password(password)
+                .algorithm(Type.SCRYPT)
+                .factor(parameter)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .verify(hash));
 
         // scrypt + pepper
-        String hash2 = Hash.create(password, pepper, Type.SCRYPT, parameter);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.SCRYPT)
+                .factor(parameter)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
     }
 
     @Test
-    public void highParameterTests()
-            throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void highFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
 
         int parameter = 262144;
-        String pepper = "ZfMifTCEvjyDGIqv";
-        String password = "Hello&77World!";
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
 
         // scrypt + pepper
-        String hash2 = Hash.create(password, pepper, Type.SCRYPT, parameter);
-        assertTrue(Hash.verify(password, pepper, hash2));
+        char[] hash2 = Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.SCRYPT)
+                .factor(parameter)
+                .create()
+                .toCharArray();
+        assertTrue(Hash.password(password)
+                .pepper(pepper)
+                .verify(hash2));
     }
 }

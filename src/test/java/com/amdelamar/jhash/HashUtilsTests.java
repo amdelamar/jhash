@@ -23,10 +23,15 @@ public class HashUtilsTests {
         SecureRandom sr = new SecureRandom();
         sr.setSeed(123456789l);
 
-        String s1 = new String(HashUtils.randomSalt());
-        String s2 = new String(HashUtils.randomSalt(24));
-        String s3 = new String(HashUtils.randomSalt(sr));
-        String s4 = new String(HashUtils.randomSalt(sr, 24));
+        String s1 = HashUtils.encodeBase64(HashUtils.randomSalt());
+        String s2 = HashUtils.encodeBase64(HashUtils.randomSalt(24));
+        String s3 = HashUtils.encodeBase64(HashUtils.randomSalt(sr));
+        String s4 = HashUtils.encodeBase64(HashUtils.randomSalt(sr, 24));
+
+        System.out.println(s1);
+        System.out.println(s2);
+        System.out.println(s3);
+        System.out.println(s4);
 
         assertNotNull(s1);
         assertNotNull(s2);
@@ -39,11 +44,6 @@ public class HashUtilsTests {
         assertNotEquals(s2, s3);
         assertNotEquals(s2, s4);
         assertNotEquals(s3, s4);
-
-        assertEquals(s1.length(), 24);
-        assertEquals(s2.length(), 24);
-        assertEquals(s3.length(), 24);
-        assertEquals(s4.length(), 24);
     }
 
     @Test

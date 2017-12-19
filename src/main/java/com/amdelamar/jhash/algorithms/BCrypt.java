@@ -13,7 +13,7 @@ import com.amdelamar.jhash.util.HashUtils;
  */
 public class BCrypt {
 
-    public static final int DEFAULT_SALT_LENGTH = 24;
+    public static final int DEFAULT_SALT_LENGTH = 16;
     public static final int LOG2_ROUNDS = 13;
     public static final int BLOWFISH_ROUNDS = 16;
 

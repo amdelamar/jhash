@@ -9,14 +9,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class BCryptTests {
 
     @Test
-    public void defaultTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void defaultTests() throws InvalidHashException {
 
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
         char[] password = "Hello&77World!".toCharArray();
@@ -37,9 +36,9 @@ public class BCryptTests {
                 .pepper(pepper)
                 .verify(hash2));
     }
-    
+
     @Test
-    public void saltLengthTests() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+    public void saltLengthTests() throws InvalidHashException {
 
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
         char[] password = "Hello&77World!".toCharArray();
@@ -56,7 +55,7 @@ public class BCryptTests {
     }
 
     @Test
-    public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void lowFactorTests() throws InvalidHashException {
 
         int parameter = 10;
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
@@ -82,7 +81,7 @@ public class BCryptTests {
     }
 
     @Test
-    public void highFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void highFactorTests() throws InvalidHashException {
 
         int parameter = 14;
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();

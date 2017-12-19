@@ -3,20 +3,17 @@ package com.amdelamar.jhash;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class HashTests {
-    
-    public void truncatedHashTest() throws NoSuchAlgorithmException, BadOperationException {
+
+    public void truncatedHashTest() {
 
         char[] password = "Hello World!".toCharArray();
         String badHash = "";
@@ -45,8 +42,7 @@ public class HashTests {
         } while (badHash.charAt(badHashLength - 3) != ':');
     }
 
-    
-    public void verifyTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
+    public void verifyTests() throws InvalidHashException {
 
         boolean failure = false;
         for (int i = 0; i < 10; i++) {
@@ -71,8 +67,7 @@ public class HashTests {
         }
     }
 
-    
-    public void breakTests() throws InvalidHashException, BadOperationException, NoSuchAlgorithmException {
+    public void breakTests() throws InvalidHashException {
         char[] password = "foobar".toCharArray();
         // sha1
         String hash = Hash.password(password)

@@ -1,12 +1,9 @@
 package com.amdelamar.jhash;
 
-import java.security.NoSuchAlgorithmException;
-
 import com.amdelamar.jhash.algorithms.BCrypt;
 import com.amdelamar.jhash.algorithms.PBKDF2;
 import com.amdelamar.jhash.algorithms.SCrypt;
 import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 import com.amdelamar.jhash.util.HashUtils;
 
@@ -40,7 +37,7 @@ public class Hash {
     // Hash parameters with defaults
     private char[] password;
     private char[] pepper;
-    private int hashLength = 18;
+    private int hashLength = 0;
     private int saltLength = 0;
     private int factor = 0;
     private Type algorithm = Type.PBKDF2_SHA1;
@@ -51,6 +48,7 @@ public class Hash {
      * But this has to be done before you call create().
      * @param char[] password
      * @return Hash
+     * @throws IllegalArgumentException if password is null or empty
      */
     public static Hash password(char[] password) {
         if (password == null || password.length < 1) {
@@ -68,9 +66,6 @@ public class Hash {
      * @see https://en.wikipedia.org/wiki/Pepper_(cryptography)
      */
     public Hash pepper(char[] pepper) {
-        if (pepper == null || pepper.length < 1) {
-            throw new IllegalArgumentException("Pepper cannot be null or empty.");
-        }
         this.pepper = pepper;
         return this;
     }
@@ -122,13 +117,11 @@ public class Hash {
      * Creates a Hash from the given char array using the specified algorithm. Use this to 
      * create new user's passwords. Or when they change their password.
      * @return A String hash
-     * @throws BadOperationException
+     * @throws IllegalArgumentException
      *             if one or more parameters are invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public String create() throws BadOperationException, NoSuchAlgorithmException {
+    public String create() throws IllegalArgumentException {
 
         // add pepper if not empty
         char isPeppered = 'n';
@@ -139,11 +132,6 @@ public class Hash {
         }
 
         if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256 || algorithm == Type.PBKDF2_SHA512) {
-
-            if (factor <= 0) {
-                // default factor
-                factor = PBKDF2.ITERATIONS;
-            }
 
             String alg = null;
             if (algorithm == Type.PBKDF2_SHA1) {
@@ -156,7 +144,12 @@ public class Hash {
             
             if(saltLength <= 0) {
                 // default salt length
-                saltLength = 24;
+                saltLength = PBKDF2.DEFAULT_SALT_LENGTH;
+            }
+            
+            if (factor <= 0) {
+                // default factor
+                factor = PBKDF2.ITERATIONS;
             }
             
             // Generate a random salt
@@ -196,7 +189,7 @@ public class Hash {
             
             if(saltLength <= 0) {
                 // default salt length
-                saltLength = 16;
+                saltLength = BCrypt.DEFAULT_SALT_LENGTH;
             }
 
             // Hash the password
@@ -225,11 +218,11 @@ public class Hash {
             
             if(saltLength <= 0) {
                 // default salt length
-                saltLength = 24;
+                saltLength = SCrypt.DEFAULT_SALT_LENGTH;
             }
 
             // Hash the password
-            String hash = SCrypt.create(pepperPassword, factor);
+            String hash = SCrypt.create(pepperPassword, saltLength, factor);
 
             // format for storage
             StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
@@ -247,7 +240,7 @@ public class Hash {
 
         } else {
             // unrecognized algorithm
-            throw new NoSuchAlgorithmException("Unsupported algorithm type. Expected Type.BCRYPT or other.");
+            throw new IllegalArgumentException("Unsupported algorithm type. Expected Type.BCRYPT, Type.SCRIPT, or other Type enum.");
         }
     }
 
@@ -259,15 +252,13 @@ public class Hash {
      * @param correctHash
      *            The stored hash from storage.
      * @return boolean true if matches
-     * @throws BadOperationException
+     * @throws IllegalArgumentException
      *             if one or more parameters are invalid
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
-     * @throws NoSuchAlgorithmException
-     *             if algorithm is not supported
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
-    public boolean verify(String correctHash) throws NoSuchAlgorithmException, InvalidHashException, BadOperationException {
+    public boolean verify(String correctHash) throws IllegalArgumentException, InvalidHashException {
         // Decode the hash into its parameters
         String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
@@ -380,7 +371,7 @@ public class Hash {
             return SCrypt.verify(pepperPassword, new String(hash));
         } else {
             // unrecognized algorithm
-            throw new NoSuchAlgorithmException("Unsupported algorithm type.");
+            throw new IllegalArgumentException("Unsupported algorithm type: "+algorithm);
         }
     }
 

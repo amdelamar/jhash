@@ -2,7 +2,6 @@ package com.amdelamar.jhash.algorithms;
 
 import java.io.UnsupportedEncodingException;
 
-import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.util.HashUtils;
 
 /**
@@ -167,13 +166,13 @@ public class BCrypt {
      * @param len
      *            the number of bytes to encode
      * @return base64-encoded string
-     * @exception BadOperationException
+     * @exception IllegalArgumentException
      *                if the length is invalid
      */
-    private static String encodeBase64(byte[] array, int len) throws BadOperationException {
+    private static String encodeBase64(byte[] array, int len) throws IllegalArgumentException {
 
         if (len <= 0 || len > array.length) {
-            throw new BadOperationException("Invalid length");
+            throw new IllegalArgumentException("Invalid length");
         }
 
         StringBuffer rs = new StringBuffer();
@@ -228,13 +227,13 @@ public class BCrypt {
      * @param maxolen
      *            the maximum number of bytes to decode
      * @return an array containing the decoded bytes
-     * @throws BadOperationException
+     * @throws IllegalArgumentException
      *             if maxolen is invalid
      */
-    private static byte[] decodeBase64(String string, int maxolen) throws BadOperationException {
+    private static byte[] decodeBase64(String string, int maxolen) throws IllegalArgumentException {
 
         if (maxolen <= 0) {
-            throw new BadOperationException("Invalid maxolen");
+            throw new IllegalArgumentException("Invalid maxolen");
         }
 
         StringBuffer sb = new StringBuffer();
@@ -411,13 +410,13 @@ public class BCrypt {
      * @param cdata
      *            the plaintext to encrypt
      * @return an array containing the binary hashed password
-     * @throws BadOperationException
+     * @throws IllegalArgumentException
      *             if log rounds is a bad value
      */
-    private static byte[] bcrypt(byte[] password, byte[] salt, int log_rounds, int[] cdata) throws BadOperationException {
+    private static byte[] bcrypt(byte[] password, byte[] salt, int log_rounds, int[] cdata) throws IllegalArgumentException {
 
         if (log_rounds < 4 || log_rounds > 30) {
-            throw new BadOperationException("Bad number of rounds");
+            throw new IllegalArgumentException("Bad number of rounds");
         }
         int rounds = 1 << log_rounds;
         // if (salt.length != Hash.SALT_BYTE_SIZE)
@@ -460,17 +459,17 @@ public class BCrypt {
      * @param iterations
      *            the log rounds (e.g. 2^10)
      * @return the hashed password
-     * @throws BadOperationException
+     * @throws IllegalArgumentException
      *             if invalid salt or parameters
      */
-    public static String create(String password, String hash, int saltLength, int iterations) throws BadOperationException {
+    public static String create(String password, String hash, int saltLength, int iterations) throws IllegalArgumentException {
 
         if (password == null || password.isEmpty()) {
-            throw new BadOperationException("Password cannot be null or empty!");
+            throw new IllegalArgumentException("Password cannot be null or empty!");
         }
         if (password.length() > 72) {
             // 72 character password limit for bcrypt
-            throw new BadOperationException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
+            throw new IllegalArgumentException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
         }
 
         // defaults
@@ -492,21 +491,21 @@ public class BCrypt {
 
         // validate salt version
         if (hash.charAt(0) != '$' || hash.charAt(1) != '2') {
-            throw new BadOperationException("Invalid salt version");
+            throw new IllegalArgumentException("Invalid salt version");
         }
         if (hash.charAt(2) == '$') {
             off = 3;
         } else {
             minor = hash.charAt(2);
             if (minor != Minor.A.minor || hash.charAt(3) != '$') {
-                throw new BadOperationException("Invalid salt revision");
+                throw new IllegalArgumentException("Invalid salt revision");
             }
             off = 4;
         }
 
         // Extract number of rounds
         if (hash.charAt(off + 2) > '$') {
-            throw new BadOperationException("Missing salt rounds");
+            throw new IllegalArgumentException("Missing salt rounds");
         }
         int rounds = Integer.parseInt(hash.substring(off, off + 2));
 
@@ -531,7 +530,7 @@ public class BCrypt {
             rs.append("0");
         }
         if (rounds > 30) {
-            throw new BadOperationException("rounds exceeds maximum (30)");
+            throw new IllegalArgumentException("rounds exceeds maximum (30)");
         }
         rs.append(Integer.toString(rounds));
         rs.append("$");

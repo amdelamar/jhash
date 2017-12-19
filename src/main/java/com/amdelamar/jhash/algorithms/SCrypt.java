@@ -295,7 +295,7 @@ public class SCrypt {
 
             long params = Long.parseLong(parts[2], 16);
             byte[] salt = HashUtils.decodeBase64(parts[3]);
-            byte[] derived0 = HashUtils.decodeBase64(parts[4]);
+            byte[] derived = HashUtils.decodeBase64(parts[4]);
 
             int N = (int) Math.pow(2, params >> 16 & 0xffff);
             int r = (int) params >> 8 & 0xff;
@@ -303,11 +303,11 @@ public class SCrypt {
 
             byte[] derived1 = SCrypt.scrypt(password.getBytes("UTF-8"), salt, N, r, p, 32);
 
-            if (derived0.length != derived1.length) return false;
+            if (derived.length != derived1.length) return false;
 
             int result = 0;
-            for (int i = 0; i < derived0.length; i++) {
-                result |= derived0[i] ^ derived1[i];
+            for (int i = 0; i < derived.length; i++) {
+                result |= derived[i] ^ derived1[i];
             }
             return result == 0;
         } catch (UnsupportedEncodingException e) {
@@ -322,29 +322,17 @@ public class SCrypt {
      * {@link SCryptUtil}.
      *
      * @param password
-     *            Password. *
-     * @return The hashed password.
-     * @throws IllegalStateException
-     *             If JVM doesn't support necessary functions.
-     */
-    public static String create(String password) throws IllegalStateException {
-        return create(password, COST, BLOCKSIZE, PARALLEL);
-    }
-
-    /**
-     * Hash the supplied plaintext password and generate output in the format described in
-     * {@link SCryptUtil}.
-     *
-     * @param password
-     *            Password. *
+     *            Password.
+     * @param saltLength
+     *            The salt byte length.
      * @param cost
      *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
      * @return The hashed password.
      * @throws IllegalStateException
      *             If JVM doesn't support necessary functions.
      */
-    public static String create(String password, int cost) throws IllegalStateException {
-        return create(password, cost, BLOCKSIZE, PARALLEL);
+    public static String create(String password, int saltLength, int cost) throws IllegalStateException {
+        return create(password, saltLength, cost, BLOCKSIZE, PARALLEL);
     }
 
     /**
@@ -353,6 +341,8 @@ public class SCrypt {
      *
      * @param password
      *            Password.
+     * @param saltLength
+     *            The salt byte length.
      * @param cost
      *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
      * @param blockSize
@@ -364,9 +354,9 @@ public class SCrypt {
      * @throws IllegalStateException
      *             If JVM doesn't support necessary functions.
      */
-    public static String create(String password, int cost, int blockSize, int parallel) throws IllegalStateException {
+    private static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
         try {
-            byte[] salt = HashUtils.randomSalt(16);
+            byte[] salt = HashUtils.randomSalt(saltLength);
 
             byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 

@@ -2,21 +2,18 @@ package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertTrue;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.BadOperationException;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class PBKDF2Tests {
 
     @Test
-    public void defaultTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void defaultTests() throws InvalidHashException {
 
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
         char[] password = "Hello&77World!".toCharArray();
@@ -71,9 +68,9 @@ public class PBKDF2Tests {
                 .pepper(pepper)
                 .verify(hash6));
     }
-    
+
     @Test
-    public void saltLengthTests() throws NoSuchAlgorithmException, BadOperationException, InvalidHashException {
+    public void saltLengthTests() throws InvalidHashException {
 
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
         char[] password = "Hello&77World!".toCharArray();
@@ -90,7 +87,7 @@ public class PBKDF2Tests {
     }
 
     @Test
-    public void lowFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void lowFactorTests() throws InvalidHashException {
 
         int factor = 1000;
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
@@ -154,7 +151,7 @@ public class PBKDF2Tests {
     }
 
     @Test
-    public void highFactorTests() throws BadOperationException, InvalidHashException, NoSuchAlgorithmException {
+    public void highFactorTests() throws InvalidHashException {
 
         int factor = 250000;
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();

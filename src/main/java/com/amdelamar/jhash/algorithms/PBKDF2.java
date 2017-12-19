@@ -6,8 +6,6 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-import com.amdelamar.jhash.exception.BadOperationException;
-
 /**
  * PBKDF2 implements the password-based key derivative function 2, for password hashing. It follows
  * the PKCS public key cryptography standards #5 v2.0. (RFC 2898).
@@ -18,6 +16,8 @@ import com.amdelamar.jhash.exception.BadOperationException;
  */
 public class PBKDF2 {
 
+    public static final int DEFAULT_HASH_LENGTH = 18;
+    public static final int DEFAULT_SALT_LENGTH = 24;
     public static final int ITERATIONS = 64000;
 
     /**
@@ -32,19 +32,21 @@ public class PBKDF2 {
      *            - Expects Hash.PBKDF2_HMACSHA1, SHA256, or SHA512
      * @param iterations
      *            - The number of iterations of the algorithm.
-     * @param bytes
+     * @param hashSize
      *            - The length of the hash in bytes.
      * @return A hash String
-     * @throws NoSuchAlgorithmException
-     *             if algorithm not supported
-     * @throws BadOperationException
-     *             if key spec is invalid
+     * @throws IllegalArgumentException
+     *             if one or more parameters are invalid
      */
-    public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations, int bytes)
-            throws NoSuchAlgorithmException, BadOperationException {
+    public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations, int hashSize)
+            throws IllegalArgumentException {
 
         if (password == null || password.length == 0) {
-            throw new BadOperationException("Password cannot be null or empty!");
+            throw new IllegalArgumentException("Password cannot be null or empty!");
+        }
+
+        if (hashSize <= 0) {
+            hashSize = DEFAULT_HASH_LENGTH;
         }
 
         // strengthen weak choices from users
@@ -53,14 +55,15 @@ public class PBKDF2 {
         }
 
         try {
-            PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, bytes * 8);
+            // hash
+            PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, hashSize * 8);
             SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
             return skf.generateSecret(spec)
                     .getEncoded();
         } catch (NoSuchAlgorithmException ex) {
-            throw new NoSuchAlgorithmException("Hash algorithm not supported.", ex);
+            throw new IllegalArgumentException("Hash algorithm not supported.", ex);
         } catch (InvalidKeySpecException ex) {
-            throw new BadOperationException("Invalid key spec.", ex);
+            throw new IllegalArgumentException("Invalid key spec.", ex);
         }
     }
 }

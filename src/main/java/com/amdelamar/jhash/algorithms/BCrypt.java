@@ -14,22 +14,8 @@ import com.amdelamar.jhash.util.HashUtils;
 public class BCrypt {
 
     public static final int DEFAULT_SALT_LENGTH = 16;
-    public static final int LOG2_ROUNDS = 13;
+    public static final int DEFAULT_LOG2_ROUNDS = 13;
     public static final int BLOWFISH_ROUNDS = 16;
-
-    // Different types of compatible blowfish minors
-    private enum Minor {
-        A('a'), // "2a" - some implementations suffered from a very rare security flaw. current
-        // default for compatibility purposes.
-        Y('y'); // "2y" - format specific to the crypt_blowfish BCrypt implementation, identical to
-                // "2a" in all but name.
-
-        private final char minor;
-
-        Minor(char minor) {
-            this.minor = minor;
-        }
-    }
 
     // Initial contents of key schedule
     private static final int[] P_ARRAY = { 0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
@@ -419,8 +405,6 @@ public class BCrypt {
             throw new IllegalArgumentException("Bad number of rounds");
         }
         int rounds = 1 << log_rounds;
-        // if (salt.length != Hash.SALT_BYTE_SIZE)
-        // throw new InvalidHashException("Bad salt length");
 
         initializeKey();
         enhancedKeySchedule(salt, password);
@@ -437,14 +421,14 @@ public class BCrypt {
             }
         }
 
-        byte[] ret = new byte[clen * 4];
+        byte[] hash = new byte[clen * 4];
         for (int i = 0, j = 0; i < clen; i++) {
-            ret[j++] = (byte) ((cdata[i] >> 24) & 0xff);
-            ret[j++] = (byte) ((cdata[i] >> 16) & 0xff);
-            ret[j++] = (byte) ((cdata[i] >> 8) & 0xff);
-            ret[j++] = (byte) (cdata[i] & 0xff);
+            hash[j++] = (byte) ((cdata[i] >> 24) & 0xff);
+            hash[j++] = (byte) ((cdata[i] >> 16) & 0xff);
+            hash[j++] = (byte) ((cdata[i] >> 8) & 0xff);
+            hash[j++] = (byte) (cdata[i] & 0xff);
         }
-        return ret;
+        return hash;
     }
 
     /**
@@ -477,7 +461,7 @@ public class BCrypt {
             saltLength = DEFAULT_SALT_LENGTH;
         }
         if (iterations <= 0) {
-            iterations = LOG2_ROUNDS;
+            iterations = DEFAULT_LOG2_ROUNDS;
         }
 
         // we are creating a new hash
@@ -496,8 +480,11 @@ public class BCrypt {
         if (hash.charAt(2) == '$') {
             off = 3;
         } else {
+            // Different types of compatible blowfish minors.
+            // "2a" - some implementations suffered from a very rare security flaw. current default for compatibility purposes.
+            // "2y" - format specific to the crypt_blowfish BCrypt implementation, identical to "2a" in all but name.
             minor = hash.charAt(2);
-            if (minor != Minor.A.minor || hash.charAt(3) != '$') {
+            if (minor != 'a' || hash.charAt(3) != '$') {
                 throw new IllegalArgumentException("Invalid salt revision");
             }
             off = 4;
@@ -515,14 +502,14 @@ public class BCrypt {
         byte[] saltb = decodeBase64(realSalt, realSalt.length());
         byte[] passwordb;
         try {
-            passwordb = (password + (minor >= Minor.A.minor ? "\000" : "")).getBytes("UTF-8");
+            passwordb = (password + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
             throw new AssertionError("UTF-8 is not supported");
         }
 
         StringBuffer rs = new StringBuffer();
         rs.append("$2");
-        if (minor >= Minor.A.minor) {
+        if (minor >= 'a') {
             rs.append(minor);
         }
         rs.append("$");
@@ -548,7 +535,7 @@ public class BCrypt {
      * @param rounds the log rounds
      * @return an encoded salt value
      */
-    public static String createSalt(int length, int rounds) {
+    private static String createSalt(int length, int rounds) {
         try {
             byte[] salt = HashUtils.randomSalt(length);
             StringBuffer sb = new StringBuffer();

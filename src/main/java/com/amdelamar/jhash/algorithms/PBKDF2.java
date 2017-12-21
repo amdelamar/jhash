@@ -18,7 +18,7 @@ public class PBKDF2 {
 
     public static final int DEFAULT_HASH_LENGTH = 18;
     public static final int DEFAULT_SALT_LENGTH = 24;
-    public static final int ITERATIONS = 64000;
+    public static final int DEFAULT_ITERATIONS = 64000;
 
     /**
      * Creates a Hash from the given char array using the specified algorithm. Use this to create
@@ -41,17 +41,9 @@ public class PBKDF2 {
     public static byte[] create(char[] password, byte[] salt, String algorithm, int iterations, int hashSize)
             throws IllegalArgumentException {
 
-        if (password == null || password.length == 0) {
-            throw new IllegalArgumentException("Password cannot be null or empty!");
-        }
-
-        if (hashSize <= 0) {
-            hashSize = DEFAULT_HASH_LENGTH;
-        }
-
-        // strengthen weak choices from users
         if (iterations < 1000) {
-            iterations = ITERATIONS;
+            // strengthen weak choices from users
+            iterations = DEFAULT_ITERATIONS;
         }
 
         try {

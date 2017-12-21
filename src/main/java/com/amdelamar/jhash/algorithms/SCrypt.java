@@ -103,19 +103,19 @@ public class SCrypt {
 
         for (int i = 0; i < cpu; i++) {
             System.arraycopy(xy, xi, v1, i * (128 * round), 128 * round);
-            blockmix_salsa8(xy, xi, yi, round);
+            blockMixSalsa8(xy, xi, yi, round);
         }
 
         for (int i = 0; i < cpu; i++) {
             int j = integerify(xy, xi, round) & (cpu - 1);
             blockxor(v1, j * (128 * round), xy, xi, 128 * round);
-            blockmix_salsa8(xy, xi, yi, round);
+            blockMixSalsa8(xy, xi, yi, round);
         }
 
         System.arraycopy(xy, xi, b1, bi, 128 * round);
     }
 
-    private static void blockmix_salsa8(byte[] by, int bi, int yi, int round) {
+    private static void blockMixSalsa8(byte[] by, int bi, int yi, int round) {
 
         byte[] x1 = new byte[64];
         System.arraycopy(by, bi + (2 * round - 1) * 64, x1, 0, 64);
@@ -206,9 +206,7 @@ public class SCrypt {
     }
 
     private static int integerify(byte[] b1, int bi, int round) {
-
         bi += (2 * round - 1) * 64;
-
         int n = (b1[bi + 0] & 0xff) << 0;
         n |= (b1[bi + 1] & 0xff) << 8;
         n |= (b1[bi + 2] & 0xff) << 16;
@@ -297,19 +295,19 @@ public class SCrypt {
             byte[] salt = HashUtils.decodeBase64(parts[3]);
             byte[] derived = HashUtils.decodeBase64(parts[4]);
 
-            int N = (int) Math.pow(2, params >> 16 & 0xffff);
-            int r = (int) params >> 8 & 0xff;
-            int p = (int) params & 0xff;
+            int cost = (int) Math.pow(2, params >> 16 & 0xffff);
+            int blockSize = (int) params >> 8 & 0xff;
+            int parallel = (int) params & 0xff;
 
-            byte[] derived1 = SCrypt.scrypt(password.getBytes("UTF-8"), salt, N, r, p, 32);
+            byte[] derivedPwd = SCrypt.scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 
-            if (derived.length != derived1.length) return false;
-
-            int result = 0;
-            for (int i = 0; i < derived.length; i++) {
-                result |= derived[i] ^ derived1[i];
+            if (derived.length != derivedPwd.length) {
+                return false;
             }
-            return result == 0;
+
+            // slow equals
+            return HashUtils.slowEquals(derived, derivedPwd);
+
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException("JVM doesn't support UTF-8?");
         } catch (GeneralSecurityException e) {

@@ -134,12 +134,21 @@ public class Hash {
         if (algorithm == Type.PBKDF2_SHA1 || algorithm == Type.PBKDF2_SHA256 || algorithm == Type.PBKDF2_SHA512) {
 
             String alg = null;
+            String alg2 = null;
             if (algorithm == Type.PBKDF2_SHA1) {
                 alg = Hash.PBKDF2_HMACSHA1;
+                alg2 = "pbkdf2sha1";
             } else if (algorithm == Type.PBKDF2_SHA256) {
                 alg = Hash.PBKDF2_HMACSHA256;
+                alg2 = "pbkdf2sha256";
             } else if (algorithm == Type.PBKDF2_SHA512) {
                 alg = Hash.PBKDF2_HMACSHA512;
+                alg2 = "pbkdf2sha512";
+            }
+
+            if (hashLength <= 0) {
+                // default hash length
+                hashLength = PBKDF2.DEFAULT_HASH_LENGTH;
             }
 
             if (saltLength <= 0) {
@@ -149,7 +158,7 @@ public class Hash {
 
             if (factor <= 0) {
                 // default factor
-                factor = PBKDF2.ITERATIONS;
+                factor = PBKDF2.DEFAULT_ITERATIONS;
             }
 
             // Generate a random salt
@@ -159,12 +168,6 @@ public class Hash {
             byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
 
             // format for storage
-            String alg2 = "pbkdf2sha1";
-            if (algorithm == Type.PBKDF2_SHA256) {
-                alg2 = "pbkdf2sha256";
-            } else if (algorithm == Type.PBKDF2_SHA512) {
-                alg2 = "pbkdf2sha512";
-            }
             StringBuilder finalHash = new StringBuilder(alg2).append(":")
                     .append(factor)
                     .append(":")
@@ -184,7 +187,7 @@ public class Hash {
 
             if (factor <= 0) {
                 // default factor
-                factor = BCrypt.LOG2_ROUNDS;
+                factor = BCrypt.DEFAULT_LOG2_ROUNDS;
             }
 
             if (saltLength <= 0) {
@@ -257,6 +260,7 @@ public class Hash {
      * @see https://en.wikipedia.org/wiki/Hash_function
      */
     public boolean verify(String correctHash) throws InvalidHashException {
+        // check hash
         if (correctHash == null || correctHash.isEmpty()) {
             throw new InvalidHashException("Correct hash cannot be null or empty.");
         }
@@ -267,7 +271,7 @@ public class Hash {
             throw new InvalidHashException("Fields are missing from the correct hash. Double-check JHash vesrion and hash format.");
         }
 
-        // validate parts
+        // validate each part
         int iterations = 0;
         try {
             iterations = Integer.parseInt(params[ITERATION_INDEX]);
@@ -314,11 +318,11 @@ public class Hash {
         if (algorithm.toLowerCase()
                 .startsWith("pbkdf2")) {
 
-            if (algorithm.equals("pbkdf2sha1")) {
+            if ("pbkdf2sha1".equals(algorithm)) {
                 algorithm = PBKDF2_HMACSHA1;
-            } else if (algorithm.equals("pbkdf2sha256")) {
+            } else if ("pbkdf2sha256".equals(algorithm)) {
                 algorithm = PBKDF2_HMACSHA256;
-            } else if (algorithm.equals("pbkdf2sha512")) {
+            } else if ("pbkdf2sha512".equals(algorithm)) {
                 algorithm = PBKDF2_HMACSHA512;
             }
 
@@ -339,6 +343,7 @@ public class Hash {
 
             // Compare the hashes in constant time.
             return HashUtils.slowEquals(hash, testHash);
+
         } else if (algorithm.equals(BCRYPT)) {
 
             byte[] hash = null;
@@ -357,6 +362,7 @@ public class Hash {
 
             // Compare the hashes in constant time.
             return HashUtils.slowEquals(hash, testHash);
+
         } else if (algorithm.equals(SCRYPT)) {
 
             byte[] hash = null;
@@ -371,6 +377,7 @@ public class Hash {
             }
 
             return SCrypt.verify(pepperPassword, new String(hash));
+
         } else {
             // unrecognized algorithm
             throw new InvalidHashException("Unsupported algorithm type: " + algorithm);

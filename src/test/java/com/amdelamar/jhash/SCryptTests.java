@@ -6,11 +6,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.algorithms.SCrypt;
 import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class SCryptTests {
+    
+    @Test
+    public void constructorTests() {
+        @SuppressWarnings("unused")
+        SCrypt algorithm = new SCrypt();
+    }
 
     @Test
     public void defaultTests() throws InvalidHashException {
@@ -45,7 +52,7 @@ public class SCryptTests {
         String hash3 = Hash.password(password)
                 .pepper(pepper)
                 .algorithm(Type.SCRYPT)
-                .saltLength(24)
+                .saltLength(16)
                 .create();
         assertTrue(Hash.password(password)
                 .pepper(pepper)

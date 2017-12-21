@@ -12,11 +12,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.exception.InvalidHashException;
 import com.amdelamar.jhash.util.HashUtils;
 
 @RunWith(JUnit4.class)
 public class HashUtilsTests {
 
+    @Test
+    public void constructorTests() {
+        @SuppressWarnings("unused")
+        HashUtils util = new HashUtils();
+    }
+    
     @Test
     public void saltTests() {
 
@@ -27,11 +34,6 @@ public class HashUtilsTests {
         String s2 = HashUtils.encodeBase64(HashUtils.randomSalt(24));
         String s3 = HashUtils.encodeBase64(HashUtils.randomSalt(sr));
         String s4 = HashUtils.encodeBase64(HashUtils.randomSalt(sr, 24));
-
-        System.out.println(s1);
-        System.out.println(s2);
-        System.out.println(s3);
-        System.out.println(s4);
 
         assertNotNull(s1);
         assertNotNull(s2);
@@ -58,6 +60,9 @@ public class HashUtilsTests {
         boolean slow2 = HashUtils.slowEquals(HashUtils.encodeBase64(hello.getBytes())
                 .getBytes(), hello64.getBytes());
         assertTrue(slow2);
+        
+        boolean slow3 = HashUtils.slowEquals(hello64.getBytes(), hello.getBytes());
+        assertFalse(slow3);
     }
 
     @Test
@@ -68,5 +73,15 @@ public class HashUtilsTests {
 
         assertEquals(hello64, HashUtils.encodeBase64(hello.getBytes()));
         assertEquals(hello, new String(HashUtils.decodeBase64(hello64)));
+    }
+    
+    @Test
+    public void invalidHashExceptionTests() {
+        
+        InvalidHashException ex = new InvalidHashException("Invalid");
+        InvalidHashException ex2 = new InvalidHashException("Invalid2", new Throwable());
+        
+        assertEquals("Invalid", ex.getMessage());
+        assertEquals("Invalid2", ex2.getMessage());
     }
 }

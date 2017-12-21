@@ -2,6 +2,7 @@ package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 @RunWith(JUnit4.class)
 public class HashTests {
 
+    @Test
     public void truncatedHashTest() {
 
         char[] password = "Hello World!".toCharArray();
@@ -42,6 +44,7 @@ public class HashTests {
         } while (badHash.charAt(badHashLength - 3) != ':');
     }
 
+    @Test
     public void verifyTests() throws InvalidHashException {
 
         boolean failure = false;
@@ -67,6 +70,7 @@ public class HashTests {
         }
     }
 
+    @Test
     public void breakTests() throws InvalidHashException {
         char[] password = "foobar".toCharArray();
         // sha1
@@ -86,12 +90,53 @@ public class HashTests {
     }
 
     @Test
-    public void nullTests() {
-        // null algorithm type
-        boolean caught = false;
+    public void invalidAlgorithmTests() {
+        char[] password = "foobar".toCharArray();
+
         try {
+            String hash = Hash.password(password)
+                    .algorithm(null)
+                    .create();
+
+            // verify
+            Hash.password(password)
+                    .verify(hash);
+
+            // if ok, then fail
+            fail("invalid algorithm not detected");
+
+        } catch (IllegalArgumentException | InvalidHashException e) {
+            // good catch
+        }
+
+        try {
+            String hash = Hash.password(password)
+                    .create();
+
+            // change to bad algorithm
+            hash = hash.replaceFirst("pbkdf2sha1:", "pbkdf2:");
+
+            // verify
+            Hash.password(password)
+                    .verify(hash);
+
+            // if ok, then fail
+            fail("invalid hash algorithm not detected");
+
+        } catch (IllegalArgumentException | InvalidHashException e) {
+            // good catch
+        }
+    }
+
+    @Test
+    public void nullPasswordTests() {
+        boolean caught = false;
+
+        try {
+            // null password is bad
             Hash.password(null)
                     .create();
+            caught = false;
         } catch (IllegalArgumentException e) {
             // the error we expect
             caught = true;
@@ -100,5 +145,136 @@ public class HashTests {
             caught = false;
         }
         assertTrue(caught);
+
+        try {
+            // empty password is bad
+            Hash.password(new char[0])
+                    .create();
+            caught = false;
+        } catch (IllegalArgumentException e) {
+            // the error we expect
+            caught = true;
+        } catch (Exception e) {
+            // not good error
+            caught = false;
+        }
+        assertTrue(caught);
+    }
+
+    @Test
+    public void nullPepperTests() {
+        char[] password = "HelloWorld".toCharArray();
+        boolean caught = false;
+
+        try {
+            // null pepper is ok
+            Hash.password(password)
+                    .pepper(null)
+                    .create();
+            caught = false;
+        } catch (Exception e) {
+            // not good error
+            caught = true;
+        }
+        assertFalse(caught);
+
+        try {
+            // empty pepper is ok
+            Hash.password(password)
+                    .pepper(new char[0])
+                    .create();
+            caught = false;
+        } catch (Exception e) {
+            // not good error
+            caught = true;
+        }
+        assertFalse(caught);
+    }
+
+    @Test
+    public void nullHashTests() {
+        char[] password = "HelloWorld".toCharArray();
+        boolean caught = false;
+
+        try {
+            // null hash is bad
+            Hash.password(password)
+                    .verify(null);
+            caught = false;
+        } catch (Exception e) {
+            // good error
+            caught = true;
+        }
+        assertTrue(caught);
+
+        try {
+            // empty hash is bad
+            Hash.password(password)
+                    .verify("");
+            caught = false;
+        } catch (Exception e) {
+            // good error
+            caught = true;
+        }
+        assertTrue(caught);
+    }
+    
+    @Test
+    public void invalidHashTests() {
+        char[] password = "HelloWorld".toCharArray();
+
+        try {
+            // hash with non-standard format
+            Hash.password(password)
+                    .verify("pbkdf2sha1:64000:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("bad hash format not detected");
+        } catch (Exception e) {
+            // good error
+        }
+
+        try {
+            // bad iterations
+            Hash.password(password)
+                    .verify("pbkdf2sha1:64000a:18:24:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("bad iterations not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad pepper flag
+            Hash.password(password)
+                    .verify("pbkdf2sha1:0:18:24::LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("bad pepper flag not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad hash size
+            Hash.password(password)
+                    .verify("pbkdf2sha1:0:18a:24:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("bad hash size not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad hash length
+            Hash.password(password)
+                    .verify("pbkdf2sha1:0:18a:24:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw0");
+            fail("bad hash length not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad salt size
+            Hash.password(password)
+                    .verify("pbkdf2sha1:0:18a:24:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("bad salt size not detected");
+        } catch (Exception e) {
+            // good error
+        }
     }
 }

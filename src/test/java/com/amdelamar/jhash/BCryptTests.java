@@ -6,11 +6,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.algorithms.BCrypt;
 import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class BCryptTests {
+    
+    @Test
+    public void constructorTests() {
+        @SuppressWarnings("unused")
+        BCrypt algorithm = new BCrypt();
+    }
 
     @Test
     public void defaultTests() throws InvalidHashException {

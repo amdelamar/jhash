@@ -20,8 +20,8 @@ public class HashUtilsTests {
 
     @Test
     public void constructorTests() {
-        @SuppressWarnings("unused")
         HashUtils util = new HashUtils();
+        assertNotNull(util);
     }
     
     @Test

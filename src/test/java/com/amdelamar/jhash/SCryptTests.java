@@ -1,5 +1,6 @@
 package com.amdelamar.jhash;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -15,8 +16,8 @@ public class SCryptTests {
     
     @Test
     public void constructorTests() {
-        @SuppressWarnings("unused")
         SCrypt algorithm = new SCrypt();
+        assertNotNull(algorithm);
     }
 
     @Test

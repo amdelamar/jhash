@@ -1,6 +1,7 @@
 package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -13,6 +14,12 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
 public class HashTests {
+    
+    @Test
+    public void constructorTests() {
+        Hash hash = new Hash();
+        assertNotNull(hash);
+    }
 
     @Test
     public void truncatedHashTest() {

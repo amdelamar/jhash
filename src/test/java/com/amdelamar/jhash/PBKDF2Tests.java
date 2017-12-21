@@ -1,5 +1,6 @@
 package com.amdelamar.jhash;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -16,8 +17,8 @@ public class PBKDF2Tests {
     
     @Test
     public void constructorTests() {
-        @SuppressWarnings("unused")
         PBKDF2 algorithm = new PBKDF2();
+        assertNotNull(algorithm);
     }
 
     @Test

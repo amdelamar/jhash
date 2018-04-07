@@ -20,7 +20,7 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
         <url>https://jitpack.io</url>
     </repository>
 </repositories>
-...
+
 <dependency>
     <groupId>com.github.amdelamar</groupId>
     <artifactId>jhash</artifactId>
@@ -32,10 +32,9 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 ```gradle
 repositories {
-    ...
     maven { url 'https://jitpack.io' }
 }
-...
+
 dependencies {
     compile 'com.github.amdelamar:jhash:2.0.0'
 }

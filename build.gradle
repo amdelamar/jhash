@@ -1,10 +1,14 @@
-apply plugin: 'java'
-apply plugin: 'jacoco'
-apply plugin: 'maven'
+plugins {
+  id 'java'
+  id 'java-library'
+  id 'jacoco'
+  id 'maven'
+  id 'maven-publish'
+}
 
 group = 'com.github.amdelamar'
 version = '2.0.0'
-
+description = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
@@ -31,5 +35,13 @@ jacocoTestReport {
     reports {
         xml.enabled true
         html.enabled false
+    }
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+          from components.java
+        }
     }
 }

@@ -2,18 +2,18 @@ language: java
 jdk:
 - oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.sonar/cache/
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.sonar/cache/"
 addons:
   sonarcloud:
     organization: amdelamar-github
     token:
-      secure: W5eL8T6cCLfHBT5FE3SSmvT6fY0yoyqTvF3jvPuu/nHR1FggEDUC19MnxDfSFc1IOIE8OJUyBb6YUHGJpmJgFD3M8uKL/CZjeO1WMUcSrVNzrPmZAf5Ei9wgeoaQE73FBnf5SVzD8DvDxXMo4uimnOGmY2ZNupBekF7yaCOj1AoNlGbdY67n2iAsL84iqUXZBB1kf3W38rP3bsCPyViKxqP/tNGKsiNh+iNIedTktYA7ahbuRL3blayDSCgOCa+cnnA2lq6PRs789TVB7fSVxH71TjKdZKhs/yCCXd9DcaZkeaYRnjDPXyiqT9geG47r8P3qxI6Qeo0khLd6zWnBryKRs3L1RSvkN9Rf+V7EYh3a2txpJ9D73Y6GV3AbGX8ZYCaMwhDvKQaaMigVu8k2Yk5jkTgFyJaIrmlYMKgxN91pUKZxeay1qJnLofwIfrJmbtC0cav14gsM0JWRF5nXYfN2B1M6/p/y0AMPFt1/X9knyUY8q8MWjq0AX//LId5LFiUMgYHcuiMyDToBfMHw68TS6K1OpgtKshplRcrkDEvQPXT+lw/1pBJwWvSxtQpld0NUOk4H607Hvd9rW835e46ADFDy51Usfp5tvlyk1NJNxdwMBTuyoYCW6NFCYxLcFer5n7+8KjlFIr/ftgc/3SFzSeSnMH9+v+r/bl/jLjg=
+      secure: j8gjWYxcv13ZGo6AJQn+uA7IUX4Dw2l8nUWgJDrALcZb2gd4itCc3+aqSAvJqObEvsxMrs5IhlCcrOCDNqOwm5VmL9xk/oMsKTLfN+19K5M7XiwzwudcCzlZibDaFCQdubSj+f0SOh9iIx6/Yi+zt4zCYcB/lzxpeY4HiBN3cB9aQIAoqCZpqi+IIDhL/whoTbNfq+VUWwArU+IhBvhQy8m1DH7VqGx8TuSwDEUK7u+25xLKpfVHFY/hfbB2aKRHR71XH/brZbZqgtgyLg2jTB6sBQj/McpYzXXUJij3x83fKR2KVhd4BsYNYdOtiIyoAeWIfc+f2RR8zQUBRvRpWTEw8uDsws1xQVl5oM2XLsErek+7sxgLmR8reCxbxVXiT0lAAUCzvSCTwIo5dUYPJTa5cqeO3xUixtEMWCo70R0jTccbyENJy4gVDREeCjK6tikRYn32iWnPE488kc9rWof1CvEApoRLts4wUt2d7zzLeow8qXq7q/ldu8cth+0PsGkejrLQgBHpmC/+HbMXAMcx09N6LvcnSnOJDuimyvcKQ+/CiC2Q88xDbye0AH3+akfyrNQ++Ar4geHGXhXD2wSngSZZLtxkE89fOMAQP66tH9U4sjnbxNSE8fJl5bxKp4lkJuaZc5dP9gV8ttYg+rG9W09b6uJYV4Gf68E2tQ4=
 before_install:
 - chmod +x gradlew
 script:

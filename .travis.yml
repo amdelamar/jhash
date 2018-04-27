@@ -12,5 +12,6 @@ before_install:
 script:
 - "./gradlew check"
 - "./gradlew jacocoTestReport"
+- "sonar-scanner"
 after_success:
 - bash <(curl -s https://codecov.io/bash)

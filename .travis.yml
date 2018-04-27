@@ -1,16 +1,16 @@
 language: java
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 addons:
   sonarcloud:
-    organization: "amdelamar-github"
-
+    organization: amdelamar-github
+  sonar:
+    token:
+      secure: W5eL8T6cCLfHBT5FE3SSmvT6fY0yoyqTvF3jvPuu/nHR1FggEDUC19MnxDfSFc1IOIE8OJUyBb6YUHGJpmJgFD3M8uKL/CZjeO1WMUcSrVNzrPmZAf5Ei9wgeoaQE73FBnf5SVzD8DvDxXMo4uimnOGmY2ZNupBekF7yaCOj1AoNlGbdY67n2iAsL84iqUXZBB1kf3W38rP3bsCPyViKxqP/tNGKsiNh+iNIedTktYA7ahbuRL3blayDSCgOCa+cnnA2lq6PRs789TVB7fSVxH71TjKdZKhs/yCCXd9DcaZkeaYRnjDPXyiqT9geG47r8P3qxI6Qeo0khLd6zWnBryKRs3L1RSvkN9Rf+V7EYh3a2txpJ9D73Y6GV3AbGX8ZYCaMwhDvKQaaMigVu8k2Yk5jkTgFyJaIrmlYMKgxN91pUKZxeay1qJnLofwIfrJmbtC0cav14gsM0JWRF5nXYfN2B1M6/p/y0AMPFt1/X9knyUY8q8MWjq0AX//LId5LFiUMgYHcuiMyDToBfMHw68TS6K1OpgtKshplRcrkDEvQPXT+lw/1pBJwWvSxtQpld0NUOk4H607Hvd9rW835e46ADFDy51Usfp5tvlyk1NJNxdwMBTuyoYCW6NFCYxLcFer5n7+8KjlFIr/ftgc/3SFzSeSnMH9+v+r/bl/jLjg=
 before_install:
- - chmod +x gradlew
-
+- chmod +x gradlew
 script:
- - ./gradlew check
- - ./gradlew jacocoTestReport
+- "./gradlew check"
+- "./gradlew jacocoTestReport"
 after_success:
- - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)

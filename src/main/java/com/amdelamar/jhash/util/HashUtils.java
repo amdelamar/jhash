@@ -9,7 +9,11 @@ import java.util.Base64;
  * @author amdelamar
  * @see https://github.com/amdelamar/jhash
  */
-public class HashUtils {
+public final class HashUtils {
+    
+    private HashUtils() {
+        // prevent instantiation
+    }
 
     /**
      * Generates a secure random salt of 24 bytes.

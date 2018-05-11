@@ -17,12 +17,6 @@ import com.amdelamar.jhash.util.HashUtils;
 
 @RunWith(JUnit4.class)
 public class HashUtilsTests {
-
-    @Test
-    public void constructorTests() {
-        HashUtils util = new HashUtils();
-        assertNotNull(util);
-    }
     
     @Test
     public void saltTests() {

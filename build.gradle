@@ -16,55 +16,55 @@ targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
 repositories {
-    jcenter()
+  jcenter()
 }
 
 dependencies {
-	testCompile "junit:junit:4.12"
+  testCompile "junit:junit:4.12"
 }
 
 jar {
-    baseName = 'jhash'
-    from sourceSets.main.allSource
+  baseName = 'jhash'
+  from sourceSets.main.allSource
 }
 
 javadoc {
-	source = sourceSets.main.allJava
-	classpath = configurations.compile
+  source = sourceSets.main.allJava
+  classpath = configurations.compile
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled false
-    }
+  reports {
+    xml.enabled true
+    html.enabled false
+  }
 }
 
 publishing {
-    publications {
-        MyPublication(MavenPublication) {
-          from components.java
-        }
+  publications {
+    MyPublication(MavenPublication) {
+      from components.java
     }
+  }
 }
 
 bintray {
-	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-	publications = ['MyPublication']
-	publish = true
-	override = true
-	pkg {
-		repo = 'maven'
-		name = 'jhash'
-		desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
-		licenses = ['Apache-2.0']
-		websiteUrl = 'https://github.com/amdelamar/jhash/'
-        issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
-        vcsUrl = 'https://github.com/amdelamar/jhash.git'
-        githubRepo = 'amdelamar/jhash' // Optional Github repository
-        githubReleaseNotesFile = 'README.md' // Optional Github release notes
-		labels = ['password', 'hash', 'pbkdf2', 'hmac' ,'sha' ,'sha256' ,'bcrypt' ,'scrypt']
-		publicDownloadNumbers = true
-	}
+  user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+  key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+  publications = ['MyPublication']
+  publish = true
+  override = true
+  pkg {
+    repo = 'maven'
+    name = 'jhash'
+    desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
+    licenses = ['Apache-2.0']
+    websiteUrl = 'https://github.com/amdelamar/jhash/'
+    issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
+    vcsUrl = 'https://github.com/amdelamar/jhash.git'
+    githubRepo = 'amdelamar/jhash' // Optional Github repository
+    githubReleaseNotesFile = 'README.md' // Optional Github release notes
+    labels = ['password', 'hash', 'pbkdf2', 'hmac' ,'sha' ,'sha256' ,'bcrypt' ,'scrypt']
+    publicDownloadNumbers = true
+  }
 }

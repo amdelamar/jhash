@@ -9,7 +9,7 @@ import com.amdelamar.jhash.util.HashUtils;
  * Future-Adaptable Password Scheme" by Niels Provos and David Mazieres.
  *
  * @author amdelamar, djm
- * @see https://en.wikipedia.org/wiki/Bcrypt
+ * @see <a href="https://en.wikipedia.org/wiki/Bcrypt">https://en.wikipedia.org/wiki/Bcrypt</a>
  */
 public class BCrypt {
 
@@ -432,7 +432,7 @@ public class BCrypt {
     }
 
     /**
-     * Hash a password using the OpenBSD bcrypt scheme
+     * Creates a Hash from the given password using the specified algorithm.
      * 
      * @param password
      *            the password to hash

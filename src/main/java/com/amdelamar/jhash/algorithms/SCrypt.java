@@ -14,7 +14,7 @@ import com.amdelamar.jhash.util.HashUtils;
  * follows the scrypt algorithm published by IETF (RFC 7914).
  * 
  * @author amdelamar, Will Glozer
- * @see https://en.wikipedia.org/wiki/Scrypt
+ * @see <a href="https://en.wikipedia.org/wiki/Scrypt">https://en.wikipedia.org/wiki/Scrypt</a>
  */
 public class SCrypt {
 
@@ -316,8 +316,7 @@ public class SCrypt {
     }
 
     /**
-     * Hash the supplied plaintext password and generate output in the format described in
-     * {@link SCryptUtil}.
+     * Creates a Hash from the given password using the specified algorithm.
      *
      * @param password
      *            Password.

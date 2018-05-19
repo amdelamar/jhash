@@ -7,7 +7,7 @@ import java.util.Base64;
  * Hash Utility and Common functions.
  * 
  * @author amdelamar
- * @see https://github.com/amdelamar/jhash
+ * @since 1.0.0
  */
 public final class HashUtils {
     
@@ -84,7 +84,7 @@ public final class HashUtils {
      * @param string
      *            (in Base64)
      * @return Base64 decoded byte array
-     * @see https://en.wikipedia.org/wiki/Base64
+     * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static byte[] decodeBase64(String string) {
         return Base64.getDecoder()
@@ -97,7 +97,7 @@ public final class HashUtils {
      * @param array
      *            (byte array)
      * @return Base64 encoded string
-     * @see https://en.wikipedia.org/wiki/Base64
+     * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static String encodeBase64(byte[] array) {
         return new String(Base64.getEncoder()

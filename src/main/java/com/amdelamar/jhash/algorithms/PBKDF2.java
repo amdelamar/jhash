@@ -11,8 +11,8 @@ import javax.crypto.spec.PBEKeySpec;
  * the PKCS public key cryptography standards #5 v2.0. (RFC 2898).
  * 
  * @author amdelamar
- * @see https://en.wikipedia.org/wiki/PBKDF2
- * @see https://tools.ietf.org/html/rfc2898
+ * @see <a href="https://en.wikipedia.org/wiki/PBKDF2">https://en.wikipedia.org/wiki/PBKDF2</a>
+ * @see <a href="https://tools.ietf.org/html/rfc2898">https://tools.ietf.org/html/rfc2898</a>
  */
 public class PBKDF2 {
 
@@ -21,8 +21,7 @@ public class PBKDF2 {
     public static final int DEFAULT_ITERATIONS = 64000;
 
     /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to create
-     * new user's passwords. Or when they change their password.
+     * Creates a Hash from the given password using the specified algorithm.
      * 
      * @param password
      *            - The password to be salted and hashed.

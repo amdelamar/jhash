@@ -15,7 +15,9 @@ import com.amdelamar.jhash.util.HashUtils;
  * 
  * @author amdelamar
  * @version 2.0.0
- * @see https://github.com/amdelamar/jhash
+ * @since 1.0.0
+ * @see <a href="https://github.com/amdelamar/jhash">https://github.com/amdelamar/jhash</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Hash_function">https://en.wikipedia.org/wiki/Hash_function</a>
  */
 public class Hash {
 
@@ -46,7 +48,7 @@ public class Hash {
      * The password to be hashed. Note: Call create() when ready to output the hash value. 
      * You can also specify optional parameters such as pepper, factor, algorithm, and more. 
      * But this has to be done before you call create().
-     * @param char[] password
+     * @param password char[]
      * @return Hash
      * @throws IllegalArgumentException if password is null or empty
      */
@@ -60,10 +62,10 @@ public class Hash {
     }
 
     /**
-     * Optional value for the application-specific pepper.
-     * @param char[] pepper
+     * Optional value for the application-specific <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">pepper</a>.
+     * @param pepper char[]
      * @return Hash
-     * @see https://en.wikipedia.org/wiki/Pepper_(cryptography)
+     * @see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">https://en.wikipedia.org/wiki/Pepper_(cryptography)</a>
      */
     public Hash pepper(char[] pepper) {
         this.pepper = pepper;
@@ -72,7 +74,7 @@ public class Hash {
 
     /**
      * Optional value for hash byte length. Default is 18.
-     * @param int hashLength
+     * @param hashLength int
      * @return Hash
      */
     public Hash hashLength(int hashLength) {
@@ -82,8 +84,8 @@ public class Hash {
 
     /**
      * Optional value for salt byte length. Default is 24.
-     * @param saltLength
-     * @return
+     * @param saltLength int
+     * @return Hash
      */
     public Hash saltLength(int saltLength) {
         this.saltLength = saltLength;
@@ -94,7 +96,7 @@ public class Hash {
      * Optional value for selecting hash algorithm. E.g. Type.PBKDF2_SHA512, Type.BCRYPT, 
      * or Type.SCRYPT.
      * Default is Type.PBKDF2_SHA1
-     * @param Type algorithm
+     * @param algorithm Type
      * @return Hash
      */
     public Hash algorithm(Type algorithm) {
@@ -105,7 +107,7 @@ public class Hash {
     /**
      * Optional value for iterations (PBKDF2), logrounds (BCRYPT), or cost (SCRYPT). Set to 0 
      * if you're unsure and it will use the default value for the specified algorithm.
-     * @param int factor
+     * @param factor int
      * @return Hash
      */
     public Hash factor(int factor) {
@@ -116,10 +118,10 @@ public class Hash {
     /**
      * Creates a Hash from the given char array using the specified algorithm. Use this to 
      * create new user's passwords. Or when they change their password.
-     * @return A String hash
+     * @return String hash
      * @throws IllegalArgumentException
      *             if one or more parameters are invalid
-     * @see https://en.wikipedia.org/wiki/Hash_function
+     * @see <a href="https://en.wikipedia.org/wiki/Hash_function">https://en.wikipedia.org/wiki/Hash_function</a>
      */
     public String create() throws IllegalArgumentException {
 
@@ -253,11 +255,11 @@ public class Hash {
      * if you used a pepper to hash the correctHash from before.
      * 
      * @param correctHash
-     *            The stored hash from storage.
+     *            The string hash from storage.
      * @return boolean true if matches
      * @throws InvalidHashException
      *             if the correctHash was missing parts or invalid
-     * @see https://en.wikipedia.org/wiki/Hash_function
+     * @see <a href="https://en.wikipedia.org/wiki/Hash_function">https://en.wikipedia.org/wiki/Hash_function</a>
      */
     public boolean verify(String correctHash) throws InvalidHashException {
         // check hash

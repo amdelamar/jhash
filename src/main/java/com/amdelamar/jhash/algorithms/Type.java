@@ -4,7 +4,6 @@ package com.amdelamar.jhash.algorithms;
  * Hash Type enumeration constant
  * 
  * @author amdelamar
- * @see https://github.com/amdelamar/jhash
  * @since 1.1.0
  */
 public enum Type {

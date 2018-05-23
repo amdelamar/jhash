@@ -8,7 +8,7 @@ plugins {
   id 'org.sonarqube' version '2.6.2'
 }
 
-group = 'com.github.amdelamar'
+group = 'com.amdelamar'
 version = '2.0.0'
 description = 'Password hashing utility in Java.'
 sourceCompatibility = 1.8
@@ -81,7 +81,7 @@ bintray {
     name = 'jhash'
     desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
     licenses = ['Apache-2.0']
-    websiteUrl = 'https://github.com/amdelamar/jhash/'
+    websiteUrl = 'https://austindelamar.com/jhash/'
     issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
     vcsUrl = 'https://github.com/amdelamar/jhash.git'
     githubRepo = 'amdelamar/jhash' // Optional Github repository

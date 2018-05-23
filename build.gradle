@@ -83,7 +83,7 @@ bintray {
     licenses = ['Apache-2.0']
     websiteUrl = 'https://austindelamar.com/jhash/'
     issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
-    vcsUrl = 'https://github.com/amdelamar/jhash.git'
+    vcsUrl = 'git://github.com/amdelamar/jhash.git'
     githubRepo = 'amdelamar/jhash' // Optional Github repository
     githubReleaseNotesFile = 'README.md' // Optional Github release notes
     labels = ['password', 'hash', 'pbkdf2', 'hmac' ,'sha' ,'sha256' ,'bcrypt' ,'scrypt']

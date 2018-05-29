@@ -15,13 +15,13 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 ```xml
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+        <id>jcenter</id>
+        <url>https://jcenter.bintray.com/</url>
     </repository>
 </repositories>
 
 <dependency>
-    <groupId>com.github.amdelamar</groupId>
+    <groupId>com.amdelamar</groupId>
     <artifactId>jhash</artifactId>
     <version>2.0.0</version>
 </dependency>
@@ -31,15 +31,15 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 ```gradle
 repositories {
-    maven { url 'https://jitpack.io' }
+    jcenter()
 }
 
 dependencies {
-    compile 'com.github.amdelamar:jhash:2.0.0'
+    compile 'com.amdelamar:jhash:2.0.0'
 }
 ```
 
-* or Download the latest [release](https://github.com/amdelamar/jhash/releases).
+* or Download the latest [release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
 
 
 ## Usage

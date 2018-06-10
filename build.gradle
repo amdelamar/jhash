@@ -60,7 +60,7 @@ publishing {
   publications {
     MyPublication(MavenPublication) {
       from components.java
-      artifact (sourcesJar) { 
+      artifact (sourcesJar) {
         classifier = "sources"
       }
       artifact (javadocJar) {
@@ -81,7 +81,7 @@ bintray {
     name = 'jhash'
     desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
     licenses = ['Apache-2.0']
-    websiteUrl = 'https://austindelamar.com/jhash/'
+    websiteUrl = 'https://amdelamar.com/jhash/'
     issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
     vcsUrl = 'git://github.com/amdelamar/jhash.git'
     githubRepo = 'amdelamar/jhash' // Optional Github repository

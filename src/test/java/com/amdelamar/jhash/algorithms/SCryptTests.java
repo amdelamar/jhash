@@ -1,4 +1,4 @@
-package com.amdelamar.jhash;
+package com.amdelamar.jhash.algorithms;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.algorithms.SCrypt;
 import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
@@ -108,6 +109,15 @@ public class SCryptTests {
     @Test
     public void invalidHashTests() {
         char[] password = "HelloWorld".toCharArray();
+        
+        try {
+            // bad password
+            Hash.password(new char[1])
+                    .verify("scrypt:131072:80:24:n::$s0$e0801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("bad password not detected");
+        } catch (Exception e) {
+            // good error
+        }
 
         try {
             // bad hash length
@@ -122,6 +132,15 @@ public class SCryptTests {
             // bad hash
             Hash.password(password)
                     .verify("scrypt:131072:80:24:n::~$s0$e0801$~Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("bad hash not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad hash format
+            Hash.password(password)
+                    .verify("scrypt:131072:80:24:n::$s1$e0801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
             fail("bad hash not detected");
         } catch (Exception e) {
             // good error
@@ -150,6 +169,51 @@ public class SCryptTests {
             Hash.password(password)
                     .verify("scrypt:1:80:24:n::~$s0$e0801$~Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
             fail("too low factor not detected");
+        } catch (Exception e) {
+            // good error
+        }
+    }
+    
+    @Test
+    public void invalidTests() {
+        byte[] password = "HelloWorld".getBytes();
+
+        try {
+            // too low cost
+            SCrypt.scrypt(password, new byte[0], 1, SCrypt.BLOCKSIZE, SCrypt.PARALLEL, 32);
+            fail("too low cost not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad cost
+            SCrypt.scrypt(password, new byte[0], 3, SCrypt.BLOCKSIZE, SCrypt.PARALLEL, 32);
+            fail("bad cost not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // too high cost
+            SCrypt.scrypt(password, new byte[0], 1 + (Integer.MAX_VALUE / 128 / SCrypt.BLOCKSIZE), SCrypt.BLOCKSIZE, SCrypt.PARALLEL, 32);
+            fail("too high cost not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // too high blocksize
+            SCrypt.scrypt(password, new byte[0], SCrypt.COST, 1 + (Integer.MAX_VALUE / 128 / SCrypt.PARALLEL), SCrypt.PARALLEL, 32);
+            fail("too high blocksize not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad key length
+            SCrypt.scrypt(password, new byte[0], SCrypt.COST, SCrypt.COST, SCrypt.COST, 32);
+            fail("bad key length not detected");
         } catch (Exception e) {
             // good error
         }

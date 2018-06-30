@@ -68,10 +68,9 @@ public class SCrypt {
      * @throws IllegalArgumentException
      *             when parameters invalid
      */
-    private static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize, int parallel, int length)
+    protected static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize, int parallel, int length)
             throws GeneralSecurityException {
         if (cost < 2 || (cost & (cost - 1)) != 0) throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
-
         if (cost > Integer.MAX_VALUE / 128 / blocksize) throw new IllegalArgumentException("Parameter cost is too large");
         if (blocksize > Integer.MAX_VALUE / 128 / parallel) throw new IllegalArgumentException("Parameter blocksize is too large");
 
@@ -232,7 +231,7 @@ public class SCrypt {
      * @throws GeneralSecurityException
      *             If key length is too long
      */
-    private static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
+    protected static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
         int len = mac.getMacLength();
 
         if (length > (Math.pow(2, 32) - 1) * len) {
@@ -351,7 +350,7 @@ public class SCrypt {
      * @throws IllegalStateException
      *             If JVM doesn't support necessary functions.
      */
-    private static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
+    protected static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
         try {
             byte[] salt = HashUtils.randomSalt(saltLength);
 

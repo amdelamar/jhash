@@ -1,4 +1,4 @@
-package com.amdelamar.jhash;
+package com.amdelamar.jhash.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

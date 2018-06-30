@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.amdelamar</groupId>
   <artifactId>jhash</artifactId>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

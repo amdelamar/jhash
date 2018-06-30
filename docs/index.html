@@ -59,7 +59,7 @@
             <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/"><span class="icon-github" style="font-size:1.5em;margin-right:5px"></span>View on GitHub</a>
             <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/issues"><span class="icon-bug" style="font-size:1.5em;margin-right:5px"></span>Report Issue</a>
             </p>
-            <code>v2.0.0</code> - 19 Dec 2017 - <code>48KB</code>
+            <code>v2.1.0</code> - 30 Jun 2018 - <code>47KB</code>
         </div>
         <div class="twelve columns">
             <hr />
@@ -80,23 +80,27 @@
 &lt;dependency&gt;
     &lt;groupId&gt;com.amdelamar&lt;/groupId&gt;
     &lt;artifactId&gt;jhash&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0&lt;/version&gt;
+    &lt;version&gt;2.1.0&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 
             <p>Gradle:</p>
-            <pre><code class="yaml">repositories {
+            <pre><code class="groovy">repositories {
     jcenter()
 }
 
 dependencies {
-    compile 'com.amdelamar:jhash:2.0.0'
+    compile 'com.amdelamar:jhash:2.1.0'
 }
 </code></pre>
+
+            <p>Or Download the <a href="https://github.com/amdelamar/jhash/releases">latest release</a>. Published on <a href="https://bintray.com/bintray/jcenter/jhash">JCenter</a>.</p>
 
 			<br>
 			<h3>Usage</h3>
 
-            <pre><code class="java">char[] password = "Hello World!".toCharArray();
+            <pre><code class="java">import com.amdelamar.jhash.Hash;
+
+char[] password = "Hello World!".toCharArray();
 
 // salt + hash a password. (pbkdf2 hmac sha1)
 String hash = Hash.password(password).create();

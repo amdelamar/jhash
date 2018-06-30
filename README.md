@@ -10,7 +10,7 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 
 ## Getting Started
 
-* Maven:
+Maven:
 
 ```xml
 <repositories>
@@ -23,11 +23,11 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 <dependency>
     <groupId>com.amdelamar</groupId>
     <artifactId>jhash</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
-* Gradle:
+Gradle:
 
 ```gradle
 repositories {
@@ -35,11 +35,11 @@ repositories {
 }
 
 dependencies {
-    compile 'com.amdelamar:jhash:2.0.0'
+    compile 'com.amdelamar:jhash:2.1.0'
 }
 ```
 
-* or Download the latest [release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
+Or Download the latest [release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
 
 
 ## Usage
@@ -47,6 +47,8 @@ dependencies {
 Easy hash and verification...
 
 ```java
+import com.amdelamar.jhash.Hash;
+
 char[] password = "Hello World!".toCharArray();
 
 // salt + hash a password. (pbkdf2 hmac sha1)

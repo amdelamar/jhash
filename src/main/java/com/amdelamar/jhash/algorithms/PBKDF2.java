@@ -1,8 +1,5 @@
 package com.amdelamar.jhash.algorithms;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
@@ -51,10 +48,8 @@ public class PBKDF2 {
             SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
             return skf.generateSecret(spec)
                     .getEncoded();
-        } catch (NoSuchAlgorithmException ex) {
-            throw new IllegalArgumentException("Hash algorithm not supported.", ex);
-        } catch (InvalidKeySpecException ex) {
-            throw new IllegalArgumentException("Invalid key spec.", ex);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid hash arguments", ex);
         }
     }
 }

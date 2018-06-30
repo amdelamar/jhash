@@ -11,6 +11,7 @@ import org.junit.runners.JUnit4;
 import com.amdelamar.jhash.algorithms.PBKDF2;
 import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.util.HashUtils;
 
 @RunWith(JUnit4.class)
 public class PBKDF2Tests {
@@ -189,10 +190,28 @@ public class PBKDF2Tests {
     @Test
     public void invalidTests() {
         char[] password = "Hello&77World!".toCharArray();
+        byte[] salt = HashUtils.randomSalt(PBKDF2.DEFAULT_SALT_LENGTH);
         
         try {
-            PBKDF2.create(password, null, "pbwhat?", PBKDF2.DEFAULT_ITERATIONS, PBKDF2.DEFAULT_HASH_LENGTH);
+            // bad algorithm
+            PBKDF2.create(password, salt, "PBKDFwhat?", PBKDF2.DEFAULT_ITERATIONS, PBKDF2.DEFAULT_HASH_LENGTH);
             fail("invalid PBKDF2 algorithm not detected");
+        } catch (Exception e) {
+            // good catch
+        }
+        
+        try {
+            // bad salt
+            PBKDF2.create(password, null, "PBKDF2WithHmacSHA1", PBKDF2.DEFAULT_ITERATIONS, PBKDF2.DEFAULT_HASH_LENGTH);
+            fail("invalid salt not detected");
+        } catch (Exception e) {
+            // good catch
+        }
+        
+        try {
+            // bad hash length
+            PBKDF2.create(password, salt, "PBKDF2WithHmacSHA1", PBKDF2.DEFAULT_ITERATIONS, 0);
+            fail("invalid hash length not detected");
         } catch (Exception e) {
             // good catch
         }

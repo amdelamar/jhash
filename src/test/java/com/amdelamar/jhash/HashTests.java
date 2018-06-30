@@ -247,6 +247,15 @@ public class HashTests {
         } catch (Exception e) {
             // good error
         }
+        
+        try {
+            // zero iterations
+            Hash.password(password)
+                    .verify("pbkdf2sha1:0:18:24:n:LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+            fail("zero iterations not detected");
+        } catch (Exception e) {
+            // good error
+        }
 
         try {
             // bad iterations

@@ -1,5 +1,6 @@
 package com.amdelamar.jhash.algorithms;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -9,8 +10,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.amdelamar.jhash.Hash;
-import com.amdelamar.jhash.algorithms.SCrypt;
-import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
 
 @RunWith(JUnit4.class)
@@ -204,18 +203,22 @@ public class SCryptTests {
         
         try {
             // too high blocksize
-            SCrypt.scrypt(password, new byte[0], SCrypt.COST, 1 + (Integer.MAX_VALUE / 128 / SCrypt.PARALLEL), SCrypt.PARALLEL, 32);
+            SCrypt.scrypt(password, new byte[0], 2, SCrypt.COST, SCrypt.COST, 32);
             fail("too high blocksize not detected");
         } catch (Exception e) {
             // good error
         }
         
         try {
-            // bad key length
-            SCrypt.scrypt(password, new byte[0], SCrypt.COST, SCrypt.COST, SCrypt.COST, 32);
-            fail("bad key length not detected");
+            // bad hash format
+            SCrypt.verify("HelloWorld", "$s$1$e0$801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("bad hash format not detected");
         } catch (Exception e) {
             // good error
         }
+        
+        
+        // bad hash length
+        assertFalse(SCrypt.verify("0", "$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y="));
     }
 }

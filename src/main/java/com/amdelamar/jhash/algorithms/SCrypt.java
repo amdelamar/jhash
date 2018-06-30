@@ -234,10 +234,6 @@ public class SCrypt {
     protected static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
         int len = mac.getMacLength();
 
-        if (length > (Math.pow(2, 32) - 1) * len) {
-            throw new GeneralSecurityException("Requested key length too long");
-        }
-
         byte[] u1 = new byte[len];
         byte[] t1 = new byte[len];
         byte[] block = new byte[salt.length + 4];

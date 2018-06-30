@@ -2,6 +2,7 @@ package com.amdelamar.jhash;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,5 +104,19 @@ public class BCryptTests {
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
+    }
+    
+    @Test
+    public void invalidHashTests() {
+        char[] password = "HelloWorld".toCharArray();
+
+        try {
+            // bad hash length
+            Hash.password(password)
+                    .verify("bcrypt:13:60:16:n::$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway");
+            fail("bad hash length not detected");
+        } catch (Exception e) {
+            // good error
+        }
     }
 }

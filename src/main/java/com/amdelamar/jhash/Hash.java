@@ -143,7 +143,7 @@ public class Hash {
             } else if (algorithm == Type.PBKDF2_SHA256) {
                 alg = Hash.PBKDF2_HMACSHA256;
                 alg2 = "pbkdf2sha256";
-            } else if (algorithm == Type.PBKDF2_SHA512) {
+            } else {
                 alg = Hash.PBKDF2_HMACSHA512;
                 alg2 = "pbkdf2sha512";
             }
@@ -286,12 +286,8 @@ public class Hash {
         }
 
         String pepperPassword = new String(password);
-        try {
-            if ('y' == params[PEPPER_INDEX].charAt(0)) {
-                pepperPassword = (new String(pepper) + pepperPassword);
-            }
-        } catch (IllegalArgumentException ex) {
-            throw new InvalidHashException("Could not parse the pepper flag.", ex);
+        if ('y' == params[PEPPER_INDEX].charAt(0)) {
+            pepperPassword = (new String(pepper) + pepperPassword);
         }
 
         byte[] salt = null;
@@ -348,12 +344,7 @@ public class Hash {
 
         } else if (algorithm.equals(BCRYPT)) {
 
-            byte[] hash = null;
-            try {
-                hash = params[HASH_INDEX].getBytes();
-            } catch (Exception ex) {
-                throw new InvalidHashException("Parsing of hash failed.", ex);
-            }
+            byte[] hash = params[HASH_INDEX].getBytes();            
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException("Hash length doesn't match stored hash length.");
@@ -367,12 +358,7 @@ public class Hash {
 
         } else if (algorithm.equals(SCRYPT)) {
 
-            byte[] hash = null;
-            try {
-                hash = params[HASH_INDEX].getBytes();
-            } catch (Exception ex) {
-                throw new InvalidHashException("Parsing of hash failed.", ex);
-            }
+            byte[] hash = params[HASH_INDEX].getBytes();
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException("Hash length doesn't match stored hash length.");

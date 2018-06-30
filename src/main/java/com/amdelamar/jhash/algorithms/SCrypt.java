@@ -45,8 +45,7 @@ public class SCrypt {
     }
 
     /**
-     * Pure Java implementation of the <a href="http://www.tarsnap.com/scrypt/scrypt.pdf"/>scrypt
-     * KDF</a>.
+     * Pure Java implementation of the <a href="http://www.tarsnap.com/scrypt/scrypt.pdf">scrypt</a>.
      *
      * @param password
      *            Password.
@@ -54,7 +53,7 @@ public class SCrypt {
      *            Salt.
      * @param cost
      *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
-     * @param blockSize
+     * @param blocksize
      *            Block size for each mixing loop (memory usage).
      * @param parallel
      *            Parallelization to control the number of independent mixing loops.
@@ -328,8 +327,7 @@ public class SCrypt {
     }
 
     /**
-     * Hash the supplied plaintext password and generate output in the format described in
-     * {@link SCryptUtil}.
+     * Hash the supplied plaintext password and generate output in the format described
      *
      * @param password
      *            Password.

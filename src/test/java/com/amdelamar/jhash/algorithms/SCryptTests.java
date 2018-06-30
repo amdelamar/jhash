@@ -217,8 +217,15 @@ public class SCryptTests {
             // good error
         }
         
+        try {
+            // bad hash format
+            SCrypt.verify("HelloWorld", "$ss0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y=");
+            fail("bad hash format not detected");
+        } catch (Exception e) {
+            // good error
+        }
         
         // bad hash length
-        assertFalse(SCrypt.verify("0", "$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y="));
+        assertFalse(SCrypt.verify("HelloWorld", "$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$uOw06jt6FvimXSxEJipYYHsQ"));
     }
 }

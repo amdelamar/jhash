@@ -15,13 +15,13 @@ import com.amdelamar.jhash.exception.InvalidHashException;
 @RunWith(JUnit4.class)
 public class HashTests {
     
-    
+    @Test
     public void constructorTests() {
         Hash hash = new Hash();
         assertNotNull(hash);
     }
 
-    
+    @Test
     public void truncatedHashTest() {
 
         char[] password = "Hello World!".toCharArray();
@@ -51,7 +51,7 @@ public class HashTests {
         } while (badHash.charAt(badHashLength - 3) != ':');
     }
 
-    
+    @Test
     public void verifyTests() throws InvalidHashException {
 
         boolean failure = false;
@@ -77,7 +77,7 @@ public class HashTests {
         }
     }
 
-    
+    @Test
     public void breakTests() throws InvalidHashException {
         char[] password = "foobar".toCharArray();
         // sha1
@@ -96,7 +96,7 @@ public class HashTests {
                 .verify(hash));
     }
 
-    
+    @Test
     public void invalidAlgorithmTests() {
         char[] password = "foobar".toCharArray();
 
@@ -144,7 +144,7 @@ public class HashTests {
         }
     }
 
-    
+    @Test
     public void nullPasswordTests() {
         boolean caught = false;
 
@@ -177,7 +177,7 @@ public class HashTests {
         assertTrue(caught);
     }
 
-    
+    @Test
     public void nullPepperTests() {
         char[] password = "HelloWorld".toCharArray();
         boolean caught = false;
@@ -207,7 +207,7 @@ public class HashTests {
         assertFalse(caught);
     }
 
-    
+    @Test
     public void nullHashTests() {
         char[] password = "HelloWorld".toCharArray();
         boolean caught = false;

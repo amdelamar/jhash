@@ -117,5 +117,41 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
+        
+        try {
+            // bad hash
+            Hash.password(password)
+                    .verify("scrypt:131072:80:24:n::~$s0$e0801$~Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("bad hash not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad hash format
+            Hash.password(password)
+                    .verify("scrypt:131072:80:24:n::$$s0$e0801$Evw8WPqcEUy1n3PhZcP9pg==$$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("bad hash not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // too high factor
+            Hash.password(password)
+                    .verify("scrypt:13107200000000:80:24:n::~$s0$e0801$~Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("too high factor not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // too low factor
+            Hash.password(password)
+                    .verify("scrypt:1:80:24:n::~$s0$e0801$~Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
+            fail("too low factor not detected");
+        } catch (Exception e) {
+            // good error
+        }
     }
 }

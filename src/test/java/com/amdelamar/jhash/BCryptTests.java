@@ -118,5 +118,32 @@ public class BCryptTests {
         } catch (Exception e) {
             // good error
         }
+        
+        try {
+            // bad hash
+            Hash.password(password)
+                    .verify("bcrypt:13:66:16:n::~$2a$10$~YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway");
+            fail("bad hash not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // bad hash format
+            Hash.password(password)
+                    .verify("bcrypt:13:66:16:n::$$2a$10$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway");
+            fail("bad hash not detected");
+        } catch (Exception e) {
+            // good error
+        }
+        
+        try {
+            // too high factor
+            Hash.password(password)
+                    .verify("bcrypt:31:66:16:n::$2a$31$YQ9urAM3RKuDtl1XaF99HrdpoIlB6ZhfaGR1T4yS4jlfMSPyeXehE.0Dway");
+            fail("too high factor not detected");
+        } catch (Exception e) {
+            // good error
+        }
     }
 }

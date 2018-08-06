@@ -88,7 +88,7 @@ bintray {
     issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
     vcsUrl = 'git://github.com/amdelamar/jhash.git'
     version {
-        name = '2.1.0'
+        name = this.version
         desc = this.description
         released  = new Date()
     }

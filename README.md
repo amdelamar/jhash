@@ -39,7 +39,7 @@ dependencies {
 }
 ```
 
-Or Download the latest [release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
+Or Download the [latest release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
 
 
 ## Usage

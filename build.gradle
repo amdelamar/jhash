@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-  testCompile "junit:junit:4.12"
+  testCompile 'junit:junit:4.12'
 }
 
 jar {
@@ -77,7 +77,7 @@ bintray {
   publish = true
   override = true
   pkg {
-    repo = 'maven'
+    repo = 'mvn'
     name = 'jhash'
     desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
     licenses = ['Apache-2.0']

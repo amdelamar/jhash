@@ -4,13 +4,13 @@ plugins {
   id 'jacoco'
   id 'maven'
   id 'maven-publish'
-  id 'com.jfrog.bintray' version '1.8.0'
+  id 'com.jfrog.bintray' version '1.8.4'
   id 'org.sonarqube' version '2.6.2'
 }
 
 group = 'com.amdelamar'
 version = '2.1.0'
-description = 'Password hashing utility in Java.'
+description = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
@@ -66,6 +66,9 @@ publishing {
       artifact (javadocJar) {
         classifier = "javadoc"
       }
+      version this.version
+      groupId this.group
+      artifactId 'jhash'
     }
   }
 }
@@ -79,11 +82,16 @@ bintray {
   pkg {
     repo = 'mvn'
     name = 'jhash'
-    desc = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
+    desc = this.description
     licenses = ['Apache-2.0']
     websiteUrl = 'https://amdelamar.com/jhash/'
     issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
     vcsUrl = 'git://github.com/amdelamar/jhash.git'
+    version {
+        name = '2.1.0'
+        desc = this.description
+        released  = new Date()
+    }
     githubRepo = 'amdelamar/jhash' // Optional Github repository
     githubReleaseNotesFile = 'README.md' // Optional Github release notes
     labels = ['password', 'hash', 'pbkdf2', 'hmac' ,'sha' ,'sha256' ,'bcrypt' ,'scrypt']

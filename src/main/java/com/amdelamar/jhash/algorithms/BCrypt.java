@@ -161,7 +161,7 @@ public class BCrypt {
             throw new IllegalArgumentException("Invalid length");
         }
 
-        StringBuffer rs = new StringBuffer();
+        StringBuilder rs = new StringBuilder();
         int c1;
         int c2;
         int off = 0;
@@ -192,7 +192,7 @@ public class BCrypt {
     /**
      * Look up the 3 bits base64-encoded by the specified character, range-checking against
      * conversion table
-     * 
+     *
      * @param character
      *            the base64-encoded value
      * @return the decoded value of x
@@ -207,7 +207,7 @@ public class BCrypt {
     /**
      * This returns a string encoded using bcrypt's base64 scheme to a byte array. Note that this is
      * *not* compatible with the standard MIME-base64 encoding.
-     * 
+     *
      * @param string
      *            the string to decode
      * @param maxolen
@@ -222,7 +222,7 @@ public class BCrypt {
             throw new IllegalArgumentException("Invalid maxolen");
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int off = 0;
         int slen = string.length();
         int olen = 0;
@@ -265,7 +265,7 @@ public class BCrypt {
 
     /**
      * Blowfish encipher a single 64-bit block encoded as two 32-bit halves
-     * 
+     *
      * @param block
      *            an array containing the two 32-bit half blocks
      * @param off
@@ -298,7 +298,7 @@ public class BCrypt {
 
     /**
      * Cyclically extract a word of key material
-     * 
+     *
      * @param data
      *            the string to extract the data from
      * @param offp
@@ -328,7 +328,7 @@ public class BCrypt {
 
     /**
      * Key the Blowfish cipher
-     * 
+     *
      * @param key
      *            an array containing the key
      */
@@ -353,7 +353,7 @@ public class BCrypt {
 
     /**
      * Perform the "enhanced key schedule"
-     * 
+     *
      * @param data
      *            salt information
      * @param key
@@ -386,7 +386,7 @@ public class BCrypt {
 
     /**
      * Perform the central password hashing step in the bcrypt scheme
-     * 
+     *
      * @param password
      *            the password to hash
      * @param salt
@@ -433,7 +433,7 @@ public class BCrypt {
 
     /**
      * Creates a Hash from the given password using the specified algorithm.
-     * 
+     *
      * @param password
      *            the password to hash
      * @param hash
@@ -507,7 +507,7 @@ public class BCrypt {
             throw new AssertionError("UTF-8 is not supported");
         }
 
-        StringBuffer rs = new StringBuffer();
+        StringBuilder rs = new StringBuilder();
         rs.append("$2");
         if (minor >= 'a') {
             rs.append(minor);
@@ -538,7 +538,7 @@ public class BCrypt {
     private static String createSalt(int length, int rounds) {
         try {
             byte[] salt = HashUtils.randomSalt(length);
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("$2a$");
             sb.append(Integer.toString(rounds));
             sb.append("$");

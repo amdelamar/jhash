@@ -12,7 +12,7 @@ import com.amdelamar.jhash.util.HashUtils;
  * passwords with PBKDF2 using 64,000 iterations of SHA1 (default), SHA256, or SHA512. Follows
  * the builder pattern, so start with Hash.password(pw).create() and use .verify(hash) to
  * check if valid password hash matches.
- * 
+ *
  * @author amdelamar
  * @version 2.0.0
  * @since 1.0.0
@@ -27,6 +27,7 @@ public class Hash {
     private static final String PBKDF2_HMACSHA1 = "PBKDF2WithHmacSHA1";
     private static final String PBKDF2_HMACSHA256 = "PBKDF2WithHmacSHA256";
     private static final String PBKDF2_HMACSHA512 = "PBKDF2WithHmacSHA512";
+    private static final String HASH_LENGTH_MISMATCH = "Hash length doesn't match stored hash length.";
     private static final int HASH_SECTIONS = 7;
     private static final int HASH_ALGORITHM_INDEX = 0;
     private static final int ITERATION_INDEX = 1;
@@ -45,8 +46,8 @@ public class Hash {
     private Type algorithm = Type.PBKDF2_SHA1;
 
     /**
-     * The password to be hashed. Note: Call create() when ready to output the hash value. 
-     * You can also specify optional parameters such as pepper, factor, algorithm, and more. 
+     * The password to be hashed. Note: Call create() when ready to output the hash value.
+     * You can also specify optional parameters such as pepper, factor, algorithm, and more.
      * But this has to be done before you call create().
      * @param password char[]
      * @return Hash
@@ -93,7 +94,7 @@ public class Hash {
     }
 
     /**
-     * Optional value for selecting hash algorithm. E.g. Type.PBKDF2_SHA512, Type.BCRYPT, 
+     * Optional value for selecting hash algorithm. E.g. Type.PBKDF2_SHA512, Type.BCRYPT,
      * or Type.SCRYPT.
      * Default is Type.PBKDF2_SHA1
      * @param algorithm Type
@@ -105,7 +106,7 @@ public class Hash {
     }
 
     /**
-     * Optional value for iterations (PBKDF2), logrounds (BCRYPT), or cost (SCRYPT). Set to 0 
+     * Optional value for iterations (PBKDF2), logrounds (BCRYPT), or cost (SCRYPT). Set to 0
      * if you're unsure and it will use the default value for the specified algorithm.
      * @param factor int
      * @return Hash
@@ -116,7 +117,7 @@ public class Hash {
     }
 
     /**
-     * Creates a Hash from the given char array using the specified algorithm. Use this to 
+     * Creates a Hash from the given char array using the specified algorithm. Use this to
      * create new user's passwords. Or when they change their password.
      * @return String hash
      * @throws IllegalArgumentException
@@ -250,10 +251,10 @@ public class Hash {
     }
 
     /**
-     * Returns true if the password (and pepper) to be hashed matches the expected correctHash. 
+     * Returns true if the password (and pepper) to be hashed matches the expected correctHash.
      * Use this to verify a user login. Note: you must provide a pepper before calling this method
      * if you used a pepper to hash the correctHash from before.
-     * 
+     *
      * @param correctHash
      *            The string hash from storage.
      * @return boolean true if matches
@@ -332,7 +333,7 @@ public class Hash {
             }
 
             if (storedHashSize != hash.length) {
-                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+                throw new InvalidHashException(HASH_LENGTH_MISMATCH);
             }
 
             // Compute the hash of the provided string, using the same salt,
@@ -344,10 +345,10 @@ public class Hash {
 
         } else if (algorithm.equals(BCRYPT)) {
 
-            byte[] hash = params[HASH_INDEX].getBytes();            
+            byte[] hash = params[HASH_INDEX].getBytes();
 
             if (storedHashSize != hash.length) {
-                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+                throw new InvalidHashException(HASH_LENGTH_MISMATCH);
             }
 
             byte[] testHash = BCrypt.create(pepperPassword, new String(hash), storedSaltSize, iterations)
@@ -361,7 +362,7 @@ public class Hash {
             byte[] hash = params[HASH_INDEX].getBytes();
 
             if (storedHashSize != hash.length) {
-                throw new InvalidHashException("Hash length doesn't match stored hash length.");
+                throw new InvalidHashException(HASH_LENGTH_MISMATCH);
             }
 
             return SCrypt.verify(pepperPassword, new String(hash));

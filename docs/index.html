@@ -32,38 +32,37 @@
     <meta itemprop="image" content="https://amdelamar.com/jhash/img/blue-key-200x200.png">
 
     <link rel="icon" type="image/x-icon" href="img/blue-key-32x32.png">
-    <link rel="stylesheet" href="https://amdelamar.com/osseous/1.2.0/osseous.min.css">
+    <link rel="stylesheet" href="https://amdelamar.com/osseous/2.5.1/osseous.min.css">
     <link rel="stylesheet" href="vendor/icomoon/icomoon.css">
     <link rel="stylesheet" href="vendor/highlight/default.css">
     <title>Jhash - Password hashing utility in Java</title>
 </head>
 <body>
 
-<div class="container" style="margin-top:2%;">
-    <div class="row">
-        <div class="twelve columns" style="text-align:center;">
-            <img src="img/blue-key-200x200.png" alt="Banner" title="Photo Credit: Typography Images at Pixabay.com" style="max-width: 200px;" />
-        </div>
-    </div>
-</div>
+  <!-- Landing logo, title, and subtitle. -->
+  <header class="row padding-top-large margin-top-large">
+      <div class="container text-center">
+          <div class="twelve columns">
+              <img class="round" src="img/blue-key-200x200.png" width="200" height="200" alt="Banner" title="Photo Credit: Typography Images at Pixabay.com" />
+          </div>
+          <div class="twelve columns">
+              <h1 class="text-uppercase text-thinner text-wide">Jhash</h1>
+              <p>Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.</p>
+              <p>
+                  <a class="button button-primary" target="_blank" href="https://github.com/amdelamar/jhash/releases"><span class="icon-embed text-medium margin-right"></span>Download</a>
+                  <a class="button button-secondary" href="https://github.com/amdelamar/jhash/"><span class="icon-github text-medium margin-right"></span>View on GitHub</a>
+                  <a class="button" href="https://github.com/amdelamar/jhash/issues"><span class="icon-bug text-medium margin-right"></span>Report Issue</a>
+              </p>
+              <code>v2.1.0</code> - 30 Jun 2018 - <code>47KB</code>
+          </div>
+      </div>
+  </header>
 
-<div class="container" style="margin-bottom:10%">
-    <div class="row">
-        <div class="twelve columns" style="text-align:center;">
-            <h1>Jhash</h1>
-            <p>
-                Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.
-            </p>
-            <p>
-            <a class="button button-blue" target="_blank" href="https://github.com/amdelamar/jhash/releases"><span class="icon-embed" style="font-size:1.5em;margin-right:5px"></span>Download</a>
-            <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/"><span class="icon-github" style="font-size:1.5em;margin-right:5px"></span>View on GitHub</a>
-            <a class="button" target="_blank" href="https://github.com/amdelamar/jhash/issues"><span class="icon-bug" style="font-size:1.5em;margin-right:5px"></span>Report Issue</a>
-            </p>
-            <code>v2.1.0</code> - 30 Jun 2018 - <code>47KB</code>
-        </div>
-        <div class="twelve columns">
-            <hr />
-            <br />
+  <!-- Main Content -->
+  <article class="container">
+
+            <!-- Description Section -->
+            <div id="description" class="row section">
             <h3>Getting Started</h3>
             <p>
                 Add to your project using Maven, Gradle, or download the jar directly.
@@ -243,9 +242,19 @@ scrypt:131072:80:24:y::$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79Ag
             <br><br>
             SCRYPT is licensed as <a href="https://github.com/amdelamar/jhash/blob/master/LICENSE">Apache-2.0</a></p>
         </div>
-    </div>
-</div>
 
+</article>
+
+<!-- Footer at bottom -->
+<footer class="row section text-center">
+    <p><small><em>&#169; <a href="https://amdelamar.com">AustinDelamar</a> - 2017-2018</em></small></p>
+    <a class="button button-primary float-right margin-right-large" title="Back to top" href="javascript:gotoTop()">Back to Top</a>
+</footer>
+
+<!-- Lazy load JavaScript, just for sidebar popup -->
+<script type="text/javascript" src="https://amdelamar.com/osseous/2.5.1/osseous.min.js"></script>
+
+<!-- Highlightjs for color coding -->
 <script src="vendor/highlight/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

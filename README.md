@@ -8,7 +8,7 @@
 Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.
 
 
-## Getting Started
+## Download
 
 Maven:
 
@@ -39,7 +39,7 @@ dependencies {
 }
 ```
 
-Or Download the [latest release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/bintray/jcenter/jhash).
+Or Download the [latest release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/amdelamar/mvn/jhash).
 
 
 ## Usage

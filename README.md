@@ -1,6 +1,6 @@
 # Jhash
 
-[![Build](https://img.shields.io/travis/amdelamar/jhash.svg)](https://travis-ci.org/amdelamar/jhash)
+[![Build](https://img.shields.io/drone/build/amdelamar/jhash.svg)](https://cloud.drone.io/amdelamar/jhash)
 [![Codacy](https://img.shields.io/codacy/grade/6d7927e4c18042d6a62f27e8ab5b53dd.svg)](https://www.codacy.com/app/amdelamar/jhash)
 [![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
 [![Known Vulnerabilities](https://snyk.io/test/github/amdelamar/jhash/badge.svg)](https://snyk.io/test/github/amdelamar/jhash)

@@ -1,22 +1,17 @@
 package com.amdelamar.jhash.algorithms;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import com.amdelamar.jhash.Hash;
+import com.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.util.HashUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.amdelamar.jhash.Hash;
-import com.amdelamar.jhash.algorithms.PBKDF2;
-import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.InvalidHashException;
-import com.amdelamar.jhash.util.HashUtils;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class PBKDF2Tests {
-    
+
     @Test
     public void constructorTests() {
         PBKDF2 algorithm = new PBKDF2();
@@ -187,12 +182,12 @@ public class PBKDF2Tests {
                 .pepper(pepper)
                 .verify(hash2));
     }
-    
+
     @Test
     public void invalidTests() {
         char[] password = "Hello&77World!".toCharArray();
         byte[] salt = HashUtils.randomSalt(PBKDF2.DEFAULT_SALT_LENGTH);
-        
+
         try {
             // bad algorithm
             PBKDF2.create(password, salt, "PBKDFwhat?", PBKDF2.DEFAULT_ITERATIONS, PBKDF2.DEFAULT_HASH_LENGTH);
@@ -200,7 +195,7 @@ public class PBKDF2Tests {
         } catch (Exception e) {
             // good catch
         }
-        
+
         try {
             // bad salt
             PBKDF2.create(password, null, "PBKDF2WithHmacSHA1", PBKDF2.DEFAULT_ITERATIONS, PBKDF2.DEFAULT_HASH_LENGTH);
@@ -208,7 +203,7 @@ public class PBKDF2Tests {
         } catch (Exception e) {
             // good catch
         }
-        
+
         try {
             // bad hash length
             PBKDF2.create(password, salt, "PBKDF2WithHmacSHA1", PBKDF2.DEFAULT_ITERATIONS, 0);

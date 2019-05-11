@@ -2,7 +2,7 @@ package com.amdelamar.jhash.algorithms;
 
 /**
  * Hash Type enumeration constant
- * 
+ *
  * @author amdelamar
  * @since 1.1.0
  */

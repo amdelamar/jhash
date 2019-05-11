@@ -1,21 +1,16 @@
 package com.amdelamar.jhash.algorithms;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import com.amdelamar.jhash.Hash;
+import com.amdelamar.jhash.exception.InvalidHashException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.amdelamar.jhash.Hash;
-import com.amdelamar.jhash.algorithms.BCrypt;
-import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.InvalidHashException;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class BCryptTests {
-    
+
     @Test
     public void constructorTests() {
         BCrypt algorithm = new BCrypt();
@@ -106,7 +101,7 @@ public class BCryptTests {
                 .pepper(pepper)
                 .verify(hash2));
     }
-    
+
     @Test
     public void invalidHashTests() {
         char[] password = "HelloWorld".toCharArray();
@@ -119,7 +114,7 @@ public class BCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash
             Hash.password(password)
@@ -128,7 +123,7 @@ public class BCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash format
             Hash.password(password)
@@ -137,7 +132,7 @@ public class BCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // too high factor
             Hash.password(password)

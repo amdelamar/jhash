@@ -1,8 +1,8 @@
 package com.amdelamar.jhash.algorithms;
 
-import java.io.UnsupportedEncodingException;
-
 import com.amdelamar.jhash.util.HashUtils;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * BCrypt implements OpenBSD-style Blowfish password hashing using the scheme described in "A
@@ -18,10 +18,10 @@ public class BCrypt {
     public static final int BLOWFISH_ROUNDS = 16;
 
     // Initial contents of key schedule
-    private static final int[] P_ARRAY = { 0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
-            0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c, 0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917, 0x9216d5d9, 0x8979fb1b };
+    private static final int[] P_ARRAY = {0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344, 0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
+            0x452821e6, 0x38d01377, 0xbe5466cf, 0x34e90c6c, 0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917, 0x9216d5d9, 0x8979fb1b};
 
-    private static final int[] S_BOX = { 0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,
+    private static final int[] S_BOX = {0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7, 0xb8e1afed, 0x6a267e96, 0xba7c9045, 0xf12c7f99,
             0x24a19947, 0xb3916cf7, 0x0801f2e2, 0x858efc16, 0x636920d8, 0x71574e69, 0xa458fea3, 0xf4933d7e, 0x0d95748f, 0x728eb658,
             0x718bcd58, 0x82154aee, 0x7b54a41d, 0xc25a59b5, 0x9c30d539, 0x2af26013, 0xc5d1b023, 0x286085f0, 0xca417918, 0xb8db38ef,
             0x8e79dcb0, 0x603a180e, 0x6c9e0e8b, 0xb01e8a3e, 0xd71577c1, 0xbd314b27, 0x78af2fda, 0x55605c60, 0xe65525f3, 0xaa55ab94,
@@ -123,21 +123,21 @@ public class BCrypt {
             0xe6c6c7bd, 0x327a140a, 0x45e1d006, 0xc3f27b9a, 0xc9aa53fd, 0x62a80f00, 0xbb25bfe2, 0x35bdd2f6, 0x71126905, 0xb2040222,
             0xb6cbcf7c, 0xcd769c2b, 0x53113ec0, 0x1640e3d3, 0x38abbd60, 0x2547adf0, 0xba38209c, 0xf746ce76, 0x77afa1c5, 0x20756060,
             0x85cbfe4e, 0x8ae88dd8, 0x7aaaf9b0, 0x4cf9aa7e, 0x1948c25c, 0x02fb8a8c, 0x01c36ae4, 0xd6ebe1f9, 0x90d4f869, 0xa65cdea0,
-            0x3f09252d, 0xc208e69f, 0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6 };
+            0x3f09252d, 0xc208e69f, 0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6};
 
-    private static final int[] CIPHER = { 0x4f727068, 0x65616e42, 0x65686f6c, 0x64657253, 0x63727944, 0x6f756274 };
+    private static final int[] CIPHER = {0x4f727068, 0x65616e42, 0x65686f6c, 0x64657253, 0x63727944, 0x6f756274};
 
     // Table for Special Base64 encoding
-    private static final char[] BASE64 = { '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
+    private static final char[] BASE64 = {'.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q',
             'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
     // Table for Special Base64 decoding
-    private static final byte[] IBASE64 = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    private static final byte[] IBASE64 = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 1, 54, 55, 56, 57, 58, 59, 60, 61,
             62, 63, -1, -1, -1, -1, -1, -1, -1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
             27, -1, -1, -1, -1, -1, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
-            53, -1, -1, -1, -1, -1 };
+            53, -1, -1, -1, -1, -1};
 
     // Expanded Blowfish key
     private static int[] pA;
@@ -147,13 +147,10 @@ public class BCrypt {
      * This returns a String using bcrypt's slightly-modified base64 encoding scheme. Note that this
      * is *not* compatible with the standard MIME-base64 encoding.
      *
-     * @param array
-     *            the byte array to encode
-     * @param len
-     *            the number of bytes to encode
+     * @param array the byte array to encode
+     * @param len   the number of bytes to encode
      * @return base64-encoded string
-     * @exception IllegalArgumentException
-     *                if the length is invalid
+     * @throws IllegalArgumentException if the length is invalid
      */
     private static String encodeBase64(byte[] array, int len) throws IllegalArgumentException {
 
@@ -193,8 +190,7 @@ public class BCrypt {
      * Look up the 3 bits base64-encoded by the specified character, range-checking against
      * conversion table
      *
-     * @param character
-     *            the base64-encoded value
+     * @param character the base64-encoded value
      * @return the decoded value of x
      */
     private static byte char64(char character) {
@@ -208,13 +204,10 @@ public class BCrypt {
      * This returns a string encoded using bcrypt's base64 scheme to a byte array. Note that this is
      * *not* compatible with the standard MIME-base64 encoding.
      *
-     * @param string
-     *            the string to decode
-     * @param maxolen
-     *            the maximum number of bytes to decode
+     * @param string  the string to decode
+     * @param maxolen the maximum number of bytes to decode
      * @return an array containing the decoded bytes
-     * @throws IllegalArgumentException
-     *             if maxolen is invalid
+     * @throws IllegalArgumentException if maxolen is invalid
      */
     private static byte[] decodeBase64(String string, int maxolen) throws IllegalArgumentException {
 
@@ -266,10 +259,8 @@ public class BCrypt {
     /**
      * Blowfish encipher a single 64-bit block encoded as two 32-bit halves
      *
-     * @param block
-     *            an array containing the two 32-bit half blocks
-     * @param off
-     *            the position in the array of the blocks
+     * @param block an array containing the two 32-bit half blocks
+     * @param off   the position in the array of the blocks
      */
     private static final void encipher(int[] block, int off) {
         int n1;
@@ -277,7 +268,7 @@ public class BCrypt {
         int right = block[off + 1];
 
         left ^= pA[0];
-        for (int i = 0; i <= BLOWFISH_ROUNDS - 2;) {
+        for (int i = 0; i <= BLOWFISH_ROUNDS - 2; ) {
             // Feistel substitution on left word
             n1 = sB[(left >> 24) & 0xff];
             n1 += sB[0x100 | ((left >> 16) & 0xff)];
@@ -299,10 +290,8 @@ public class BCrypt {
     /**
      * Cyclically extract a word of key material
      *
-     * @param data
-     *            the string to extract the data from
-     * @param offp
-     *            a "pointer" (as a one-entry array) to the current offset into data
+     * @param data the string to extract the data from
+     * @param offp a "pointer" (as a one-entry array) to the current offset into data
      * @return the next word of material from data
      */
     private static int streamtoword(byte[] data, int[] offp) {
@@ -329,12 +318,11 @@ public class BCrypt {
     /**
      * Key the Blowfish cipher
      *
-     * @param key
-     *            an array containing the key
+     * @param key an array containing the key
      */
     private static void key(byte[] key) {
-        int[] koffp = { 0 };
-        int[] lr = { 0, 0 };
+        int[] koffp = {0};
+        int[] lr = {0, 0};
 
         for (int i = 0; i < pA.length; i++) {
             pA[i] = pA[i] ^ streamtoword(key, koffp);
@@ -354,15 +342,13 @@ public class BCrypt {
     /**
      * Perform the "enhanced key schedule"
      *
-     * @param data
-     *            salt information
-     * @param key
-     *            password information
+     * @param data salt information
+     * @param key  password information
      */
     private static void enhancedKeySchedule(byte[] data, byte[] key) {
-        int[] koffp = { 0 };
-        int[] doffp = { 0 };
-        int[] lr = { 0, 0 };
+        int[] koffp = {0};
+        int[] doffp = {0};
+        int[] lr = {0, 0};
 
         for (int i = 0; i < pA.length; i++) {
             pA[i] = pA[i] ^ streamtoword(key, koffp);
@@ -387,17 +373,12 @@ public class BCrypt {
     /**
      * Perform the central password hashing step in the bcrypt scheme
      *
-     * @param password
-     *            the password to hash
-     * @param salt
-     *            the binary salt to hash with the password
-     * @param log_rounds
-     *            the binary logarithm of the number of rounds of hashing to apply
-     * @param cdata
-     *            the plaintext to encrypt
+     * @param password   the password to hash
+     * @param salt       the binary salt to hash with the password
+     * @param log_rounds the binary logarithm of the number of rounds of hashing to apply
+     * @param cdata      the plaintext to encrypt
      * @return an array containing the binary hashed password
-     * @throws IllegalArgumentException
-     *             if log rounds is a bad value
+     * @throws IllegalArgumentException if log rounds is a bad value
      */
     private static byte[] bcrypt(byte[] password, byte[] salt, int log_rounds, int[] cdata) throws IllegalArgumentException {
 
@@ -434,17 +415,12 @@ public class BCrypt {
     /**
      * Creates a Hash from the given password using the specified algorithm.
      *
-     * @param password
-     *            the password to hash
-     * @param hash
-     *            the correct hash, null if hashing
-     * @param saltLength
-     *            the salt byte size
-     * @param iterations
-     *            the log rounds (e.g. 2^10)
+     * @param password   the password to hash
+     * @param hash       the correct hash, null if hashing
+     * @param saltLength the salt byte size
+     * @param iterations the log rounds (e.g. 2^10)
      * @return the hashed password
-     * @throws IllegalArgumentException
-     *             if invalid salt or parameters
+     * @throws IllegalArgumentException if invalid salt or parameters
      */
     public static String create(String password, String hash, int saltLength, int iterations) throws IllegalArgumentException {
 
@@ -531,6 +507,7 @@ public class BCrypt {
 
     /**
      * Generate a salt for use with the BCrypt.create() method.
+     *
      * @param length the salt length
      * @param rounds the log rounds
      * @return an encoded salt value

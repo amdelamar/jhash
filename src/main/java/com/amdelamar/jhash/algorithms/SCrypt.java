@@ -1,18 +1,17 @@
 package com.amdelamar.jhash.algorithms;
 
+import com.amdelamar.jhash.util.HashUtils;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import com.amdelamar.jhash.util.HashUtils;
-
 /**
  * SCrypt implements the password-based key derivative function created by Colin Percival. It
  * follows the scrypt algorithm published by IETF (RFC 7914).
- * 
+ *
  * @author amdelamar, Will Glozer
  * @see <a href="https://en.wikipedia.org/wiki/Scrypt">https://en.wikipedia.org/wiki/Scrypt</a>
  */
@@ -47,31 +46,24 @@ public class SCrypt {
     /**
      * Pure Java implementation of the <a href="http://www.tarsnap.com/scrypt/scrypt.pdf">scrypt</a>.
      *
-     * @param password
-     *            Password.
-     * @param salt
-     *            Salt.
-     * @param cost
-     *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
-     * @param blocksize
-     *            Block size for each mixing loop (memory usage).
-     * @param parallel
-     *            Parallelization to control the number of independent mixing loops.
-     * @param length
-     *            Intended length of the derived key.
-     *
+     * @param password  Password.
+     * @param salt      Salt.
+     * @param cost      Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
+     * @param blocksize Block size for each mixing loop (memory usage).
+     * @param parallel  Parallelization to control the number of independent mixing loops.
+     * @param length    Intended length of the derived key.
      * @return The derived key.
-     *
-     * @throws NoSuchAlgorithmException
-     *             when HMAC_SHA256 is not available.
-     * @throws IllegalArgumentException
-     *             when parameters invalid
+     * @throws NoSuchAlgorithmException when HMAC_SHA256 is not available.
+     * @throws IllegalArgumentException when parameters invalid
      */
     protected static byte[] scrypt(byte[] password, byte[] salt, int cost, int blocksize, int parallel, int length)
             throws GeneralSecurityException {
-        if (cost < 2 || (cost & (cost - 1)) != 0) throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
-        if (cost > Integer.MAX_VALUE / 128 / blocksize) throw new IllegalArgumentException("Parameter cost is too large");
-        if (blocksize > Integer.MAX_VALUE / 128 / parallel) throw new IllegalArgumentException("Parameter blocksize is too large");
+        if (cost < 2 || (cost & (cost - 1)) != 0)
+            throw new IllegalArgumentException("Cost must be a power of 2 greater than 1");
+        if (cost > Integer.MAX_VALUE / 128 / blocksize)
+            throw new IllegalArgumentException("Parameter cost is too large");
+        if (blocksize > Integer.MAX_VALUE / 128 / parallel)
+            throw new IllegalArgumentException("Parameter blocksize is too large");
 
         Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(password, "HmacSHA256"));
@@ -216,19 +208,12 @@ public class SCrypt {
     /**
      * Implementation of PBKDF2 (RFC2898).
      *
-     * @param mac
-     *            Pre-initialized {@link Mac} instance to use.
-     * @param salt
-     *            Salt.
-     * @param iterations
-     *            Iteration count.
-     * @param key
-     *            Byte array that derived key will be placed in.
-     * @param length
-     *            Intended length, in octets, of the derived key.
-     *
-     * @throws GeneralSecurityException
-     *             If key length is too long
+     * @param mac        Pre-initialized {@link Mac} instance to use.
+     * @param salt       Salt.
+     * @param iterations Iteration count.
+     * @param key        Byte array that derived key will be placed in.
+     * @param length     Intended length, in octets, of the derived key.
+     * @throws GeneralSecurityException If key length is too long
      */
     protected static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
         int len = mac.getMacLength();
@@ -268,14 +253,10 @@ public class SCrypt {
     /**
      * Compare the supplied plaintext password to a hashed password.
      *
-     * @param password
-     *            Plaintext password.
-     * @param hashed
-     *            scrypt hashed password.
-     *
+     * @param password Plaintext password.
+     * @param hashed   scrypt hashed password.
      * @return true if password matches hashed value.
-     * @throws IllegalStateException
-     *             If JVM doesn't support necessary functions.
+     * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
     public static boolean verify(String password, String hashed) throws IllegalStateException {
         try {
@@ -312,15 +293,11 @@ public class SCrypt {
     /**
      * Creates a Hash from the given password using the specified algorithm.
      *
-     * @param password
-     *            Password.
-     * @param saltLength
-     *            The salt byte length.
-     * @param cost
-     *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
+     * @param password   Password.
+     * @param saltLength The salt byte length.
+     * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
      * @return The hashed password.
-     * @throws IllegalStateException
-     *             If JVM doesn't support necessary functions.
+     * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
     public static String create(String password, int saltLength, int cost) throws IllegalStateException {
         return create(password, saltLength, cost, BLOCKSIZE, PARALLEL);
@@ -329,20 +306,13 @@ public class SCrypt {
     /**
      * Hash the supplied plaintext password and generate output in the format described
      *
-     * @param password
-     *            Password.
-     * @param saltLength
-     *            The salt byte length.
-     * @param cost
-     *            Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
-     * @param blockSize
-     *            Block size for each mixing loop (memory usage)
-     * @param parallel
-     *            Parallelization to control the number of independent mixing loops.
-     *
+     * @param password   Password.
+     * @param saltLength The salt byte length.
+     * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
+     * @param blockSize  Block size for each mixing loop (memory usage)
+     * @param parallel   Parallelization to control the number of independent mixing loops.
      * @return The hashed password.
-     * @throws IllegalStateException
-     *             If JVM doesn't support necessary functions.
+     * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
     protected static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
         try {

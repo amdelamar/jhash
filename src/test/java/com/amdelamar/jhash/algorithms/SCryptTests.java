@@ -1,20 +1,16 @@
 package com.amdelamar.jhash.algorithms;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import com.amdelamar.jhash.Hash;
+import com.amdelamar.jhash.exception.InvalidHashException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.amdelamar.jhash.Hash;
-import com.amdelamar.jhash.exception.InvalidHashException;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class SCryptTests {
-    
+
     @Test
     public void constructorTests() {
         SCrypt algorithm = new SCrypt();
@@ -108,7 +104,7 @@ public class SCryptTests {
     @Test
     public void invalidHashTests() {
         char[] password = "HelloWorld".toCharArray();
-        
+
         try {
             // bad password
             Hash.password(new char[1])
@@ -126,7 +122,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash
             Hash.password(password)
@@ -135,7 +131,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash format
             Hash.password(password)
@@ -144,7 +140,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash format
             Hash.password(password)
@@ -153,7 +149,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // too high factor
             Hash.password(password)
@@ -162,7 +158,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // too low factor
             Hash.password(password)
@@ -172,7 +168,7 @@ public class SCryptTests {
             // good error
         }
     }
-    
+
     @Test
     public void invalidTests() {
         byte[] password = "HelloWorld".getBytes();
@@ -184,7 +180,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad cost
             SCrypt.scrypt(password, new byte[0], 3, SCrypt.BLOCKSIZE, SCrypt.PARALLEL, 32);
@@ -192,7 +188,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // too high cost
             SCrypt.scrypt(password, new byte[0], 1 + (Integer.MAX_VALUE / 128 / SCrypt.BLOCKSIZE), SCrypt.BLOCKSIZE, SCrypt.PARALLEL, 32);
@@ -200,7 +196,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // too high blocksize
             SCrypt.scrypt(password, new byte[0], 2, SCrypt.COST, SCrypt.COST, 32);
@@ -208,7 +204,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash format
             SCrypt.verify("HelloWorld", "$s$1$e0$801$Evw8WPqcEUy1n3PhZcP9pg==$lRbNPFoOdoBMFT0XUcZUPvIxCY8w+9DkUklXIqCOHks=");
@@ -216,7 +212,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash format
             SCrypt.verify("HelloWorld", "$ss0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$OlipMfOQJkCm62kY1m79AgIsfPzmIDdgz/fl/68EQ+Y=");
@@ -224,7 +220,7 @@ public class SCryptTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         // bad hash length
         assertFalse(SCrypt.verify("HelloWorld", "$s0$e0801$mzUhOD/ns1JCnwhsYPvIkg==$uOw06jt6FvimXSxEJipYYHsQ"));
     }

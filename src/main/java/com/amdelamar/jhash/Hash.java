@@ -324,12 +324,7 @@ public class Hash {
                 algorithm = PBKDF2_HMACSHA512;
             }
 
-            byte[] hash = null;
-            try {
-                hash = HashUtils.decodeBase64(params[HASH_INDEX]);
-            } catch (IllegalArgumentException ex) {
-                throw new InvalidHashException("Base64 decoding of hash failed.", ex);
-            }
+            byte[] hash = HashUtils.decodeBase64(params[HASH_INDEX]);
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException(HASH_LENGTH_MISMATCH);

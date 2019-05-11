@@ -142,93 +142,77 @@ public class HashTests {
 
     @Test
     public void nullPasswordTests() {
-        boolean caught = false;
-
         try {
             // null password is bad
             Hash.password(null)
                     .create();
-            caught = false;
+            fail("null password not detected");
         } catch (IllegalArgumentException e) {
             // the error we expect
-            caught = true;
         } catch (Exception e) {
             // not good error
-            caught = false;
+            fail("null password threw unexpected exception");
         }
-        assertTrue(caught);
 
         try {
             // empty password is bad
             Hash.password(new char[0])
                     .create();
-            caught = false;
+            fail("empty password not detected");
         } catch (IllegalArgumentException e) {
             // the error we expect
-            caught = true;
         } catch (Exception e) {
             // not good error
-            caught = false;
+            fail("empty password threw unexpected exception");
         }
-        assertTrue(caught);
     }
 
     @Test
     public void nullPepperTests() {
         char[] password = "HelloWorld".toCharArray();
-        boolean caught = false;
 
         try {
             // null pepper is ok
             Hash.password(password)
                     .pepper(null)
                     .create();
-            caught = false;
         } catch (Exception e) {
             // not good error
-            caught = true;
+            fail("null pepper threw exception");
         }
-        assertFalse(caught);
 
         try {
             // empty pepper is ok
             Hash.password(password)
                     .pepper(new char[0])
                     .create();
-            caught = false;
         } catch (Exception e) {
             // not good error
-            caught = true;
+            fail("empty pepper threw exception");
         }
-        assertFalse(caught);
     }
 
     @Test
     public void nullHashTests() {
         char[] password = "HelloWorld".toCharArray();
-        boolean caught = false;
 
         try {
             // null hash is bad
             Hash.password(password)
                     .verify(null);
-            caught = false;
+            fail("null hash not detected");
         } catch (Exception e) {
             // good error
-            caught = true;
         }
-        assertTrue(caught);
 
         try {
             // empty hash is bad
             Hash.password(password)
                     .verify("");
-            caught = false;
+            fail("empty hash not detected");
         } catch (Exception e) {
             // good error
-            caught = true;
         }
-        assertTrue(caught);
     }
 
     @Test

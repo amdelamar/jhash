@@ -1,23 +1,25 @@
 package com.amdelamar.jhash.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+
 import java.security.SecureRandom;
-import java.util.Base64;
 
 /**
  * Hash Utility and Common functions.
- * 
+ *
  * @author amdelamar
  * @since 1.0.0
  */
 public final class HashUtils {
-    
+
     private HashUtils() {
         // prevent instantiation
     }
 
     /**
      * Generates a secure random salt of 24 bytes.
-     * 
+     *
      * @return byte array salt
      */
     public static byte[] randomSalt() {
@@ -26,9 +28,8 @@ public final class HashUtils {
 
     /**
      * Generates a secure random salt of the specified size.
-     * 
-     * @param size
-     *            The size of the salt in bytes.
+     *
+     * @param size The size of the salt in bytes.
      * @return byte array salt
      */
     public static byte[] randomSalt(int size) {
@@ -37,9 +38,8 @@ public final class HashUtils {
 
     /**
      * Generates a secure random salt of 24 bytes.
-     * 
-     * @param secureRandom
-     *            SecureRandom thats hopefully seeded
+     *
+     * @param secureRandom SecureRandom thats hopefully seeded
      * @return byte array salt
      */
     public static byte[] randomSalt(SecureRandom secureRandom) {
@@ -48,11 +48,9 @@ public final class HashUtils {
 
     /**
      * Generates a secure random salt of the specified size.
-     * 
-     * @param secureRandom
-     *            SecureRandom thats hopefully seeded
-     * @param size
-     *            The size of the salt in bytes.
+     *
+     * @param secureRandom SecureRandom thats hopefully seeded
+     * @param size         The size of the salt in bytes.
      * @return byte array salt
      */
     public static byte[] randomSalt(SecureRandom secureRandom, int size) {
@@ -63,11 +61,9 @@ public final class HashUtils {
 
     /**
      * Compares two byte arrays.
-     * 
-     * @param byteA
-     *            First byte array.
-     * @param byteB
-     *            Second byte array.
+     *
+     * @param byteA First byte array.
+     * @param byteB Second byte array.
      * @return true if they are equivalent.
      */
     public static boolean slowEquals(byte[] byteA, byte[] byteB) {
@@ -79,29 +75,25 @@ public final class HashUtils {
     }
 
     /**
-     * Decodes a Base64 string to a byte array. A convenience method for java.util.Base64 decoder.
-     * 
-     * @param string
-     *            (in Base64)
+     * Decodes a Base64 string to a byte array. A convenience method for Base64 decoder.
+     *
+     * @param string (in Base64)
      * @return Base64 decoded byte array
      * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static byte[] decodeBase64(String string) {
-        return Base64.getDecoder()
-                .decode(string);
+        return Base64.decodeBase64(string);
     }
 
     /**
-     * Encodes a byte array into a Base64 string. A convenience method for java.util.Base64 encoder.
-     * 
-     * @param array
-     *            (byte array)
+     * Encodes a byte array into a Base64 string. A convenience method for Base64 encoder.
+     *
+     * @param array (byte array)
      * @return Base64 encoded string
      * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static String encodeBase64(byte[] array) {
-        return new String(Base64.getEncoder()
-                .encode(array));
+        return StringUtils.newStringUtf8(Base64.encodeBase64(array));
     }
 
 }

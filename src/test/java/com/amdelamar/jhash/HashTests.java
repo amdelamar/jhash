@@ -1,20 +1,16 @@
 package com.amdelamar.jhash;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import com.amdelamar.jhash.algorithms.Type;
+import com.amdelamar.jhash.exception.InvalidHashException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.amdelamar.jhash.algorithms.Type;
-import com.amdelamar.jhash.exception.InvalidHashException;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class HashTests {
-    
+
     @Test
     public void constructorTests() {
         Hash hash = new Hash();
@@ -133,7 +129,7 @@ public class HashTests {
         } catch (IllegalArgumentException | InvalidHashException e) {
             // good catch
         }
-        
+
         try {
             // bad algorithm name
             Hash.password(password)
@@ -234,7 +230,7 @@ public class HashTests {
         }
         assertTrue(caught);
     }
-    
+
     @Test
     public void invalidHashTests() {
         char[] password = "HelloWorld".toCharArray();
@@ -247,7 +243,7 @@ public class HashTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // zero iterations
             Hash.password(password)
@@ -265,16 +261,16 @@ public class HashTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad salt encoding
             Hash.password(password)
-                    .verify("pbkdf2sha1:64000:18:24:n:~LZXY631xphycV5kaJ2WY0RRDqSfwiZ6L:uOw06jt6FvimXSxEJipYYHsQ");
+                    .verify("pbkdf2sha1:64000:18:24:n::uOw06jt6FvimXSxEJipYYHsQ");
             fail("bad salt encoding not detected");
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash size
             Hash.password(password)
@@ -283,7 +279,7 @@ public class HashTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad hash
             Hash.password(password)
@@ -292,7 +288,7 @@ public class HashTests {
         } catch (Exception e) {
             // good error
         }
-        
+
         try {
             // bad salt size
             Hash.password(password)

@@ -2,9 +2,15 @@ package com.amdelamar.jhash.algorithms;
 
 import com.amdelamar.jhash.Hash;
 import com.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.util.Base64Decoder;
+import com.amdelamar.jhash.util.Base64Encoder;
+import com.amdelamar.jhash.util.HashUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -99,6 +105,48 @@ public class SCryptTests {
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
+    }
+
+    @Test
+    public void encoderTests() {
+
+        final boolean[] encoderIsCalled = {false};
+        Base64Encoder encoder = array -> {
+            encoderIsCalled[0] = true;
+            return HashUtils.encodeBase64(array);
+        };
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
+
+        Hash.password(password)
+                .pepper(pepper)
+                .algorithm(Type.SCRYPT)
+                .encoder(encoder)
+                .create();
+
+        assertTrue(encoderIsCalled[0]);
+    }
+
+    @Test
+    public void decoderTests() throws InvalidHashException {
+
+        final boolean[] decoderIsCalled = {false};
+        Base64Decoder decoder = string -> {
+            decoderIsCalled[0] = true;
+            return HashUtils.decodeBase64(string);
+        };
+        char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
+        char[] password = "Hello&77World!".toCharArray();
+        String hash = Hash.password(password)
+                .pepper(pepper)
+                .create();
+
+        Hash.password(password)
+                .pepper(pepper)
+                .decoder(decoder)
+                .verify(hash);
+
+        assertTrue(decoderIsCalled[0]);
     }
 
     @Test

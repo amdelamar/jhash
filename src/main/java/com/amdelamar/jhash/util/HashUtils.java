@@ -11,7 +11,10 @@ import java.security.SecureRandom;
  * @author amdelamar
  * @since 1.0.0
  */
-public final class HashUtils {
+public class HashUtils {
+
+    public static Base64Encoder defaultBase64Encoder = array -> StringUtils.newStringUtf8(Base64.encodeBase64(array));
+    public static Base64Decoder defaultBase64Decoder = Base64::decodeBase64;
 
     private HashUtils() {
         // prevent instantiation
@@ -82,7 +85,7 @@ public final class HashUtils {
      * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static byte[] decodeBase64(String string) {
-        return Base64.decodeBase64(string);
+        return defaultBase64Decoder.decode(string);
     }
 
     /**
@@ -93,7 +96,7 @@ public final class HashUtils {
      * @see <a href="https://en.wikipedia.org/wiki/Base64">https://en.wikipedia.org/wiki/Base64</a>
      */
     public static String encodeBase64(byte[] array) {
-        return StringUtils.newStringUtf8(Base64.encodeBase64(array));
+        return defaultBase64Encoder.encode(array);
     }
 
 }

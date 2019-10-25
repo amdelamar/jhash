@@ -1,5 +1,7 @@
 package com.amdelamar.jhash.algorithms;
 
+import com.amdelamar.jhash.util.Base64Decoder;
+import com.amdelamar.jhash.util.Base64Encoder;
 import com.amdelamar.jhash.util.HashUtils;
 
 import javax.crypto.Mac;
@@ -250,6 +252,7 @@ public class SCrypt {
         }
     }
 
+
     /**
      * Compare the supplied plaintext password to a hashed password.
      *
@@ -259,6 +262,19 @@ public class SCrypt {
      * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
     public static boolean verify(String password, String hashed) throws IllegalStateException {
+        return verify(password, hashed, HashUtils.defaultBase64Decoder);
+    }
+
+    /**
+     * Compare the supplied plaintext password to a hashed password.
+     *
+     * @param password Plaintext password.
+     * @param hashed   scrypt hashed password.
+     * @param decoder  Base64 decoder implementation to use.
+     * @return true if password matches hashed value.
+     * @throws IllegalStateException If JVM doesn't support necessary functions.
+     */
+    public static boolean verify(String password, String hashed, Base64Decoder decoder) throws IllegalStateException {
         try {
             String[] parts = hashed.split("\\$");
 
@@ -267,8 +283,8 @@ public class SCrypt {
             }
 
             long params = Long.parseLong(parts[2], 16);
-            byte[] salt = HashUtils.decodeBase64(parts[3]);
-            byte[] derived = HashUtils.decodeBase64(parts[4]);
+            byte[] salt = decoder.decode(parts[3]);
+            byte[] derived = decoder.decode(parts[4]);
 
             int cost = (int) Math.pow(2, params >> 16 & 0xffff);
             int blockSize = (int) params >> 8 & 0xff;
@@ -300,7 +316,21 @@ public class SCrypt {
      * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
     public static String create(String password, int saltLength, int cost) throws IllegalStateException {
-        return create(password, saltLength, cost, BLOCKSIZE, PARALLEL);
+        return create(password, saltLength, cost, BLOCKSIZE, PARALLEL, HashUtils.defaultBase64Encoder);
+    }
+
+    /**
+     * Creates a Hash from the given password using the specified algorithm.
+     *
+     * @param password   Password.
+     * @param saltLength The salt byte length.
+     * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
+     * @param encoder    Base64 encoder implementation to use
+     * @return The hashed password.
+     * @throws IllegalStateException If JVM doesn't support necessary functions.
+     */
+    public static String create(String password, int saltLength, int cost, Base64Encoder encoder) throws IllegalStateException {
+        return create(password, saltLength, cost, BLOCKSIZE, PARALLEL, encoder);
     }
 
     /**
@@ -311,10 +341,11 @@ public class SCrypt {
      * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
      * @param blockSize  Block size for each mixing loop (memory usage)
      * @param parallel   Parallelization to control the number of independent mixing loops.
+     * @param encoder    Base64 encoder implementation to use.
      * @return The hashed password.
      * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
-    protected static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
+    protected static String create(String password, int saltLength, int cost, int blockSize, int parallel, Base64Encoder encoder) throws IllegalStateException {
         try {
             byte[] salt = HashUtils.randomSalt(saltLength);
 
@@ -326,9 +357,9 @@ public class SCrypt {
             sb.append("$s0$")
                     .append(params)
                     .append('$');
-            sb.append(HashUtils.encodeBase64(salt))
+            sb.append(encoder.encode(salt))
                     .append('$');
-            sb.append(HashUtils.encodeBase64(derived));
+            sb.append(encoder.encode(derived));
 
             return sb.toString();
         } catch (UnsupportedEncodingException e) {

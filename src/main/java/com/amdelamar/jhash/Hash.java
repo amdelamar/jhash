@@ -5,6 +5,8 @@ import com.amdelamar.jhash.algorithms.PBKDF2;
 import com.amdelamar.jhash.algorithms.SCrypt;
 import com.amdelamar.jhash.algorithms.Type;
 import com.amdelamar.jhash.exception.InvalidHashException;
+import com.amdelamar.jhash.util.Base64Decoder;
+import com.amdelamar.jhash.util.Base64Encoder;
 import com.amdelamar.jhash.util.HashUtils;
 
 /**
@@ -44,6 +46,8 @@ public class Hash {
     private int saltLength = 0;
     private int factor = 0;
     private Type algorithm = Type.PBKDF2_SHA1;
+    private Base64Decoder decoder = HashUtils.defaultBase64Decoder;
+    private Base64Encoder encoder = HashUtils.defaultBase64Encoder;
 
     /**
      * The password to be hashed. Note: Call create() when ready to output the hash value.
@@ -123,6 +127,30 @@ public class Hash {
     }
 
     /**
+     * Optional value for Base64 encoder implementation.
+     * Default is {@link org.apache.commons.codec.binary.Base64#encode(byte[])}
+     *
+     * @param encoder HashUtils.Base64Encoder
+     * @return Hash
+     */
+    public Hash encoder(Base64Encoder encoder) {
+        this.encoder = encoder;
+        return this;
+    }
+
+    /**
+     * Optional value for Base64 decoder implementation.
+     * Default is {@link org.apache.commons.codec.binary.Base64#decode(String)}
+     *
+     * @param decoder HashUtils.Base64Decoder
+     * @return Hash
+     */
+    public Hash decoder(Base64Decoder decoder) {
+        this.decoder = decoder;
+        return this;
+    }
+
+    /**
      * Creates a Hash from the given char array using the specified algorithm. Use this to
      * create new user's passwords. Or when they change their password.
      *
@@ -186,9 +214,9 @@ public class Hash {
                     .append(":")
                     .append(isPeppered)
                     .append(":")
-                    .append(HashUtils.encodeBase64(salt))
+                    .append(encoder.encode(salt))
                     .append(":")
-                    .append(HashUtils.encodeBase64(hash));
+                    .append(encoder.encode(hash));
 
             return finalHash.toString();
 
@@ -234,7 +262,7 @@ public class Hash {
             }
 
             // Hash the password
-            String hash = SCrypt.create(pepperPassword, saltLength, factor);
+            String hash = SCrypt.create(pepperPassword, saltLength, factor, encoder);
 
             // format for storage
             StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
@@ -295,7 +323,7 @@ public class Hash {
             pepperPassword = (new String(pepper) + pepperPassword);
         }
 
-        byte[] salt = HashUtils.decodeBase64(params[SALT_INDEX]);
+        byte[] salt = decoder.decode(params[SALT_INDEX]);
 
         int storedHashSize = 0;
         try {
@@ -324,7 +352,7 @@ public class Hash {
                 algorithm = PBKDF2_HMACSHA512;
             }
 
-            byte[] hash = HashUtils.decodeBase64(params[HASH_INDEX]);
+            byte[] hash = decoder.decode(params[HASH_INDEX]);
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException(HASH_LENGTH_MISMATCH);

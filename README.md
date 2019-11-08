@@ -39,6 +39,18 @@ dependencies {
 }
 ```
 
+SBT:
+
+```scala
+resolvers += {
+  Resolver.jcenterRepo
+}
+
+libraryDependencies ++= Seq(
+  "com.amdelamar" % "jhash" % "2.1.0"
+)
+```
+
 Or Download the [latest release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/amdelamar/mvn/jhash).
 
 

@@ -93,6 +93,16 @@ dependencies {
 }
 </code></pre>
 
+                <p>SBT:</p>
+                <pre><code class="scala">resolvers += {
+    Resolver.jcenterRepo
+}
+
+libraryDependencies ++= Seq(
+    "com.amdelamar" % "jhash" % "2.1.0"
+)
+</code></pre>
+
             <p>Or Download the <a href="https://github.com/amdelamar/jhash/releases">latest release</a>. Published on <a href="https://bintray.com/amdelamar/mvn/jhash">JCenter</a>.</p>
 
 			<br>

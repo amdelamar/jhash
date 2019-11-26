@@ -59,7 +59,7 @@ public class BCryptTests {
     }
 
     @Test
-    public void lowFactorTests() throws InvalidHashException {
+    public void defaultFactorTests() throws InvalidHashException {
 
         int parameter = 10;
         char[] pepper = "ZfMifTCEvjyDGIqv".toCharArray();
@@ -82,6 +82,41 @@ public class BCryptTests {
         assertTrue(Hash.password(password)
                 .pepper(pepper)
                 .verify(hash2));
+    }
+
+    @Test
+    public void lowFactorTests() throws InvalidHashException {
+        char[] password = "HelloWorld".toCharArray();
+
+        String hash = Hash.password(password).algorithm(Type.BCRYPT).factor(9).create();
+        assertTrue(Hash.password(password).verify(hash));
+
+        String hash2 = "bcrypt:4:60:16:n::$2y$04$lkEs3RSX0FKeaZhuFrarfuIioYwEihR56kYOFlLy.26aQ7vEq7K8q";
+        assertTrue(Hash.password(password).verify(hash2));
+
+        String hash3 = "bcrypt:9:60:16:n::$2y$09$d0pDK4uPB50MGVAqh1i6mu/GHHMcx/op4SmXMd4clWZ.uaXsNNvs.";
+        assertTrue(Hash.password(password).verify(hash3));
+    }
+
+    @Test
+    public void tooLowFactorTests() {
+        char[] password = "HelloWorld".toCharArray();
+
+        try {
+            Hash.password(password).algorithm(Type.BCRYPT).factor(1).create();
+            fail("bad rounds (factor) not detected");
+        }
+        catch (Exception e) {
+            // good error
+        }
+
+        try {
+            Hash.password(password).algorithm(Type.BCRYPT).factor(3).create();
+            fail("bad rounds (factor) not detected");
+        }
+        catch (Exception e) {
+            // good error
+        }
     }
 
     @Test

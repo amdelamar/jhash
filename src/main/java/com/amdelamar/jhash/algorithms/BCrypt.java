@@ -460,7 +460,7 @@ public class BCrypt {
             // "2a" - some implementations suffered from a very rare security flaw. current default for compatibility purposes.
             // "2y" - format specific to the crypt_blowfish BCrypt implementation, identical to "2a" in all but name.
             minor = hash.charAt(2);
-            if (minor != 'a' || hash.charAt(3) != '$') {
+            if (minor < 'a' || minor > 'z' || hash.charAt(3) != '$') {
                 throw new IllegalArgumentException("Invalid salt revision");
             }
             off = 4;
@@ -516,7 +516,7 @@ public class BCrypt {
         try {
             byte[] salt = HashUtils.randomSalt(length);
             StringBuilder sb = new StringBuilder();
-            sb.append("$2a$");
+            sb.append("$2y$");
             sb.append(Integer.toString(rounds));
             sb.append("$");
             sb.append(encodeBase64(salt, salt.length));

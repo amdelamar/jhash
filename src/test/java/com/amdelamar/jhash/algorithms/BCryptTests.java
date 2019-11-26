@@ -142,4 +142,35 @@ public class BCryptTests {
             // good error
         }
     }
+
+    @Test
+    public void revisionHashTests() throws Exception {
+        char[] password = "HelloWorld".toCharArray();
+
+        // revision 'a' with 10 rounds
+        assertTrue(Hash.password(password).verify(
+                "bcrypt:10:60:16:n::$2a$10$w6sTWVowepjgQxI4epepFuQS66Yt.ijLaXf.oa.L1PjI7TnKucZ4S"));
+
+        // revision 'b' with 12 rounds
+        assertTrue(Hash.password(password).verify(
+                "bcrypt:12:60:16:n::$2b$12$tcniI9p9QJ0bppCWsTFDTuysUNUxjIGOyXE8205SpPmZZWHYDc0pq"));
+
+        // revision 'y' with 13 rounds
+        assertTrue(Hash.password(password).verify(
+                "bcrypt:13:60:16:n::$2y$13$HHQ1CbHAQ/9u2wXjYqwApuySKPrdPqxeSakNspEWJ9S.AbHJojrXu"));
+    }
+
+    @Test
+    public void invalidRevisionHashTests() {
+        char[] password = "HelloWorld".toCharArray();
+
+        try {
+            // revision 'A' invalid
+            Hash.password(password)
+                    .verify("bcrypt:13:60:16:n::$2A$13$u.cohr7sjMW9HA6.QoPlnuEBeaRcmoHWLGEfigfC8OtGL98gjz4MK");
+            fail("invalid revision 'A' not detected");
+        } catch (Exception e) {
+            // good error
+        }
+    }
 }

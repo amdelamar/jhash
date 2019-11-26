@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-  implementation 'commons-codec:commons-codec:1.8'
+  compile 'commons-codec:commons-codec:1.8'
   testCompile 'junit:junit:4.12'
 }
 

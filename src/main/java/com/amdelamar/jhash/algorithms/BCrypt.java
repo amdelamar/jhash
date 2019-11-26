@@ -517,6 +517,9 @@ public class BCrypt {
             byte[] salt = HashUtils.randomSalt(length);
             StringBuilder sb = new StringBuilder();
             sb.append("$2y$");
+            if (rounds < 10) {
+                sb.append("0");
+            }
             sb.append(Integer.toString(rounds));
             sb.append("$");
             sb.append(encodeBase64(salt, salt.length));

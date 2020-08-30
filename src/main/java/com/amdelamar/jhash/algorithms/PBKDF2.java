@@ -38,8 +38,8 @@ public class PBKDF2 {
 
         try {
             // hash
-            PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, hashSize * 8);
-            SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
+            final PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, hashSize * 8);
+            final SecretKeyFactory skf = SecretKeyFactory.getInstance(algorithm);
             return skf.generateSecret(spec)
                     .getEncoded();
         } catch (Exception ex) {

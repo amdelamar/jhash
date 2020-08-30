@@ -171,13 +171,13 @@ public class Hash {
             }
 
             // Generate a random salt
-            byte[] salt = HashUtils.randomSalt(saltLength);
+            final byte[] salt = HashUtils.randomSalt(saltLength);
 
             // Hash the password
-            byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
+            final byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
 
             // format for storage
-            StringBuilder finalHash = new StringBuilder(alg2).append(":")
+            final StringBuilder finalHash = new StringBuilder(alg2).append(":")
                     .append(factor)
                     .append(":")
                     .append(hash.length)
@@ -205,10 +205,10 @@ public class Hash {
             }
 
             // Hash the password
-            String hash = BCrypt.create(pepperPassword, null, saltLength, factor);
+            final String hash = BCrypt.create(pepperPassword, null, saltLength, factor);
 
             // format for storage
-            StringBuilder finalHash = new StringBuilder(BCRYPT).append(":")
+            final StringBuilder finalHash = new StringBuilder(BCRYPT).append(":")
                     .append(factor)
                     .append(":")
                     .append(hash.length())
@@ -234,10 +234,10 @@ public class Hash {
             }
 
             // Hash the password
-            String hash = SCrypt.create(pepperPassword, saltLength, factor);
+            final String hash = SCrypt.create(pepperPassword, saltLength, factor);
 
             // format for storage
-            StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
+            final StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
                     .append(factor)
                     .append(":")
                     .append(hash.length())
@@ -273,7 +273,7 @@ public class Hash {
         }
 
         // Decode the hash into its parameters
-        String[] params = correctHash.split(":");
+        final String[] params = correctHash.split(":");
         if (params.length != HASH_SECTIONS) {
             throw new InvalidHashException("Fields are missing from the correct hash. Double-check JHash vesrion and hash format.");
         }
@@ -324,7 +324,7 @@ public class Hash {
                 algorithm = PBKDF2_HMACSHA512;
             }
 
-            byte[] hash = HashUtils.decodeBase64(params[HASH_INDEX]);
+            final byte[] hash = HashUtils.decodeBase64(params[HASH_INDEX]);
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException(HASH_LENGTH_MISMATCH);
@@ -332,20 +332,21 @@ public class Hash {
 
             // Compute the hash of the provided string, using the same salt,
             // iteration count, and hash length
-            byte[] testHash = PBKDF2.create(pepperPassword.toCharArray(), salt, algorithm, iterations, hash.length);
+            final byte[] testHash = PBKDF2
+                    .create(pepperPassword.toCharArray(), salt, algorithm, iterations, hash.length);
 
             // Compare the hashes in constant time.
             return HashUtils.slowEquals(hash, testHash);
 
         } else if (algorithm.equals(BCRYPT)) {
 
-            byte[] hash = params[HASH_INDEX].getBytes();
+            final byte[] hash = params[HASH_INDEX].getBytes();
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException(HASH_LENGTH_MISMATCH);
             }
 
-            byte[] testHash = BCrypt.create(pepperPassword, new String(hash), storedSaltSize, iterations)
+            final byte[] testHash = BCrypt.create(pepperPassword, new String(hash), storedSaltSize, iterations)
                     .getBytes();
 
             // Compare the hashes in constant time.
@@ -353,7 +354,7 @@ public class Hash {
 
         } else if (algorithm.equals(SCRYPT)) {
 
-            byte[] hash = params[HASH_INDEX].getBytes();
+            final byte[] hash = params[HASH_INDEX].getBytes();
 
             if (storedHashSize != hash.length) {
                 throw new InvalidHashException(HASH_LENGTH_MISMATCH);

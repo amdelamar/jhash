@@ -65,7 +65,7 @@ public class SCrypt {
         if (blocksize > Integer.MAX_VALUE / 128 / parallel)
             throw new IllegalArgumentException("Parameter blocksize is too large");
 
-        Mac mac = Mac.getInstance("HmacSHA256");
+        final Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(new SecretKeySpec(password, "HmacSHA256"));
 
         byte[] key = new byte[length];
@@ -86,8 +86,8 @@ public class SCrypt {
     }
 
     private static void smix(byte[] b1, int bi, int round, int cpu, byte[] v1, byte[] xy) {
-        int xi = 0;
-        int yi = 128 * round;
+        final int xi = 0;
+        final int yi = 128 * round;
 
         System.arraycopy(b1, bi, xy, xi, 128 * round);
 
@@ -216,14 +216,14 @@ public class SCrypt {
      * @throws GeneralSecurityException If key length is too long
      */
     protected static void pbkdf2(Mac mac, byte[] salt, int iterations, byte[] key, int length) throws GeneralSecurityException {
-        int len = mac.getMacLength();
+        final int len = mac.getMacLength();
 
         byte[] u1 = new byte[len];
         byte[] t1 = new byte[len];
         byte[] block = new byte[salt.length + 4];
 
-        int limit = (int) Math.ceil((double) length / len);
-        int r = length - (limit - 1) * len;
+        final int limit = (int) Math.ceil((double) length / len);
+        final int r = length - (limit - 1) * len;
 
         System.arraycopy(salt, 0, block, 0, salt.length);
 
@@ -260,21 +260,22 @@ public class SCrypt {
      */
     public static boolean verify(String password, String hashed) throws IllegalStateException {
         try {
-            String[] parts = hashed.split("\\$");
+            final String[] parts = hashed.split("\\$");
 
             if (parts.length != 5 || !parts[1].equals("s0")) {
                 throw new IllegalArgumentException("Invalid hashed value");
             }
 
             long params = Long.parseLong(parts[2], 16);
-            byte[] salt = HashUtils.decodeBase64(parts[3]);
-            byte[] derived = HashUtils.decodeBase64(parts[4]);
+            final byte[] salt = HashUtils.decodeBase64(parts[3]);
+            final byte[] derived = HashUtils.decodeBase64(parts[4]);
 
-            int cost = (int) Math.pow(2, params >> 16 & 0xffff);
-            int blockSize = (int) params >> 8 & 0xff;
-            int parallel = (int) params & 0xff;
+            final int cost = (int) Math.pow(2, params >> 16 & 0xffff);
+            final int blockSize = (int) params >> 8 & 0xff;
+            final int parallel = (int) params & 0xff;
 
-            byte[] derivedPwd = SCrypt.scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
+            final byte[] derivedPwd = SCrypt
+                    .scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 
             if (derived.length != derivedPwd.length) {
                 return false;
@@ -316,11 +317,11 @@ public class SCrypt {
      */
     protected static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
         try {
-            byte[] salt = HashUtils.randomSalt(saltLength);
+            final byte[] salt = HashUtils.randomSalt(saltLength);
 
-            byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
+            final byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 
-            String params = Long.toString(log2(cost) << 16L | blockSize << 8 | parallel, 16);
+            final String params = Long.toString(log2(cost) << 16L | blockSize << 8 | parallel, 16);
 
             StringBuilder sb = new StringBuilder((salt.length + derived.length) * 2);
             sb.append("$s0$")

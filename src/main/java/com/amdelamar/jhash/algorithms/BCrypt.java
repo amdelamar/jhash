@@ -385,7 +385,7 @@ public class BCrypt {
         if (log_rounds < 4 || log_rounds > 30) {
             throw new IllegalArgumentException("Bad number of rounds");
         }
-        int rounds = 1 << log_rounds;
+        final int rounds = 1 << log_rounds;
 
         initializeKey();
         enhancedKeySchedule(salt, password);
@@ -470,12 +470,12 @@ public class BCrypt {
         if (hash.charAt(off + 2) > '$') {
             throw new IllegalArgumentException("Missing salt rounds");
         }
-        int rounds = Integer.parseInt(hash.substring(off, off + 2));
+        final int rounds = Integer.parseInt(hash.substring(off, off + 2));
 
         // Extract real salt
-        int realSaltLength = createSalt(saltLength, 10).length() - (off + 3);
-        String realSalt = hash.substring(off + 3, off + 3 + realSaltLength);
-        byte[] saltb = decodeBase64(realSalt, realSalt.length());
+        final int realSaltLength = createSalt(saltLength, 10).length() - (off + 3);
+        final String realSalt = hash.substring(off + 3, off + 3 + realSaltLength);
+        final byte[] saltb = decodeBase64(realSalt, realSalt.length());
         byte[] passwordb;
         try {
             passwordb = (password + (minor >= 'a' ? "\000" : "")).getBytes("UTF-8");
@@ -499,7 +499,7 @@ public class BCrypt {
         rs.append("$");
         rs.append(encodeBase64(saltb, saltb.length));
 
-        byte[] hashed = bcrypt(passwordb, saltb, rounds, (int[]) CIPHER.clone());
+        final byte[] hashed = bcrypt(passwordb, saltb, rounds, (int[]) CIPHER.clone());
         rs.append(encodeBase64(hashed, CIPHER.length * 4 - 1));
 
         return rs.toString();
@@ -514,7 +514,7 @@ public class BCrypt {
      */
     private static String createSalt(int length, int rounds) {
         try {
-            byte[] salt = HashUtils.randomSalt(length);
+            final byte[] salt = HashUtils.randomSalt(length);
             StringBuilder sb = new StringBuilder();
             sb.append("$2y$");
             if (rounds < 10) {

@@ -21,7 +21,7 @@ Maven:
 <dependency>
     <groupId>com.amdelamar</groupId>
     <artifactId>jhash</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.amdelamar:jhash:2.1.2'
+    compile 'com.amdelamar:jhash:2.2.0'
 }
 ```
 
@@ -45,7 +45,7 @@ resolvers += {
 }
 
 libraryDependencies ++= Seq(
-  "com.amdelamar" % "jhash" % "2.1.2"
+  "com.amdelamar" % "jhash" % "2.2.0"
 )
 ```
 

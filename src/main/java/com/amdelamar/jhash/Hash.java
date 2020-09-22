@@ -39,6 +39,7 @@ public class Hash {
 
     // Hash parameters with defaults
     private char[] password;
+    private byte[] salt;
     private char[] pepper;
     private int hashLength = 0;
     private int saltLength = 0;
@@ -61,6 +62,21 @@ public class Hash {
         Hash hash = new Hash();
         hash.password = password;
         return hash;
+    }
+
+    /**
+     * Optional value for the <a href="https://en.wikipedia.org/wiki/Salt_(cryptography)">salt</a>.
+     *
+     * You don't need to call this method. A secure random salt will be generated
+     * for you automatically. This method merely provides the option to inject your own salt value if you wish.
+     * Note: Specifying a salt here will override any value provided in saltLength(int).
+     * @param salt byte[]
+     * @return Hash
+     */
+    public Hash salt(byte[] salt) {
+        this.salt = salt;
+        this.saltLength = salt.length;
+        return this;
     }
 
     /**
@@ -88,12 +104,16 @@ public class Hash {
 
     /**
      * Optional value for salt byte length. Default is 24.
-     *
+     * Note: Specifying a length here can be overridden by any value provided in salt().
      * @param saltLength int
      * @return Hash
      */
     public Hash saltLength(int saltLength) {
-        this.saltLength = saltLength;
+        if (this.salt != null && this.salt.length > 0) {
+            // Salt is already defined, so do nothing
+        } else {
+            this.saltLength = saltLength;
+        }
         return this;
     }
 
@@ -160,18 +180,23 @@ public class Hash {
                 hashLength = PBKDF2.DEFAULT_HASH_LENGTH;
             }
 
-            if (saltLength <= 0) {
-                // default salt length
-                saltLength = PBKDF2.DEFAULT_SALT_LENGTH;
+            if (salt != null && salt.length > 0) {
+                // Custom salt was provided
+                saltLength = salt.length;
+            } else {
+                if (saltLength <= 0) {
+                    // default salt length
+                    saltLength = PBKDF2.DEFAULT_SALT_LENGTH;
+                }
+
+                // Generate a random salt
+                salt = HashUtils.randomSalt(saltLength);
             }
 
             if (factor <= 0) {
                 // default factor
                 factor = PBKDF2.DEFAULT_ITERATIONS;
             }
-
-            // Generate a random salt
-            final byte[] salt = HashUtils.randomSalt(saltLength);
 
             // Hash the password
             final byte[] hash = PBKDF2.create(pepperPassword.toCharArray(), salt, alg, factor, hashLength);
@@ -199,13 +224,21 @@ public class Hash {
                 factor = BCrypt.DEFAULT_LOG2_ROUNDS;
             }
 
-            if (saltLength <= 0) {
-                // default salt length
-                saltLength = BCrypt.DEFAULT_SALT_LENGTH;
+            if (salt != null && salt.length > 0) {
+                // Custom salt was provided
+                saltLength = salt.length;
+            } else {
+                if (saltLength <= 0) {
+                    // default salt length
+                    saltLength = BCrypt.DEFAULT_SALT_LENGTH;
+                }
+
+                // Generate a random salt
+                salt = HashUtils.randomSalt(saltLength);
             }
 
             // Hash the password
-            final String hash = BCrypt.create(pepperPassword, null, saltLength, factor);
+            final String hash = BCrypt.create(pepperPassword, null, salt, factor);
 
             // format for storage
             final StringBuilder finalHash = new StringBuilder(BCRYPT).append(":")
@@ -213,7 +246,7 @@ public class Hash {
                     .append(":")
                     .append(hash.length())
                     .append(":")
-                    .append(saltLength)
+                    .append(salt.length)
                     .append(":")
                     .append(isPeppered)
                     .append("::")
@@ -228,13 +261,21 @@ public class Hash {
                 factor = SCrypt.COST;
             }
 
-            if (saltLength <= 0) {
-                // default salt length
-                saltLength = SCrypt.DEFAULT_SALT_LENGTH;
+            if (salt != null && salt.length > 0) {
+                // Custom salt was provided
+                saltLength = salt.length;
+            } else {
+                if (saltLength <= 0) {
+                    // default salt length
+                    saltLength = SCrypt.DEFAULT_SALT_LENGTH;
+                }
+
+                // Generate a random salt
+                salt = HashUtils.randomSalt(saltLength);
             }
 
             // Hash the password
-            final String hash = SCrypt.create(pepperPassword, saltLength, factor);
+            final String hash = SCrypt.create(pepperPassword, salt, factor);
 
             // format for storage
             final StringBuilder finalHash = new StringBuilder(SCRYPT).append(":")
@@ -242,7 +283,7 @@ public class Hash {
                     .append(":")
                     .append(hash.length())
                     .append(":")
-                    .append(saltLength)
+                    .append(salt.length)
                     .append(":")
                     .append(isPeppered)
                     .append("::")

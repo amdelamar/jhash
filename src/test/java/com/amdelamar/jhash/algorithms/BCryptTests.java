@@ -59,6 +59,20 @@ public class BCryptTests {
     }
 
     @Test
+    public void customSaltTests() throws InvalidHashException {
+        char[] password = "Hello&77World!".toCharArray();
+        // bcrypt + custom salt
+        String hash = Hash.password(password)
+                .algorithm(Type.BCRYPT)
+                .saltLength(1) // should be overridden
+                .salt("pretzel".getBytes())
+                .saltLength(10) // should be ignored
+                .create();
+        assertTrue(Hash.password(password)
+                .verify(hash));
+    }
+
+    @Test
     public void defaultFactorTests() throws InvalidHashException {
 
         int parameter = 10;

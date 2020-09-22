@@ -299,26 +299,30 @@ public class SCrypt {
      * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
      * @return The hashed password.
      * @throws IllegalStateException If JVM doesn't support necessary functions.
+     * @deprecated use {@link #create(String, byte[], int)} instead.
      */
+    @Deprecated
     public static String create(String password, int saltLength, int cost) throws IllegalStateException {
-        return create(password, saltLength, cost, BLOCKSIZE, PARALLEL);
+        // Generate a salt of the specified length
+        final byte[] salt = HashUtils.randomSalt(saltLength);
+        return create(password, salt, cost, BLOCKSIZE, PARALLEL);
     }
 
     /**
-     * Hash the supplied plaintext password and generate output in the format described
+     * Creates a Hash from the given password using the specified algorithm.
      *
      * @param password   Password.
-     * @param saltLength The salt byte length.
+     * @param salt       The salt bytes
      * @param cost       Overall CPU/MEM cost parameter. 2^15 for testing, but 2^20 recommended.
-     * @param blockSize  Block size for each mixing loop (memory usage)
-     * @param parallel   Parallelization to control the number of independent mixing loops.
      * @return The hashed password.
      * @throws IllegalStateException If JVM doesn't support necessary functions.
      */
-    protected static String create(String password, int saltLength, int cost, int blockSize, int parallel) throws IllegalStateException {
-        try {
-            final byte[] salt = HashUtils.randomSalt(saltLength);
+    public static String create(String password, byte[] salt, int cost) throws IllegalStateException {
+        return create(password, salt, cost, BLOCKSIZE, PARALLEL);
+    }
 
+    private static String create(String password, byte[] salt, int cost, int blockSize, int parallel) throws IllegalStateException {
+        try {
             final byte[] derived = scrypt(password.getBytes("UTF-8"), salt, cost, blockSize, parallel, 32);
 
             final String params = Long.toString(log2(cost) << 16L | blockSize << 8 | parallel, 16);

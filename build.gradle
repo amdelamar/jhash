@@ -24,6 +24,12 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
+test {
+  testLogging {
+    showStandardStreams = true
+  }
+}
+
 jar {
   baseName = 'jhash'
   from sourceSets.main.allSource

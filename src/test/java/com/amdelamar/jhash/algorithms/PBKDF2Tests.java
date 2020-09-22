@@ -103,6 +103,20 @@ public class PBKDF2Tests {
     }
 
     @Test
+    public void customSaltTests() throws InvalidHashException {
+        char[] password = "Hello&77World!".toCharArray();
+        // sha512 + custom salt
+        String hash = Hash.password(password)
+                .algorithm(Type.PBKDF2_SHA512)
+                .saltLength(1) // should be overridden
+                .salt("pretzel".getBytes())
+                .saltLength(10) // should be ignored
+                .create();
+        assertTrue(Hash.password(password)
+                .verify(hash));
+    }
+
+    @Test
     public void lowFactorTests() throws InvalidHashException {
 
         int factor = 500;

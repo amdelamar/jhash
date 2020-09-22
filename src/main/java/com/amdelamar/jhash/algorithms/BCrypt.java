@@ -421,8 +421,26 @@ public class BCrypt {
      * @param iterations the log rounds (e.g. 2^10)
      * @return the hashed password
      * @throws IllegalArgumentException if invalid salt or parameters
+     * @deprecated use {@link #create(String, String, byte[], int)} instead.
      */
+    @Deprecated
     public static String create(String password, String hash, int saltLength, int iterations) throws IllegalArgumentException {
+        // Generate a salt of the specified length
+        final byte[] salt = HashUtils.randomSalt(saltLength);
+        return create(password, hash, salt, iterations);
+    }
+
+    /**
+     * Creates a Hash from the given password using the specified algorithm.
+     *
+     * @param password   the password to hash
+     * @param hash       the correct hash, null if hashing
+     * @param salt       the salt bytes
+     * @param iterations the log rounds (e.g. 2^10)
+     * @return the hashed password
+     * @throws IllegalArgumentException if invalid salt or parameters
+     */
+    public static String create(String password, String hash, byte[] salt, int iterations) throws IllegalArgumentException {
 
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty!");
@@ -431,19 +449,17 @@ public class BCrypt {
             // 72 character password limit for bcrypt
             throw new IllegalArgumentException("Bcrypt cannot handle passwords longer than 72 characters. Sorry.");
         }
-
-        // defaults
-        if (saltLength <= 0) {
-            saltLength = DEFAULT_SALT_LENGTH;
+        if (salt == null) {
+            salt = new byte[0];
         }
         if (iterations <= 0) {
             iterations = DEFAULT_LOG2_ROUNDS;
         }
 
         // we are creating a new hash
-        // so we need a random salt
+        // so we encode the salt first
         if (hash == null || hash.isEmpty()) {
-            hash = createSalt(saltLength, iterations);
+            hash = formatSalt(salt, iterations);
         }
 
         char minor = (char) 0;
@@ -473,7 +489,7 @@ public class BCrypt {
         final int rounds = Integer.parseInt(hash.substring(off, off + 2));
 
         // Extract real salt
-        final int realSaltLength = createSalt(saltLength, 10).length() - (off + 3);
+        final int realSaltLength = formatSalt(salt, 10).length() - (off + 3);
         final String realSalt = hash.substring(off + 3, off + 3 + realSaltLength);
         final byte[] saltb = decodeBase64(realSalt, realSalt.length());
         byte[] passwordb;
@@ -506,15 +522,14 @@ public class BCrypt {
     }
 
     /**
-     * Generate a salt for use with the BCrypt.create() method.
+     * Prepare a salt for use with the BCrypt.create() method.
      *
-     * @param length the salt length
+     * @param salt the salt
      * @param rounds the log rounds
      * @return an encoded salt value
      */
-    private static String createSalt(int length, int rounds) {
+    private static String formatSalt(byte[] salt, int rounds) {
         try {
-            final byte[] salt = HashUtils.randomSalt(length);
             StringBuilder sb = new StringBuilder();
             sb.append("$2y$");
             if (rounds < 10) {

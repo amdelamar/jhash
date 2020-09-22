@@ -10,7 +10,7 @@ plugins {
 
 group = 'com.amdelamar'
 version = '2.1.2'
-description = 'Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.'
+description = 'Password hashing utility in Java. Supports PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, and SCRYPT. It salts automatically and has a pepper option.'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'

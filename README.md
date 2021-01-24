@@ -1,5 +1,7 @@
 # Jhash
 
+[![Bintray](https://img.shields.io/bintray/v/amdelamar/mvn/jhash)](https://bintray.com/amdelamar/mvn/jhash/_latestVersion)
+[![Javadoc](https://www.javadoc.io/badge/com.amdelamar/jhash.svg)](https://www.javadoc.io/doc/com.amdelamar/jhash)
 [![Build](https://img.shields.io/drone/build/amdelamar/jhash.svg)](https://cloud.drone.io/amdelamar/jhash)
 [![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
 

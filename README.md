@@ -1,6 +1,6 @@
 # Jhash
 
-[![Bintray](https://img.shields.io/bintray/v/amdelamar/mvn/jhash)](https://bintray.com/amdelamar/mvn/jhash/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/com.amdelamar/jhash.svg)](https://search.maven.org/search?q=a:jhash)
 [![Javadoc](https://www.javadoc.io/badge/com.amdelamar/jhash.svg)](https://www.javadoc.io/doc/com.amdelamar/jhash)
 [![Build](https://img.shields.io/drone/build/amdelamar/jhash.svg)](https://cloud.drone.io/amdelamar/jhash)
 [![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
@@ -13,13 +13,6 @@ Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SH
 Maven:
 
 ```xml
-<repositories>
-    <repository>
-        <id>jcenter</id>
-        <url>https://jcenter.bintray.com/</url>
-    </repository>
-</repositories>
-
 <dependency>
     <groupId>com.amdelamar</groupId>
     <artifactId>jhash</artifactId>
@@ -30,10 +23,6 @@ Maven:
 Gradle:
 
 ```gradle
-repositories {
-    jcenter()
-}
-
 dependencies {
     compile 'com.amdelamar:jhash:2.2.0'
 }
@@ -42,16 +31,12 @@ dependencies {
 SBT:
 
 ```scala
-resolvers += {
-  Resolver.jcenterRepo
-}
-
 libraryDependencies ++= Seq(
   "com.amdelamar" % "jhash" % "2.2.0"
 )
 ```
 
-Or Download the [latest release](https://github.com/amdelamar/jhash/releases). Published on [JCenter](https://bintray.com/amdelamar/mvn/jhash).
+Or Download the [latest release](https://github.com/amdelamar/jhash/releases).
 
 
 ## Usage

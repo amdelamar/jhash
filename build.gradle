@@ -2,10 +2,8 @@ plugins {
   id 'java'
   id 'java-library'
   id 'jacoco'
-  id 'maven'
   id 'maven-publish'
-  id 'com.jfrog.bintray' version '1.8.4'
-  id 'org.sonarqube' version '2.6.2'
+  id 'signing'
 }
 
 group = 'com.amdelamar'
@@ -14,9 +12,10 @@ description = 'Password hashing utility in Java. Supports PBKDF2 hmac SHA1/SHA25
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 repositories {
-  jcenter()
+  mavenCentral()
 }
 
 dependencies {
@@ -31,30 +30,9 @@ test {
   }
 }
 
-jar {
-  baseName = 'jhash'
-  from sourceSets.main.allSource
-}
-
-javadoc {
-  source = sourceSets.main.allJava
-  classpath = configurations.compile
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = "sources"
-  from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = "javadoc"
-  from javadoc.destinationDir
-}
-
-artifacts {
-  archives jar
-  archives sourcesJar
-  archives javadocJar
+java {
+  withJavadocJar()
+  withSourcesJar()
 }
 
 jacocoTestReport {
@@ -65,44 +43,54 @@ jacocoTestReport {
 }
 
 publishing {
+  repositories {
+    maven {
+      def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+      url = isReleaseVersion ? releaseRepo : snapshotRepo
+      credentials {
+        username = project.hasProperty('sonatypeUsername') ? sonatypeUsername : System.getenv('SONATYPE_USERNAME')
+        password = project.hasProperty('sonatypePassword') ? sonatypePassword : System.getenv('SONATYPE_PASSWORD')
+      }
+    }
+  }
+
   publications {
-    MyPublication(MavenPublication) {
-      from components.java
-      artifact (sourcesJar) {
-        classifier = "sources"
+    mavenJava(MavenPublication) {
+      pom {
+        name = 'jhash'
+        artifactId = 'jhash'
+        groupId = this.group
+        version = this.version
+        description = this.description
+        url = 'https://amdelamar.com/jhash/'
+        from components.java
+        licenses {
+          license {
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+        developers {
+          developer {
+            id = "amdelamar"
+            name = "Austin Delamar"
+            email = "amdelamar@protonmail.com"
+          }
+        }
+        scm {
+          connection = 'scm:git:git@github.com:amdelamar/jhash.git'
+          developerConnection = 'scm:git:git@github.com:amdelamar/jhash.git'
+          url = 'https://github.com/amdelamar/jhash/'
+        }
       }
-      artifact (javadocJar) {
-        classifier = "javadoc"
-      }
-      version this.version
-      groupId this.group
-      artifactId 'jhash'
     }
   }
 }
 
-bintray {
-  user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-  key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-  publications = ['MyPublication']
-  publish = true
-  override = true
-  pkg {
-    repo = 'mvn'
-    name = 'jhash'
-    desc = this.description
-    licenses = ['Apache-2.0']
-    websiteUrl = 'https://amdelamar.com/jhash/'
-    issueTrackerUrl = 'https://github.com/amdelamar/jhash/issues'
-    vcsUrl = 'git://github.com/amdelamar/jhash.git'
-    version {
-        name = this.version
-        desc = this.description
-        released  = new Date()
-    }
-    githubRepo = 'amdelamar/jhash' // Optional Github repository
-    githubReleaseNotesFile = 'README.md' // Optional Github release notes
-    labels = ['password', 'hash', 'pbkdf2', 'hmac' ,'sha' ,'sha256' ,'bcrypt' ,'scrypt']
-    publicDownloadNumbers = true
-  }
+signing {
+  sign publishing.publications.mavenJava
+}
+tasks.withType(Sign) {
+  onlyIf { isReleaseVersion }
 }

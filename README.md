@@ -24,7 +24,7 @@ Gradle:
 
 ```gradle
 dependencies {
-    compile 'com.amdelamar:jhash:2.2.0'
+    implementation 'com.amdelamar:jhash:2.2.0'
 }
 ```
 

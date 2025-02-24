@@ -9,8 +9,6 @@ plugins {
 group = 'com.amdelamar'
 version = '2.2.0'
 description = 'Password hashing utility in Java. Supports PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, and SCRYPT. It salts automatically and has a pepper option.'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -19,8 +17,8 @@ repositories {
 }
 
 dependencies {
-  compile 'commons-codec:commons-codec:1.8'
-  testCompile 'junit:junit:4.12'
+  implementation 'commons-codec:commons-codec:1.8'
+  testImplementation 'junit:junit:4.12'
 }
 
 test {
@@ -28,17 +26,21 @@ test {
     showStandardStreams = true
     events "passed", "skipped", "failed", "standardOut", "standardError"
   }
+  finalizedBy jacocoTestReport
 }
 
 java {
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
   withJavadocJar()
   withSourcesJar()
 }
 
 jacocoTestReport {
+  dependsOn test
   reports {
-    xml.enabled true
-    html.enabled false
+    xml.required = true
+    html.required = false
   }
 }
 

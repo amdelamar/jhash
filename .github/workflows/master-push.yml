@@ -1,0 +1,14 @@
+name: master-push
+on:
+  push:
+    branches:
+      - master
+jobs:
+  scalatest:
+    name: sbt test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run sbt test
+        run: |
+          ./gradlew test

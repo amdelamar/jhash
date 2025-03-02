@@ -2,7 +2,7 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.amdelamar/jhash.svg)](https://search.maven.org/search?q=a:jhash)
 [![Javadoc](https://www.javadoc.io/badge/com.amdelamar/jhash.svg)](https://www.javadoc.io/doc/com.amdelamar/jhash)
-[![Build](https://img.shields.io/drone/build/amdelamar/jhash.svg)](https://cloud.drone.io/amdelamar/jhash)
+[![Build](https://github.com/amdelamar/jhash/actions/workflows/master-push.yml/badge.svg)](https://github.com/amdelamar/jhash/actions/workflows/master-push.yml)
 [![Codecov](https://img.shields.io/codecov/c/github/amdelamar/jhash.svg)](https://codecov.io/gh/amdelamar/jhash)
 
 Password hashing utility in Java. It can hash passwords with PBKDF2 hmac SHA1/SHA256/SHA512, BCRYPT, or SCRYPT, and it salts automatically and has a pepper option.
